@@ -15,18 +15,18 @@
     "@chakra-ui/react": "^3.31.0",
     "@emotion/react": "^11.14.0",
     "@emotion/styled": "^11.14.1",
-    "@fluentui/react": "^8.125.3",
+    "@fluentui/react": "^8.125.4",
     "@headlessui/react": "^2.2.9",
     "@mantine/core": "^8.3.13",
     "@mui/material": "^7.3.7",
-    "antd": "^6.2.1",
-    "element-plus": "^2.13.1",
-    "react": "^19.2.3",
+    "antd": "^6.2.2",
+    "element-plus": "^2.13.2",
+    "react": "^19.2.4",
     "react-bootstrap": "^2.10.10",
-    "react-dom": "^19.2.3",
+    "react-dom": "^19.2.4",
     "vant": "^4.9.22",
     "vue": "^3.5.27",
-    "vuetify": "^3.11.7"
+    "vuetify": "^3.11.8"
   },
   "browserslist": "Chrome >= 93"
 }
