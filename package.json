@@ -40,6 +40,7 @@
     "fs-extra": "^11.4.0",
     "gzip-size": "^7.0.0",
     "markdown-table": "^3.0.4",
+    "minimizer-webpack-plugin": "^5.8.0",
     "parcel": "^2.16.4",
     "picocolors": "^1.1.1",
     "pidusage": "^4.0.1",
