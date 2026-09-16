@@ -56,6 +56,8 @@ export const createBrowserUtooConfig = ({
     devServer: {
       port: 3000,
       hot: true,
+      dynamicHmrChunkLists: true,
+      lazyDynamicImports: true,
     },
     ...config,
   });
