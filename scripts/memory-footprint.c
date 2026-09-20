@@ -54,6 +54,18 @@ int main(int argc, char **argv) {
           (current.pbi_status == SZOMB || (current.pbi_flags & PROC_FLAG_INEXIT) ||
            current.pbi_start_tvsec != info[i].pbi_start_tvsec ||
            current.pbi_start_tvusec != info[i].pbi_start_tvusec)) continue;
+      if (size == 0 && errno == EPERM) {
+        // Full BSD info has the same UID check as rusage. The short form can
+        // still confirm exit after credentials change; arg=1 includes zombies.
+        struct proc_bsdshortinfo state = {0};
+        int state_size = proc_pidinfo(pids[i], PROC_PIDT_SHORTBSDINFO, 1,
+                                      &state, sizeof(state));
+        if (state_size == 0 && errno == ESRCH) continue;
+        if (state_size == sizeof(state) &&
+            (state.pbsi_status == SZOMB || (state.pbsi_flags & PROC_FLAG_INEXIT))) continue;
+        current.pbi_status = state.pbsi_status;
+        current.pbi_flags = state.pbsi_flags;
+      }
       // Do not silently undercount an inaccessible process that is still alive.
       errno = error;
       fprintf(stderr, "proc_pid_rusage(%d), status=%u flags=0x%x: ",
