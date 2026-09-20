@@ -51,5 +51,23 @@ jobs:
       - name: Install Dependencies
         run: pnpm install
 
+      - name: Test memory sampler
+        run: pnpm test
+
       - name: Run Benchmark
         run: cross-env CASE=${{ matrix.case }} pnpm benchmark
+
+      - name: Publish benchmark summary
+        if: always()
+        run: |
+          for summary in results/*/summary.md; do
+            if [ -f "$summary" ]; then cat "$summary" >> "$GITHUB_STEP_SUMMARY"; fi
+          done
+
+      - name: Upload benchmark samples
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        with:
+          name: benchmark-${{ matrix.os }}-${{ matrix.case }}
+          path: results/
+          if-no-files-found: warn

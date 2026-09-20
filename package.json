@@ -4,7 +4,8 @@
   "type": "module",
   "scripts": {
     "benchmark": "node ./scripts/benchmark.ts",
-    "build:cases": "node ./scripts/build-rspack-cases.ts"
+    "build:cases": "node ./scripts/build-rspack-cases.ts",
+    "test": "node --test scripts/memory.test.ts"
   },
   "devDependencies": {
     "@farmfe/cli": "^1.0.5",
@@ -28,7 +29,6 @@
     "@swc/core": "^1.16.2",
     "@types/fs-extra": "^11.0.4",
     "@types/node": "^24.13.4",
-    "@types/pidusage": "^2.0.5",
     "@types/react": "^19.3.0",
     "@types/react-dom": "^19.3.0",
     "@utoo/pack-cli": "1.5.18",
@@ -43,7 +43,6 @@
     "minimizer-webpack-plugin": "^5.10.1",
     "parcel": "^2.16.4",
     "picocolors": "^1.1.1",
-    "pidusage": "^4.0.1",
     "postcss": "^8.5.28",
     "postcss-url": "^10.1.4",
     "prettier": "^3.9.6",
@@ -55,7 +54,6 @@
     "rollup-plugin-swc3": "^0.12.1",
     "rslog": "^2.3.0",
     "swc-loader": "^0.2.7",
-    "tree-kill": "^1.2.2",
     "typescript": "^6.0.3",
     "vite": "^8.3.0",
     "webpack": "^5.111.0",

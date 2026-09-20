@@ -11,7 +11,8 @@ Benchmark comparing JavaScript bundlers and build tools ([Rspack](https://github
 | **HMR**                  | Time to HMR after changing a module                                        |
 | **Build (no cache)**     | Time taken to build the production bundles                                 |
 | **Build (with cache)**   | Time taken to build the production bundles with cache                      |
-| **Memory (RSS)**         | Memory usage at the end of a cold start or production build                |
+| **Memory steady**        | Dev server memory after 10 HMR updates and a fixed idle window, with and without cache |
+| **Memory peak**          | Sampled peak memory during dev or a production build, with and without cache |
 | **Output size**          | Total size of the output bundle, minified with the default minifier        |
 | **Gzipped size**         | Gzipped size of the output bundle, represents actual network transfer size |
 
@@ -27,7 +28,19 @@ Tooling details:
 - webpack is configured to use SWC instead of Babel / Terser.
 - Vite uses Rolldown and Oxc.
 
+## Memory methodology
+
+- On macOS (including CI), memory means **physical footprint**, queried with `proc_pid_rusage`. On Linux, the fallback is **RSS**, which counts shared resident pages in each process; results explicitly name the metric. Do not compare these two metrics across operating systems.
+- Sample the entire command process tree and process group, including launchers and child processes, approximately every **50 ms**. Browser, benchmark driver, and sampler processes are excluded. Threads are included once through their owning process.
+- **Dev steady:** load the fixture's `/` route (other lazy routes are not visited), wait for network idle, then perform 10 alternating root/leaf HMR updates. Keep the page connected, idle for 5 seconds, and take the median of the following 2-second observation window. Restore edited files only after measurement and server shutdown.
+- **Dev peak:** the largest sampled total from process startup through that steady window. **Build peak:** the largest sampled total from command startup to exit. Sum processes at each sample before taking the peak; short-lived peaks between samples can be missed.
+- Cold and warm cache scenarios are measured separately, without forced GC. Memory is reported in **MiB**, as the median **(minimum–maximum)** across measured runs. Timing also uses the median across runs; HMR averages the root and leaf medians from the five updates of each in the cold session.
+- Raw per-process samples, environment details, individual runs, and summaries are saved under `results/<case>-<timestamp>/` (override with `RESULTS_DIR`). CI uploads them as artifacts and adds tables to the job summary.
+- Local memory measurement supports macOS and Linux. macOS requires the Xcode Command Line Tools (`cc`); the small native helper is compiled once before timing starts.
+
 ## Results
+
+> **Historical results:** the tables below predate the process-tree methodology above. Their memory column is a single-process RSS snapshot (after HMR for dev, just before exit for build), not a steady-window measurement or a peak. The legacy script labelled binary MiB values as MB. Timing values used arithmetic means. These numbers cannot be compared directly with new results.
 
 > Data from GitHub Actions: https://github.com/rstackjs/build-tools-performance/actions/runs/35064814264 (2026-09-16)
 

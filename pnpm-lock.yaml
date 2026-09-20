@@ -71,9 +71,6 @@ importers:
       '@types/node':
         specifier: ^24.13.4
         version: 24.13.4
-      '@types/pidusage':
-        specifier: ^2.0.5
-        version: 2.0.5
       '@types/react':
         specifier: ^19.3.0
         version: 19.3.0
@@ -116,9 +113,6 @@ importers:
       picocolors:
         specifier: ^1.1.1
         version: 1.1.1
-      pidusage:
-        specifier: ^4.0.1
-        version: 4.0.1
       postcss:
         specifier: ^8.5.28
         version: 8.5.28
@@ -152,9 +146,6 @@ importers:
       swc-loader:
         specifier: ^0.2.7
         version: 0.2.7(@swc/core@1.16.2(@swc/helpers@0.5.23))(webpack@5.111.0)
-      tree-kill:
-        specifier: ^1.2.2
-        version: 1.2.2
       typescript:
         specifier: ^6.0.3
         version: 6.0.3
@@ -4183,9 +4174,6 @@ packages:
   '@types/parse-json@4.0.2':
     resolution: {integrity: sha512-dISoDXWWQwUquiKsyZ4Ng+HX2KsPL7LyHKHQwgGFEA3IaKac4Obd+h2a/a6waisAoepJlBcx9paWqjA8/HVjCw==}
 
-  '@types/pidusage@2.0.5':
-    resolution: {integrity: sha512-MIiyZI4/MK9UGUXWt0jJcCZhVw7YdhBuTOuqP/BjuLDLZ2PmmViMIQgZiWxtaMicQfAz/kMrZ5T7PKxFSkTeUA==}
-
   '@types/prop-types@15.7.15':
     resolution: {integrity: sha512-F6bEyamV9jKGAFBEmlQnesRPGOQqS2+Uwi0Em15xenOxHaf2hv6L8YCVn3rPdPJOiJfPiCnLIRyvwVaqMY3MIw==}
 
@@ -7255,10 +7243,6 @@ packages:
     resolution: {integrity: sha512-qcJu88Q2IWqJsDD529JKMdwGm/dvInW4HvQnRwiH9JtihJvzGOscDtHE3x1pBKeUOTysQ8kVmLnJ2kJu7yhcGA==}
     engines: {node: '>=12'}
 
-  pidusage@4.0.1:
-    resolution: {integrity: sha512-yCH2dtLHfEBnzlHUJymR/Z1nN2ePG3m392Mv8TFlTP1B0xkpMQNHAnfkY0n2tAi6ceKO6YWhxYfZ96V4vVkh/g==}
-    engines: {node: '>=18'}
-
   pify@4.0.1:
     resolution: {integrity: sha512-uB80kBFb/tfd68bVleG9T5GGsGPjJrLAUpR5PZIrhBnIaRTQRjqdJSsIKkOP6OAIFbj7GOrcudc5pNjZ+geV2g==}
     engines: {node: '>=6'}
@@ -8426,10 +8410,6 @@ packages:
     engines: {node: '>=10.0'}
     peerDependencies:
       tslib: '2'
-
-  tree-kill@1.2.2:
-    resolution: {integrity: sha512-L0Orpi8qGpRG//Nd+H90vFB+3iHnue1zSSGmNOOCh1GLJ7rUKVwV2HvijphGQS2UmhUZewS9VgvxYIdgr+fG1A==}
-    hasBin: true
 
   treemate@0.3.11:
     resolution: {integrity: sha512-M8RGFoKtZ8dF+iwJfAJTOH/SM4KluKOKRJpjCMhI8bG3qB74zrFoArKZ62ll0Fr3mqkMJiQOmWYkdYgDeITYQg==}
@@ -13159,8 +13139,6 @@ snapshots:
 
   '@types/parse-json@4.0.2': {}
 
-  '@types/pidusage@2.0.5': {}
-
   '@types/prop-types@15.7.15': {}
 
   '@types/qs@6.14.0': {}
@@ -16616,10 +16594,6 @@ snapshots:
 
   picomatch@4.0.7: {}
 
-  pidusage@4.0.1:
-    dependencies:
-      safe-buffer: 5.2.1
-
   pify@4.0.1: {}
 
   pify@5.0.0: {}
@@ -17996,8 +17970,6 @@ snapshots:
   tree-dump@1.1.0(tslib@2.8.1):
     dependencies:
       tslib: 2.8.1
-
-  tree-kill@1.2.2: {}
 
   treemate@0.3.11: {}
 
