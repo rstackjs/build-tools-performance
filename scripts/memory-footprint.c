@@ -13,23 +13,24 @@ int main(int argc, char **argv) {
   if (root <= 0) return 1;
   int capacity = proc_listallpids(NULL, 0) + 1024;
   pid_t *pids = calloc(capacity, sizeof(*pids));
-  struct proc_bsdinfo *info = calloc(capacity, sizeof(*info));
+  struct proc_bsdshortinfo *info = calloc(capacity, sizeof(*info));
   int *selected = calloc(capacity, sizeof(*selected));
   if (!pids || !info || !selected) return 1;
   int count = proc_listallpids(pids, capacity * sizeof(*pids));
   if (count <= 0 || count >= capacity) return 1;
   for (int i = 0; i < count; i++) {
-    if (proc_pidinfo(pids[i], PROC_PIDTBSDINFO, 0, &info[i], sizeof(info[i])) != sizeof(info[i])) continue;
+    // Unlike full BSD info, the short form can enumerate setuid descendants.
+    if (proc_pidinfo(pids[i], PROC_PIDT_SHORTBSDINFO, 0, &info[i], sizeof(info[i])) != sizeof(info[i])) continue;
     // The benchmark launches each command in its own process group. Include
     // reparented group members as well as descendants that create a new group.
-    selected[i] = pids[i] == root || info[i].pbi_pgid == (uint32_t)root;
+    selected[i] = pids[i] == root || info[i].pbsi_pgid == (uint32_t)root;
   }
   for (int changed = 1; changed;) {
     changed = 0;
     for (int i = 0; i < count; i++) {
       if (selected[i]) continue;
       for (int j = 0; j < count; j++) {
-        if (selected[j] && info[i].pbi_ppid == (uint32_t)pids[j]) {
+        if (selected[j] && info[i].pbsi_ppid == (uint32_t)pids[j]) {
           selected[i] = 1;
           changed = 1;
           break;
@@ -40,38 +41,24 @@ int main(int argc, char **argv) {
   printf("[");
   int first = 1;
   for (int i = 0; i < count; i++) {
-    if (!selected[i] || info[i].pbi_status == SZOMB) continue;
+    if (!selected[i] || info[i].pbsi_status == SZOMB) continue;
     rusage_info_current usage = {0};
     if (proc_pid_rusage(pids[i], RUSAGE_INFO_CURRENT, (rusage_info_t *)&usage)) {
-      // A process can exit between enumeration and measurement. macOS may
-      // return EPERM after exit teardown changes its credentials, not just ESRCH.
+      // A process can exit between enumeration and measurement.
       int error = errno;
       if (error == ESRCH) continue;
-      struct proc_bsdinfo current = {0};
-      int size = proc_pidinfo(pids[i], PROC_PIDTBSDINFO, 0, &current, sizeof(current));
+      struct proc_bsdshortinfo current = {0};
+      int size = proc_pidinfo(pids[i], PROC_PIDT_SHORTBSDINFO, 1, &current, sizeof(current));
       if (size == 0 && errno == ESRCH) continue;
       if (size == sizeof(current) &&
-          (current.pbi_status == SZOMB || (current.pbi_flags & PROC_FLAG_INEXIT) ||
-           current.pbi_start_tvsec != info[i].pbi_start_tvsec ||
-           current.pbi_start_tvusec != info[i].pbi_start_tvusec)) continue;
-      if (size == 0 && errno == EPERM) {
-        // Full BSD info has the same UID check as rusage. The short form can
-        // still confirm exit after credentials change; arg=1 includes zombies.
-        struct proc_bsdshortinfo state = {0};
-        int state_size = proc_pidinfo(pids[i], PROC_PIDT_SHORTBSDINFO, 1,
-                                      &state, sizeof(state));
-        if (state_size == 0 && errno == ESRCH) continue;
-        if (state_size == sizeof(state) &&
-            (state.pbsi_status == SZOMB || (state.pbsi_flags & PROC_FLAG_INEXIT))) continue;
-        current.pbi_status = state.pbsi_status;
-        current.pbi_flags = state.pbsi_flags;
-      }
-      // Do not silently undercount an inaccessible process that is still alive.
+          (current.pbsi_status == SZOMB || (current.pbsi_flags & PROC_FLAG_INEXIT))) continue;
+      // Short-lived setuid children (e.g. macOS ps) may temporarily deny rusage.
+      // Discard this entire snapshot; the caller retries it with a fixed limit.
       errno = error;
-      fprintf(stderr, "proc_pid_rusage(%d), status=%u flags=0x%x: ",
-              pids[i], current.pbi_status, current.pbi_flags);
+      fprintf(stderr, "proc_pid_rusage(%d, %s), status=%u flags=0x%x: ",
+              pids[i], info[i].pbsi_comm, current.pbsi_status, current.pbsi_flags);
       perror(NULL);
-      return 1;
+      return error == EPERM ? 75 : 1;
     }
     printf("%s{\"pid\":%d,\"bytes\":%" PRIu64 "}",
            first ? "" : ",", pids[i], usage.ri_phys_footprint);

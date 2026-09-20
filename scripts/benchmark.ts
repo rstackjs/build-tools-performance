@@ -237,8 +237,11 @@ class BuildTool {
       succeeded = true;
       return { time, peak: peak / 1024 ** 2 };
     } finally {
-      await stopCommand(command);
-      saveMemory(this.name, `build-${cache}`, command, { succeeded });
+      try {
+        await stopCommand(command);
+      } finally {
+        saveMemory(this.name, `build-${cache}`, command, { succeeded });
+      }
     }
   }
 }

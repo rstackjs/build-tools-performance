@@ -54,8 +54,18 @@ export async function createMemorySampler() {
 
   async function snapshot(rootPid: number): Promise<MemorySample['processes']> {
     if (process.platform === 'darwin') {
-      const { stdout } = await exec(binary, [String(rootPid)]);
-      return JSON.parse(stdout);
+      for (let attempt = 0; ; attempt++) {
+        try {
+          const { stdout } = await exec(binary, [String(rootPid)]);
+          return JSON.parse(stdout);
+        } catch (error) {
+          // A setuid child such as ps can temporarily deny access. Retry the
+          // whole snapshot so no partial process-tree total enters the results.
+          if ((error as { code?: number }).code !== 75 || attempt === 9)
+            throw error;
+          await sleep(10);
+        }
+      }
     }
     // Linux fallback: sum RSS, including shared pages in each process. This is
     // intentionally labelled RSS and is not interchangeable with macOS footprint.
