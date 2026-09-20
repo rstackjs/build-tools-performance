@@ -5,6 +5,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <sys/resource.h>
+#include <sys/proc.h>
 
 int main(int argc, char **argv) {
   if (argc != 2) return 1;
@@ -39,12 +40,25 @@ int main(int argc, char **argv) {
   printf("[");
   int first = 1;
   for (int i = 0; i < count; i++) {
-    if (!selected[i]) continue;
+    if (!selected[i] || info[i].pbi_status == SZOMB) continue;
     rusage_info_current usage = {0};
     if (proc_pid_rusage(pids[i], RUSAGE_INFO_CURRENT, (rusage_info_t *)&usage)) {
-      // A short-lived child can exit between enumeration and measurement.
-      if (errno == ESRCH) continue;
-      perror("proc_pid_rusage");
+      // A process can exit between enumeration and measurement. macOS may
+      // return EPERM after exit teardown changes its credentials, not just ESRCH.
+      int error = errno;
+      if (error == ESRCH) continue;
+      struct proc_bsdinfo current = {0};
+      int size = proc_pidinfo(pids[i], PROC_PIDTBSDINFO, 0, &current, sizeof(current));
+      if (size == 0 && errno == ESRCH) continue;
+      if (size == sizeof(current) &&
+          (current.pbi_status == SZOMB || (current.pbi_flags & PROC_FLAG_INEXIT) ||
+           current.pbi_start_tvsec != info[i].pbi_start_tvsec ||
+           current.pbi_start_tvusec != info[i].pbi_start_tvusec)) continue;
+      // Do not silently undercount an inaccessible process that is still alive.
+      errno = error;
+      fprintf(stderr, "proc_pid_rusage(%d), status=%u flags=0x%x: ",
+              pids[i], current.pbi_status, current.pbi_flags);
+      perror(NULL);
       return 1;
     }
     printf("%s{\"pid\":%d,\"bytes\":%" PRIu64 "}",
