@@ -357,7 +357,7 @@ parseToolNames().forEach((name) => {
           name: 'Farm ' + require('@farmfe/core/package.json').version,
           port: 9000,
           startScript: 'start:farm',
-          startedRegex: /Ready in (.+)(s|ms)/,
+          startedRegex: /Local:\s+http:\/\/localhost:9000/,
           buildScript: 'build:farm',
           binFilePath: '@farmfe/cli/bin/farm.mjs',
         }),
@@ -446,25 +446,26 @@ async function stopCommand(command: Command) {
   try {
     await command.memory.stop();
   } finally {
-    const pid = command.child.pid!;
-    const signal = (name: NodeJS.Signals) => {
-      try {
-        process.kill(-pid, name);
-      } catch (error) {
-        if ((error as NodeJS.ErrnoException).code !== 'ESRCH') throw error;
+    const rootPid = command.child.pid!;
+    const signal = async (name: NodeJS.Signals) => {
+      // Enumerate live processes again instead of signalling an already-empty
+      // process group (which can report EPERM on macOS after shutdown).
+      const processes = await memorySampler.snapshot(rootPid);
+      for (const { pid } of processes.reverse()) {
+        try {
+          process.kill(pid, name);
+        } catch (error) {
+          if ((error as NodeJS.ErrnoException).code !== 'ESRCH') throw error;
+        }
       }
     };
-    signal('SIGTERM');
+    await signal('SIGTERM');
     // Wait for actual shutdown so the next tool cannot overlap with this one.
     for (let i = 0; i < 20; i++) {
-      try {
-        process.kill(-pid, 0);
-      } catch {
-        break;
-      }
+      if (!(await memorySampler.snapshot(rootPid)).length) break;
       await sleep(50);
     }
-    signal('SIGKILL');
+    await signal('SIGKILL');
     activeCommands.delete(command);
   }
 }

@@ -85,6 +85,7 @@ export async function createMemorySampler() {
   await snapshot(process.pid);
 
   return {
+    snapshot,
     close: () => rm(directory, { recursive: true, force: true }),
     start(rootPid: number) {
       const samples: MemorySample[] = [];
