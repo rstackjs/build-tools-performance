@@ -775,12 +775,10 @@ const getData = function (
   if (dataset.some((item) => item === undefined)) return null;
   const normalized = dataset.map((item) => {
     if (typeof item === 'string') return `${item}${unit}`;
-    const { median: value, min, max } = item!;
-    const format = (n: number) =>
-      unit === 'MiB' ? n.toFixed(1) : String(Math.round(n));
+    const { median: value } = item!;
     return unit === 'MiB'
-      ? `${format(value)} ${unit} (${format(min)}–${format(max)})`
-      : `${format(value)}${unit}`;
+      ? `${value.toFixed(1)} ${unit}`
+      : `${Math.round(value)}${unit}`;
   });
   addRankingEmojis(normalized);
   return normalized;
@@ -823,16 +821,6 @@ if (runDev) {
         data: getData('devHotStart', 'ms'),
       },
       { title: 'HMR', data: getData('hmr', 'ms') },
-      {
-        title: 'Memory steady (no cache)',
-        data: getData('devColdSteady', 'MiB'),
-      },
-      { title: 'Memory peak (no cache)', data: getData('devColdPeak', 'MiB') },
-      {
-        title: 'Memory steady (with cache)',
-        data: getData('devHotSteady', 'MiB'),
-      },
-      { title: 'Memory peak (with cache)', data: getData('devHotPeak', 'MiB') },
     ],
   });
 }
@@ -843,11 +831,6 @@ columnGroups.push({
     nameColumn,
     { title: 'Build (no cache)', data: getData('prodBuild', 'ms') },
     { title: 'Build (with cache)', data: getData('prodHotBuild', 'ms') },
-    {
-      title: 'Memory peak (no cache)',
-      data: getData('buildColdPeak', 'MiB'),
-    },
-    { title: 'Memory peak (with cache)', data: getData('buildHotPeak', 'MiB') },
     { title: 'Output size', data: getData('outputSize', 'kB') },
     {
       title: 'Gzipped size',
@@ -856,7 +839,20 @@ columnGroups.push({
   ],
 });
 
-let markdown = `Timing and memory are measured in separate passes.\n\nMemory: process-tree ${memoryKind}, MiB; median (min–max), natural GC.\n\n`;
+columnGroups.push({
+  label: 'Memory metrics',
+  columns: [
+    nameColumn,
+    { title: 'Dev steady (no cache)', data: getData('devColdSteady', 'MiB') },
+    { title: 'Dev peak (no cache)', data: getData('devColdPeak', 'MiB') },
+    { title: 'Dev steady (with cache)', data: getData('devHotSteady', 'MiB') },
+    { title: 'Dev peak (with cache)', data: getData('devHotPeak', 'MiB') },
+    { title: 'Build peak (no cache)', data: getData('buildColdPeak', 'MiB') },
+    { title: 'Build peak (with cache)', data: getData('buildHotPeak', 'MiB') },
+  ],
+});
+
+let markdown = `Timing and memory are measured in separate passes.\n\nMemory: process-tree ${memoryKind}, MiB; median, natural GC.\n\n`;
 for (const { label, columns } of columnGroups) {
   logger.log(`${label}:\n`);
   const table = buildMarkdownTable(columns);
