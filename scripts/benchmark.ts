@@ -42,9 +42,14 @@ type BenchmarkConfig = {
 type MemoryMonitor = ReturnType<
   Awaited<ReturnType<typeof createMemorySampler>>['start']
 >;
-type Command = { child: ChildProcess; memory: MemoryMonitor };
+type Measurement = 'timing' | 'memory';
+type Command = {
+  child: ChildProcess;
+  measurement: Measurement;
+  memory?: MemoryMonitor;
+};
 type DevServerResult = { time: number; command: Command };
-type BuildResult = { time: number; peak: number };
+type BuildResult = { time: number; peak?: number };
 
 type NumericPerfMetricKey =
   | 'devColdStart'
@@ -171,7 +176,7 @@ class BuildTool {
     }
   }
 
-  private launch(script: string): Command {
+  private launch(script: string, measurement: Measurement): Command {
     const child = spawn(process.execPath, ['--run', script], {
       cwd: caseDir,
       detached: true,
@@ -179,7 +184,12 @@ class BuildTool {
       env: { ...process.env, NO_COLOR: '1' },
     });
     if (!child.pid) throw new Error(`Failed to launch ${script}`);
-    const command = { child, memory: memorySampler.start(child.pid) };
+    const command = {
+      child,
+      measurement,
+      memory:
+        measurement === 'memory' ? memorySampler.start(child.pid) : undefined,
+    };
     activeCommands.add(command);
     child.stderr!.on('data', (data: Buffer) => logger.log(`stderr: ${data}`));
     if (process.env.DEBUG)
@@ -187,9 +197,9 @@ class BuildTool {
     return command;
   }
 
-  async startServer(): Promise<DevServerResult> {
+  async startServer(measurement: Measurement): Promise<DevServerResult> {
     logger.start(`Running start command: ${this.startScript}`);
-    const command = this.launch(this.startScript);
+    const command = this.launch(this.startScript, measurement);
     return new Promise((resolve, reject) => {
       const timeout = setTimeout(
         () => reject(new Error(`${this.name} startup timed out`)),
@@ -216,11 +226,15 @@ class BuildTool {
     });
   }
 
-  async build(cache: 'cold' | 'warm'): Promise<BuildResult> {
+  async build(
+    cache: 'cold' | 'warm',
+    measurement: Measurement,
+  ): Promise<BuildResult> {
     logger.start(`Running build command: ${this.buildScript}`);
     const start = Date.now();
-    const command = this.launch(this.buildScript);
+    const command = this.launch(this.buildScript, measurement);
     let succeeded = false;
+    let time: number | undefined;
     try {
       await new Promise<void>((resolve, reject) => {
         command.child.stdout!.resume();
@@ -231,16 +245,20 @@ class BuildTool {
             : reject(new Error(`Build failed with exit code ${code}`)),
         );
       });
-      const time = Date.now() - start;
-      const peak = await command.memory.stop();
-      if (!peak) throw new Error('No build memory samples collected');
+      time = Date.now() - start;
+      const peak = await command.memory?.stop();
+      if (command.memory && !peak)
+        throw new Error('No build memory samples collected');
       succeeded = true;
-      return { time, peak: peak / 1024 ** 2 };
+      return { time, peak: peak === undefined ? undefined : peak / 1024 ** 2 };
     } finally {
       try {
         await stopCommand(command);
       } finally {
-        saveMemory(this.name, `build-${cache}`, command, { succeeded });
+        saveRun(this.name, `build-${cache}`, command, {
+          succeeded,
+          time: measurement === 'timing' ? time : undefined,
+        });
       }
     }
   }
@@ -406,6 +424,7 @@ const metadata = {
   steadyIdleMs,
   steadyWindowMs,
   hmrUpdates: 10,
+  measurements: ['timing', 'memory'],
   warmupTimes,
   runTimes,
   node: process.version,
@@ -424,13 +443,13 @@ logger.info(
   `Memory: process-tree ${memoryKind}; raw results: ${resultDirectory}`,
 );
 
-function saveMemory(
+function saveRun(
   tool: string,
   phase: string,
   command: Command,
   details: object = {},
 ) {
-  const filename = `${iteration}-${tool.replace(/[^a-zA-Z0-9.-]/g, '_')}-${phase}.json`;
+  const filename = `${iteration}-${tool.replace(/[^a-zA-Z0-9.-]/g, '_')}-${command.measurement}-${phase}.json`;
   writeFileSync(
     path.join(resultDirectory, filename),
     JSON.stringify({
@@ -438,16 +457,17 @@ function saveMemory(
       phase,
       iteration,
       warmup: iteration < warmupTimes,
-      memoryKind,
+      measurement: command.measurement,
+      memoryKind: command.memory ? memoryKind : undefined,
       ...details,
-      samples: command.memory.samples,
+      samples: command.memory?.samples,
     }),
   );
 }
 
 async function stopCommand(command: Command) {
   try {
-    await command.memory.stop();
+    await command.memory?.stop();
   } finally {
     const rootPid = command.child.pid!;
     const signal = async (name: NodeJS.Signals) => {
@@ -462,14 +482,26 @@ async function stopCommand(command: Command) {
         }
       }
     };
-    await signal('SIGTERM');
-    // Wait for actual shutdown so the next tool cannot overlap with this one.
-    for (let i = 0; i < 20; i++) {
-      if (!(await memorySampler.snapshot(rootPid)).length) break;
-      await sleep(50);
+    try {
+      await signal('SIGTERM');
+      // Allow graceful shutdown to flush persistent caches. A forced shutdown
+      // must fail the run instead of silently producing a partial warm cache.
+      const deadline = Date.now() + 30000;
+      let exited = false;
+      while (Date.now() < deadline) {
+        if (!(await memorySampler.snapshot(rootPid)).length) {
+          exited = true;
+          break;
+        }
+        await sleep(50);
+      }
+      if (!exited) {
+        await signal('SIGKILL');
+        throw new Error(`Command ${rootPid} did not shut down gracefully`);
+      }
+    } finally {
+      activeCommands.delete(command);
     }
-    await signal('SIGKILL');
-    activeCommands.delete(command);
   }
 }
 
@@ -490,49 +522,70 @@ try {
 async function runDevBenchmark(
   buildTool: BuildTool,
   perfResult: PerfResultMap,
+  measurement: Measurement,
 ): Promise<void> {
-  buildTool.cleanCache();
-  await runDevSession(buildTool, perfResult, 'cold');
-  await coolDown();
-  await runDevSession(buildTool, perfResult, 'warm');
-  await coolDown();
+  const { rootFile, leafFile } = config;
+  if (!rootFile || !leafFile)
+    throw new Error('Dev benchmarks require rootFile and leafFile');
+  const files = [rootFile, leafFile].map((file, index) => {
+    const filePath = path.join(srcDir, file);
+    const original = readFileSync(filePath, 'utf8');
+    const marker = `benchmark-restored-${index}`;
+    return {
+      path: filePath,
+      original,
+      marker,
+      // The same baseline is used for cold compilation, restoration, and warm
+      // startup. Its console message acknowledges the restoration rebuild.
+      baseline: `${original}\nconsole.log(${JSON.stringify(marker)}, Date.now());\n`,
+    };
+  });
+  try {
+    files.forEach((file) => writeFileSync(file.path, file.baseline));
+    buildTool.cleanCache();
+    await runDevSession(buildTool, perfResult, 'cold', measurement, files);
+    await coolDown();
+    await runDevSession(buildTool, perfResult, 'warm', measurement, files);
+    await coolDown();
+  } finally {
+    files.forEach((file) => writeFileSync(file.path, file.original));
+  }
 }
 
 async function runDevSession(
   buildTool: BuildTool,
   perfResult: PerfResultMap,
   cache: 'cold' | 'warm',
+  measurement: Measurement,
+  files: { path: string; baseline: string; marker: string }[],
 ) {
   const metrics = ensureMetrics(perfResult, buildTool.name);
-  const { rootFile, leafFile } = config;
-  if (!rootFile || !leafFile)
-    throw new Error('Dev benchmarks require rootFile and leafFile');
-  const files = [rootFile, leafFile].map((file) => path.join(srcDir, file));
-  const originals = files.map((file) => readFileSync(file, 'utf8'));
-  const { time, command } = await buildTool.startServer();
+  const { time, command } = await buildTool.startServer(measurement);
   const page: Page = await browser.newPage();
   let details: object = { succeeded: false };
   try {
     const start = Date.now();
     await page.goto(`http://localhost:${buildTool.port}`, { timeout: 60000 });
     await page.waitForSelector('#root > *', { timeout: 60000 });
-    metrics[cache === 'cold' ? 'devColdStart' : 'devHotStart'] =
-      time + Date.now() - start;
+    const startupTime = time + Date.now() - start;
+    if (measurement === 'timing')
+      metrics[cache === 'cold' ? 'devColdStart' : 'devHotStart'] = startupTime;
     // Load the benchmark's / route, without visiting its other lazy routes.
     await page.waitForNetworkIdle({ idleTime: 500, timeout: 60000 });
     let navigated = false;
     page.on('framenavigated', (frame) => {
       if (frame === page.mainFrame()) navigated = true;
     });
-    const hmrTimes: number[] = [];
-    for (let update = 0; update < 10; update++) {
-      const fileIndex = update % 2;
-      const marker = `benchmark-hmr-${cache}-${update}`;
+    const updateModule = async (
+      file: string,
+      content: string,
+      marker: string,
+    ) => {
       const started = Date.now();
       const updated = new Promise<number>((resolve, reject) => {
         const onConsole = (event: ConsoleMessage) => {
           const [name, timestamp] = event.text().split(' ');
-          if (name !== marker) return;
+          if (name !== marker || Number(timestamp) < started) return;
           clearTimeout(timeout);
           page.off('console', onConsole);
           resolve(Number(timestamp) - started);
@@ -543,37 +596,57 @@ async function runDevSession(
         }, 60000);
         page.on('console', onConsole);
       });
-      writeFileSync(
-        files[fileIndex],
-        `${originals[fileIndex]}\nconsole.log(${JSON.stringify(marker)}, Date.now());\n`,
-      );
-      hmrTimes.push(await updated);
+      writeFileSync(file, content);
+      const duration = await updated;
       if (navigated)
         throw new Error(`${buildTool.name} reloaded the page during HMR`);
       await page.waitForNetworkIdle({ idleTime: 500, timeout: 60000 });
+      return duration;
+    };
+    const hmrTimes: number[] = [];
+    for (let update = 0; update < 10; update++) {
+      const file = files[update % 2];
+      const marker = `benchmark-hmr-${cache}-${update}`;
+      hmrTimes.push(
+        await updateModule(
+          file.path,
+          `${file.baseline}\nconsole.log(${JSON.stringify(marker)}, Date.now());\n`,
+          marker,
+        ),
+      );
     }
-    if (cache === 'cold') {
+    if (measurement === 'timing' && cache === 'cold') {
       metrics.rootHmr = median(hmrTimes.filter((_, index) => index % 2 === 0));
       metrics.leafHmr = median(hmrTimes.filter((_, index) => index % 2 === 1));
       metrics.hmr = (metrics.rootHmr + metrics.leafHmr) / 2;
     }
-    const steady = await command.memory.steady();
-    const peak = await command.memory.stop();
-    metrics[cache === 'cold' ? 'devColdSteady' : 'devHotSteady'] =
-      steady.bytes / 1024 ** 2;
-    metrics[cache === 'cold' ? 'devColdPeak' : 'devHotPeak'] = peak / 1024 ** 2;
-    details = { succeeded: true, steady, hmrTimes };
-    logger.success(
-      `${buildTool.name} dev (${cache}): steady ${(steady.bytes / 1024 ** 2).toFixed(1)} MiB, peak ${(peak / 1024 ** 2).toFixed(1)} MiB`,
-    );
+    if (command.memory) {
+      const steady = await command.memory.steady();
+      const peak = await command.memory.stop();
+      metrics[cache === 'cold' ? 'devColdSteady' : 'devHotSteady'] =
+        steady.bytes / 1024 ** 2;
+      metrics[cache === 'cold' ? 'devColdPeak' : 'devHotPeak'] =
+        peak / 1024 ** 2;
+      details = { succeeded: false, steady };
+      logger.success(
+        `${buildTool.name} dev (${cache}, memory): steady ${(steady.bytes / 1024 ** 2).toFixed(1)} MiB, peak ${(peak / 1024 ** 2).toFixed(1)} MiB`,
+      );
+    } else {
+      details = { succeeded: false, startupTime, hmrTimes };
+      logger.success(
+        `${buildTool.name} dev (${cache}, timing): ${startupTime}ms`,
+      );
+    }
+    // Measurement is over. Restore the exact baseline while the server is
+    // alive, await each rebuild, then let graceful shutdown flush the cache.
+    for (const file of files)
+      await updateModule(file.path, file.baseline, file.marker);
+    details = { ...details, succeeded: true };
   } finally {
     try {
       await stopCommand(command);
     } finally {
-      // Restore only after sampling and shutdown, so restoration cannot trigger
-      // an extra compilation in the memory observation window.
-      files.forEach((file, index) => writeFileSync(file, originals[index]));
-      saveMemory(buildTool.name, `dev-${cache}`, command, details);
+      saveRun(buildTool.name, `dev-${cache}`, command, details);
       await page.close();
     }
   }
@@ -582,14 +655,15 @@ async function runDevSession(
 async function runBuildBenchmark(
   buildTool: BuildTool,
   perfResult: PerfResultMap,
+  measurement: Measurement,
 ): Promise<void> {
   const metrics = ensureMetrics(perfResult, buildTool.name);
   buildTool.cleanCache();
   // Clean up dist dir
   await fse.remove(distDir);
 
-  const { time: buildTime, peak } = await buildTool.build('cold');
-  metrics.buildColdPeak = peak;
+  const { time: buildTime, peak } = await buildTool.build('cold', measurement);
+  if (measurement === 'memory') metrics.buildColdPeak = peak!;
 
   const sizes = sizeResults[buildTool.name] ?? (await getFileSizes(distDir));
   sizeResults[buildTool.name] = sizes;
@@ -608,23 +682,24 @@ async function runBuildBenchmark(
       color.green(sizes.gzippedSize + 'kB'),
   );
 
-  metrics.prodBuild = buildTime;
+  if (measurement === 'timing') metrics.prodBuild = buildTime;
 
   await coolDown();
 
-  await runHotBuildBenchmark(buildTool, perfResult);
+  await runHotBuildBenchmark(buildTool, perfResult, measurement);
 }
 
 async function runHotBuildBenchmark(
   buildTool: BuildTool,
   perfResult: PerfResultMap,
+  measurement: Measurement,
 ): Promise<void> {
   const metrics = ensureMetrics(perfResult, buildTool.name);
   // Clean up dist dir
   await fse.remove(distDir);
 
-  const { time: buildTime, peak } = await buildTool.build('warm');
-  metrics.buildHotPeak = peak;
+  const { time: buildTime, peak } = await buildTool.build('warm', measurement);
+  if (measurement === 'memory') metrics.buildHotPeak = peak!;
 
   logger.success(
     color.dim(buildTool.name) +
@@ -632,7 +707,7 @@ async function runHotBuildBenchmark(
       color.green(buildTime + 'ms'),
   );
 
-  metrics.prodHotBuild = buildTime;
+  if (measurement === 'timing') metrics.prodHotBuild = buildTime;
 
   await coolDown();
 }
@@ -644,10 +719,13 @@ async function benchAllCases(): Promise<void> {
 
   for (const buildTool of shuffledBuildTools) {
     ensureMetrics(perfResult, buildTool.name);
-    if (runDev) {
-      await runDevBenchmark(buildTool, perfResult);
+    for (const measurement of ['timing', 'memory'] as const) {
+      logger.info(`${buildTool.name}: ${measurement} pass`);
+      if (runDev) {
+        await runDevBenchmark(buildTool, perfResult, measurement);
+      }
+      await runBuildBenchmark(buildTool, perfResult, measurement);
     }
-    await runBuildBenchmark(buildTool, perfResult);
   }
 
   perfResults.push(perfResult);
@@ -778,7 +856,7 @@ columnGroups.push({
   ],
 });
 
-let markdown = `Memory: process-tree ${memoryKind}, MiB; median (min–max), natural GC.\n\n`;
+let markdown = `Timing and memory are measured in separate passes.\n\nMemory: process-tree ${memoryKind}, MiB; median (min–max), natural GC.\n\n`;
 for (const { label, columns } of columnGroups) {
   logger.log(`${label}:\n`);
   const table = buildMarkdownTable(columns);
