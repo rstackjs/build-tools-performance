@@ -28,22 +28,9 @@ Tooling details:
 - webpack is configured to use SWC instead of Babel / Terser.
 - Vite uses Rolldown and Oxc.
 
-## Memory methodology
-
-- On macOS (including CI), memory means **physical footprint**, queried with `proc_pid_rusage`. On Linux, the fallback is **RSS**, which counts shared resident pages in each process; results explicitly name the metric. Do not compare these two metrics across operating systems.
-- Sample the entire command process tree and process group, including launchers and child processes, approximately every **50 ms**. Browser, benchmark driver, and sampler processes are excluded. Threads are included once through their owning process.
-- On macOS, a temporarily inaccessible child (such as the setuid system `ps`) triggers a bounded retry of the entire snapshot. Partial totals are discarded, persistent errors fail the run, and actual sampling gaps remain visible in the raw timestamps.
-- Timing and memory use **separate passes**, each with its own cold/warm cache setup. Memory sampling is disabled throughout timed startup, HMR, and build operations; only the memory pass contributes memory results.
-- **Dev steady:** load the fixture's `/` route (other lazy routes are not visited), wait for network idle, then perform 10 alternating root/leaf HMR updates. Keep the page connected, idle for 5 seconds, and take the median of the following 2-second observation window.
-- After measurement, restore the source baseline while the dev server is still alive and wait for the browser to acknowledge each restoration rebuild. Cold and warm sessions use identical baseline content, including fixed console markers for these acknowledgements. Shut down gracefully to flush persistent caches before warm startup; a shutdown timeout fails the run. Restore the original fixture files after both sessions.
-- **Dev peak:** the largest sampled total from process startup through that steady window. **Build peak:** the largest sampled total from command startup to exit. Sum processes at each sample before taking the peak; short-lived peaks between samples can be missed.
-- Cold and warm cache scenarios are measured separately, without forced GC. Memory is reported in **MiB**, as the median **(minimum–maximum)** across measured runs. Timing also uses the median across runs; HMR averages the root and leaf medians from the five updates of each in the cold session.
-- Raw per-process samples, environment details, individual runs, and summaries are saved under `results/<case>-<timestamp>/` (override with `RESULTS_DIR`). Each run file identifies its `timing` or `memory` pass; timing files contain no memory samples. CI uploads them as artifacts and adds tables to the job summary.
-- Local memory measurement supports macOS and Linux. macOS requires the Xcode Command Line Tools (`cc`); the small native helper is compiled once before timing starts.
-
 ## Results
 
-> **Historical results:** the tables below predate the process-tree methodology above. Their memory column is a single-process RSS snapshot (after HMR for dev, just before exit for build), not a steady-window measurement or a peak. The legacy script labelled binary MiB values as MB. Timing values used arithmetic means. These numbers cannot be compared directly with new results.
+> **Historical results:** the tables below predate the [process-tree memory methodology](#memory-methodology). Their memory column is a single-process RSS snapshot (after HMR for dev, just before exit for build), not a steady-window measurement or a peak. The legacy script labelled binary MiB values as MB. Timing values used arithmetic means. These numbers cannot be compared directly with new results.
 
 > Data from GitHub Actions: https://github.com/rstackjs/build-tools-performance/actions/runs/35064814264 (2026-09-16)
 
@@ -305,3 +292,10 @@ FARM=true pnpm benchmark
 ## Credits
 
 Forked from [farm-fe/performance-compare](https://github.com/farm-fe/performance-compare), thanks to the Farm team!
+
+## Memory methodology
+
+- Sample the command process tree every ~50 ms, excluding the browser and benchmark driver. Use macOS **physical footprint** (requires Xcode Command Line Tools) or Linux **RSS**; these metrics are not comparable across platforms.
+- Measure timing and memory in separate passes, each with cold/warm caches and natural GC.
+- **Dev steady:** load `/`, perform 10 root/leaf HMR updates, then idle for 5 seconds and take the median over 2 seconds. **Peak:** the largest sampled process-tree total during dev startup through this window, or during a build.
+- Report **MiB** as median (min–max) across runs. Raw samples and summaries are saved in `results/` and uploaded as CI artifacts.
