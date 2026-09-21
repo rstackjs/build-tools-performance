@@ -777,7 +777,7 @@ const getData = function (
     if (typeof item === 'string') return `${item}${unit}`;
     const { median: value } = item!;
     return unit === 'MiB'
-      ? `${value.toFixed(1)} ${unit}`
+      ? value.toFixed(1)
       : `${Math.round(value)}${unit}`;
   });
   addRankingEmojis(normalized);
@@ -839,16 +839,25 @@ columnGroups.push({
   ],
 });
 
+if (runDev) {
+  columnGroups.push({
+    label: 'Dev memory (MiB)',
+    columns: [
+      nameColumn,
+      { title: 'Steady (no cache)', data: getData('devColdSteady', 'MiB') },
+      { title: 'Steady (with cache)', data: getData('devHotSteady', 'MiB') },
+      { title: 'Peak (no cache)', data: getData('devColdPeak', 'MiB') },
+      { title: 'Peak (with cache)', data: getData('devHotPeak', 'MiB') },
+    ],
+  });
+}
+
 columnGroups.push({
-  label: 'Memory metrics',
+  label: 'Build memory (MiB)',
   columns: [
     nameColumn,
-    { title: 'Dev steady (no cache)', data: getData('devColdSteady', 'MiB') },
-    { title: 'Dev peak (no cache)', data: getData('devColdPeak', 'MiB') },
-    { title: 'Dev steady (with cache)', data: getData('devHotSteady', 'MiB') },
-    { title: 'Dev peak (with cache)', data: getData('devHotPeak', 'MiB') },
-    { title: 'Build peak (no cache)', data: getData('buildColdPeak', 'MiB') },
-    { title: 'Build peak (with cache)', data: getData('buildHotPeak', 'MiB') },
+    { title: 'Peak (no cache)', data: getData('buildColdPeak', 'MiB') },
+    { title: 'Peak (with cache)', data: getData('buildHotPeak', 'MiB') },
   ],
 });
 

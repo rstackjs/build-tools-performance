@@ -33,8 +33,9 @@ description: 'Refresh README benchmark results from a successful GitHub Actions 
 
 - **Development metrics:** startup without cache, startup with cache, and HMR. Omit this table for build-only cases.
 - **Build metrics:** build without cache, build with cache, output size, and gzipped size.
-- **Memory metrics:** a separate table immediately below Build metrics. Include dev steady and dev peak without cache, dev steady and dev peak with cache, then build peak without and with cache. Build-only cases include only the two build peak columns.
-- Keep memory out of the Development and Build tables. Display memory medians to one decimal place with `MiB`, for example `365.9 MiB🥇`, without a suffix such as `(365.9–377.5)`. Raw JSON can retain minimum and maximum values.
+- **Dev memory (MiB):** a separate table immediately below Build metrics, with Name, Steady (no cache), Steady (with cache), Peak (no cache), and Peak (with cache). Omit this table for build-only cases.
+- **Build memory (MiB):** follows Dev memory, or Build metrics for build-only cases, with Name, Peak (no cache), and Peak (with cache).
+- Keep memory out of the Development and Build tables. Put `MiB` in the table labels and display memory medians to one decimal place without repeating the unit in cells, for example `365.9🥇`, without a suffix such as `(365.9–377.5)`. Raw JSON can retain minimum and maximum values.
 - State the source memory metric (macOS physical footprint or Linux RSS). Historical single-process RSS snapshots cannot supply process-tree steady or peak values; do not relabel them or invent missing metrics.
 
 ## Commands
@@ -81,7 +82,7 @@ gh run view <run_id> --job <job_id> --log \
   | cut -f3- \
   | perl -pe 's/\e\[[0-9;]*[A-Za-z]//g' \
   | sed -E 's/^\xef\xbb\xbf//; s/^[0-9T:.\-]+Z //' \
-  | awk '/^(Development|Build|Memory) metrics:$/ {capture=1; print; next} capture && (/^\|/ || /^$/) {print; next} capture {exit}'
+  | awk '/^(Development|Build|Memory) metrics:$|^(Dev|Build) memory \(MiB\):$/ {capture=1; print; next} capture && (/^\|/ || /^$/) {print; next} capture {exit}'
 ```
 
 Notes:
@@ -89,7 +90,7 @@ Notes:
 - Do not rely on the second log column being `Run Benchmark`. Current `gh run view --log` output may label lines as `UNKNOWN STEP`, while the third column still contains the benchmark output you need.
 - Capture starts at the first `Development metrics:` or `Build metrics:` heading so preamble noise is excluded.
 - Stop at the first non-table output after capture begins so artifact-upload and cleanup steps do not leak into the tables.
-- Keep all three tables when present; build-only cases have Build metrics followed by Memory metrics.
+- Keep all four tables for cases with dev metrics; build-only cases have Build metrics followed by Build memory.
 - Prefer replacing one case section at a time or using a temporary one-off local command; do not add repository scripts just to complete a single sync.
 - The brittle part of the edit is preserving section boundaries, especially the final `---` before `## Run locally`.
 
