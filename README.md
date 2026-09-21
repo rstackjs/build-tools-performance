@@ -11,7 +11,8 @@ Benchmark comparing JavaScript bundlers and build tools ([Rspack](https://github
 | **HMR**                  | Time to HMR after changing a module                                        |
 | **Build (no cache)**     | Time taken to build the production bundles                                 |
 | **Build (with cache)**   | Time taken to build the production bundles with cache                      |
-| **Memory (RSS)**         | Memory usage at the end of a cold start or production build                |
+| **Memory steady**        | Dev server memory after 10 HMR updates and a fixed idle window, with and without cache |
+| **Memory peak**          | Sampled peak memory during dev or a production build, with and without cache |
 | **Output size**          | Total size of the output bundle, minified with the default minifier        |
 | **Gzipped size**         | Gzipped size of the output bundle, represents actual network transfer size |
 
@@ -28,6 +29,8 @@ Tooling details:
 - Vite uses Rolldown and Oxc.
 
 ## Results
+
+> **Historical results:** the tables below predate the [process-tree memory methodology](#memory-methodology). Their memory column is a single-process RSS snapshot (after HMR for dev, just before exit for build), not a steady-window measurement or a peak. The legacy script labelled binary MiB values as MB. Timing values used arithmetic means. These numbers cannot be compared directly with new results.
 
 > Data from GitHub Actions: https://github.com/rstackjs/build-tools-performance/actions/runs/35064814264 (2026-09-16)
 
@@ -289,3 +292,10 @@ FARM=true pnpm benchmark
 ## Credits
 
 Forked from [farm-fe/performance-compare](https://github.com/farm-fe/performance-compare), thanks to the Farm team!
+
+## Memory methodology
+
+- Sample the command process tree every ~50 ms, excluding the browser and benchmark driver. Use macOS **physical footprint** (requires Xcode Command Line Tools) or Linux **RSS**; these metrics are not comparable across platforms.
+- Measure timing and memory in separate passes, each with cold/warm caches and natural GC.
+- **Dev steady:** load `/`, perform 10 root/leaf HMR updates, then idle for 5 seconds and take the median over 2 seconds. **Peak:** the largest sampled process-tree total during dev startup through this window, or during a build.
+- Report **MiB** as median (min–max) across runs. Raw samples and summaries are saved in `results/` and uploaded as CI artifacts.

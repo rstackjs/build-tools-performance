@@ -1,5 +1,6 @@
 import { spawn, type ChildProcess } from 'node:child_process';
-import { appendFile, readFileSync, writeFileSync } from 'node:fs';
+import os from 'node:os';
+import { readFileSync, writeFileSync, mkdirSync } from 'node:fs';
 import fse from 'fs-extra';
 import { createRequire } from 'module';
 import path from 'path';
@@ -8,10 +9,8 @@ import puppeteer, {
   type ConsoleMessage,
   type Page,
 } from 'puppeteer';
-import kill from 'tree-kill';
 import { logger } from 'rslog';
 import color from 'picocolors';
-import pidusage from 'pidusage';
 import { markdownTable } from 'markdown-table';
 import { caseName } from '../shared/constants.mjs';
 import {
@@ -19,16 +18,18 @@ import {
   addRankingEmojis,
   shuffleArray,
   sleep,
-  N_A,
 } from './utils.ts';
 
-process.env.CASE = caseName;
+import {
+  createMemorySampler,
+  memoryKind,
+  median,
+  sampleIntervalMs,
+  steadyIdleMs,
+  steadyWindowMs,
+} from './memory.ts';
 
-declare global {
-  // Exposed when running Node with --expose-gc; allow optional presence.
-  // eslint-disable-next-line no-var
-  var gc: NodeJS.GCFunction | undefined;
-}
+process.env.CASE = caseName;
 
 type BenchmarkConfig = {
   supportedTools: string[];
@@ -38,26 +39,32 @@ type BenchmarkConfig = {
   leafFile?: string;
 };
 
-type DevServerResult = {
-  time: number;
-  stopServer: () => Promise<number>;
+type MemoryMonitor = ReturnType<
+  Awaited<ReturnType<typeof createMemorySampler>>['start']
+>;
+type Measurement = 'timing' | 'memory';
+type Command = {
+  child: ChildProcess;
+  measurement: Measurement;
+  memory?: MemoryMonitor;
 };
-
-type BuildResult = {
-  time: number;
-  rss: number;
-};
+type DevServerResult = { time: number; command: Command };
+type BuildResult = { time: number; peak?: number };
 
 type NumericPerfMetricKey =
   | 'devColdStart'
   | 'devHotStart'
-  | 'devRSS'
+  | 'devColdSteady'
+  | 'devColdPeak'
+  | 'devHotSteady'
+  | 'devHotPeak'
   | 'rootHmr'
   | 'leafHmr'
   | 'hmr'
   | 'prodBuild'
   | 'prodHotBuild'
-  | 'buildRSS';
+  | 'buildColdPeak'
+  | 'buildHotPeak';
 
 interface PerfMetrics extends Partial<Record<NumericPerfMetricKey, number>> {
   outputSize?: string;
@@ -75,7 +82,6 @@ interface Column {
 const COOL_DOWN_TIME = 3000;
 
 async function coolDown(): Promise<void> {
-  global.gc?.();
   await new Promise<void>((resolve) => setTimeout(resolve, COOL_DOWN_TIME));
 }
 
@@ -103,10 +109,6 @@ const { config } = (await import(
 const runDev = config.dev !== false;
 
 const startConsole = `console.log('Benchmark Start Time:', Date.now());
-console.log('Current PID:', process.pid);
-process.on('exit', function() {
-  console.log('Memory Usage:', process.memoryUsage().rss);
-});
 `;
 
 interface BuildToolOptions {
@@ -116,7 +118,6 @@ interface BuildToolOptions {
   startedRegex: RegExp;
   buildScript: string;
   binFilePath: string;
-  skipRss?: boolean;
 }
 
 class BuildTool {
@@ -126,7 +127,6 @@ class BuildTool {
   private readonly startedRegex: RegExp;
   private readonly buildScript: string;
   private readonly binFilePath: string;
-  public readonly skipRss: boolean;
 
   constructor({
     name,
@@ -135,7 +135,6 @@ class BuildTool {
     startedRegex,
     buildScript,
     binFilePath,
-    skipRss = false,
   }: BuildToolOptions) {
     this.name = name;
     this.port = port;
@@ -144,7 +143,6 @@ class BuildTool {
     this.buildScript = buildScript;
     this.binFilePath = path.join(process.cwd(), 'node_modules', binFilePath);
     this.hackBinFile();
-    this.skipRss = skipRss;
   }
 
   cleanCache(): void {
@@ -178,155 +176,91 @@ class BuildTool {
     }
   }
 
-  async startServer(): Promise<DevServerResult> {
-    logger.log('');
-    logger.start(
-      `Running start command: ${color.bold(color.yellow(this.startScript))}`,
-    );
-
-    const child = spawn(
-      `cd cases/${caseName} && node --run ${this.startScript}`,
-      {
-        stdio: ['pipe'],
-        shell: true,
-        env: {
-          ...process.env,
-          NO_COLOR: '1',
-        },
-      },
-    );
-    const stdout = child.stdout;
-    const stderr = child.stderr;
-
-    if (!stdout || !stderr) {
-      throw new Error('Failed to capture child process output');
-    }
-
-    if (process.env.DEBUG) {
-      stdout.on('data', (data: Buffer) => {
-        console.log(data.toString());
-      });
-    }
-    stderr.on('data', (data: Buffer) => {
-      logger.log(`stderr: ${data}`);
+  private launch(script: string, measurement: Measurement): Command {
+    const child = spawn(process.execPath, ['--run', script], {
+      cwd: caseDir,
+      detached: true,
+      stdio: ['ignore', 'pipe', 'pipe'],
+      env: { ...process.env, NO_COLOR: '1' },
     });
+    if (!child.pid) throw new Error(`Failed to launch ${script}`);
+    const command = {
+      child,
+      measurement,
+      memory:
+        measurement === 'memory' ? memorySampler.start(child.pid) : undefined,
+    };
+    activeCommands.add(command);
+    child.stderr!.on('data', (data: Buffer) => logger.log(`stderr: ${data}`));
+    if (process.env.DEBUG)
+      child.stdout!.on('data', (data: Buffer) => console.log(data.toString()));
+    return command;
+  }
 
-    return new Promise<DevServerResult>((resolve, reject) => {
-      let startTime: number | null = null;
-      let bundlerPid: number | null = null;
-
-      const stopServer = async () => {
-        if (!bundlerPid) {
-          throw new Error('Bundler pid not found');
-        }
-
-        const TIMEOUT = 30000;
-        const start = Date.now();
-        // wait bundler write cache to disk
-        while (Date.now() - start < TIMEOUT) {
-          const info = await pidusage(bundlerPid);
-          // CPU idle
-          if (info.cpu === 0) {
-            break;
-          }
-          await sleep(200);
-        }
-
-        const info = await pidusage(bundlerPid);
-        const rssRaw = info.memory / 1024 / 1024;
-        const rss = Math.round(rssRaw * 1000) / 1000;
-
-        if (child.pid) {
-          kill(child.pid);
-        }
-        return rss;
-      };
-
-      stdout.on('data', (data: Buffer) => {
-        const text = data.toString();
-
-        const startMatch = /Benchmark Start Time: (\d+)/.exec(text);
-        if (startMatch) {
-          startTime = Number(startMatch[1]);
-        }
-
-        const matchPid = /Current PID: (\d+)/.exec(text);
-        if (matchPid) {
-          bundlerPid = Number(matchPid[1]);
-        }
-
-        if (this.startedRegex.test(text)) {
-          this.startedRegex.lastIndex = 0;
-          if (startTime === null) {
-            reject(new Error('Start time not found'));
-            return;
-          }
-          resolve({ time: Date.now() - startTime, stopServer });
+  async startServer(measurement: Measurement): Promise<DevServerResult> {
+    logger.start(`Running start command: ${this.startScript}`);
+    const command = this.launch(this.startScript, measurement);
+    return new Promise((resolve, reject) => {
+      const timeout = setTimeout(
+        () => reject(new Error(`${this.name} startup timed out`)),
+        60000,
+      );
+      let output = '';
+      command.child.stdout!.on('data', (data: Buffer) => {
+        output = (output + data.toString()).slice(-65536);
+        const match = /Benchmark Start Time: (\d+)/.exec(output);
+        this.startedRegex.lastIndex = 0;
+        if (match && this.startedRegex.test(output)) {
+          clearTimeout(timeout);
+          resolve({ time: Date.now() - Number(match[1]), command });
         }
       });
-
-      child.on('error', (error) => {
-        logger.error(`${error.message}`);
+      command.child.on('error', (error) => {
+        clearTimeout(timeout);
         reject(error);
       });
-      child.on('exit', (code) => {
-        if (code !== 0 && code !== null) {
-          logger.error(
-            `(${this.name} run ${this.startScript} failed) child process exited with code ${code}`,
-          );
-          reject(new Error(String(code)));
-        }
+      command.child.on('exit', (code) => {
+        clearTimeout(timeout);
+        reject(new Error(`${this.name} dev server exited with code ${code}`));
       });
     });
   }
 
-  async build(): Promise<BuildResult> {
-    logger.log('');
-    logger.start(
-      `Running build command: ${color.bold(color.yellow(this.buildScript))}`,
-    );
-    const child = spawn(
-      `cd cases/${caseName} && node --run ${this.buildScript}`,
-      {
-        stdio: ['pipe'],
-        shell: true,
-        env: {
-          ...process.env,
-          NO_COLOR: '1',
-        },
-      },
-    );
-    const stdout = child.stdout;
-
-    if (!stdout) {
-      throw new Error('Failed to capture build output');
-    }
-
-    const startTime = Date.now();
-    let buildRss: number | null = null;
-    stdout.on('data', (data: Buffer) => {
-      const text = data.toString();
-      const matchRss = /Memory Usage: (\d+)/.exec(text);
-      if (matchRss) {
-        // transform to MB
-        const rss = Number(matchRss[1]) / 1024 / 1024;
-        buildRss = Math.round(rss * 1000) / 1000;
-      }
-    });
-    return new Promise<BuildResult>((resolve, reject) => {
-      child.on('exit', (code) => {
-        if (code !== 0) {
-          reject(new Error(`Build failed with exit code ${code}`));
-          return;
-        }
-        if (!buildRss) {
-          reject(new Error('buildRss not found'));
-          return;
-        }
-        resolve({ time: Date.now() - startTime, rss: buildRss });
+  async build(
+    cache: 'cold' | 'warm',
+    measurement: Measurement,
+  ): Promise<BuildResult> {
+    logger.start(`Running build command: ${this.buildScript}`);
+    const start = Date.now();
+    const command = this.launch(this.buildScript, measurement);
+    let succeeded = false;
+    let time: number | undefined;
+    try {
+      await new Promise<void>((resolve, reject) => {
+        command.child.stdout!.resume();
+        command.child.on('error', reject);
+        command.child.on('exit', (code) =>
+          code === 0
+            ? resolve()
+            : reject(new Error(`Build failed with exit code ${code}`)),
+        );
       });
-      child.on('error', reject);
-    });
+      time = Date.now() - start;
+      const peak = await command.memory?.stop();
+      if (command.memory && !peak)
+        throw new Error('No build memory samples collected');
+      succeeded = true;
+      return { time, peak: peak === undefined ? undefined : peak / 1024 ** 2 };
+    } finally {
+      try {
+        await stopCommand(command);
+      } finally {
+        saveRun(this.name, `build-${cache}`, command, {
+          succeeded,
+          time: measurement === 'timing' ? time : undefined,
+        });
+      }
+    }
   }
 }
 
@@ -423,8 +357,6 @@ parseToolNames().forEach((name) => {
           startedRegex: /esbuild built in (\d+) ms/,
           buildScript: 'build:esbuild',
           binFilePath: 'esbuild/lib/main.js',
-          // can not collect accurate RSS from esbuild
-          skipRss: true,
         }),
       );
       break;
@@ -446,7 +378,7 @@ parseToolNames().forEach((name) => {
           name: 'Farm ' + require('@farmfe/core/package.json').version,
           port: 9000,
           startScript: 'start:farm',
-          startedRegex: /Ready in (.+)(s|ms)/,
+          startedRegex: /Local:\s+http:\/\/localhost:9000/,
           buildScript: 'build:farm',
           binFilePath: '@farmfe/cli/bin/farm.mjs',
         }),
@@ -467,227 +399,271 @@ parseToolNames().forEach((name) => {
   }
 });
 
-const browser: Browser = await puppeteer.launch();
+const memorySampler = await createMemorySampler();
+const activeCommands = new Set<Command>();
+const resultDirectory = path.resolve(
+  process.env.RESULTS_DIR ?? path.join('results', `${caseName}-${Date.now()}`),
+);
+mkdirSync(resultDirectory, { recursive: true });
 const { WARMUP_TIMES, RUN_TIMES } = process.env;
 const warmupTimes = WARMUP_TIMES ? Number(WARMUP_TIMES) : 2;
 const runTimes = RUN_TIMES ? Number(RUN_TIMES) : 3;
-const totalTimes = warmupTimes + runTimes;
-
-logger.log('');
+if (
+  !Number.isInteger(warmupTimes) ||
+  warmupTimes < 0 ||
+  !Number.isInteger(runTimes) ||
+  runTimes < 1
+) {
+  throw new Error('WARMUP_TIMES must be >= 0 and RUN_TIMES must be >= 1');
+}
+let iteration = 0;
+const metadata = {
+  case: caseName,
+  memoryKind,
+  sampleIntervalMs,
+  steadyIdleMs,
+  steadyWindowMs,
+  hmrUpdates: 10,
+  measurements: ['timing', 'memory'],
+  warmupTimes,
+  runTimes,
+  node: process.version,
+  platform: process.platform,
+  release: os.release(),
+  arch: process.arch,
+  cpus: os.cpus().length,
+  cpuModel: os.cpus()[0]?.model,
+  totalMemory: os.totalmem(),
+};
+writeFileSync(
+  path.join(resultDirectory, 'environment.json'),
+  JSON.stringify(metadata, null, 2),
+);
 logger.info(
-  'Benchmark case ' +
-    color.green(`"${caseName}"`) +
-    ' will run ' +
-    color.green(warmupTimes + ' warmup') +
-    ' + ' +
-    color.green(runTimes + ' measured') +
-    ' times',
+  `Memory: process-tree ${memoryKind}; raw results: ${resultDirectory}`,
 );
 
+function saveRun(
+  tool: string,
+  phase: string,
+  command: Command,
+  details: object = {},
+) {
+  const filename = `${iteration}-${tool.replace(/[^a-zA-Z0-9.-]/g, '_')}-${command.measurement}-${phase}.json`;
+  writeFileSync(
+    path.join(resultDirectory, filename),
+    JSON.stringify({
+      tool,
+      phase,
+      iteration,
+      warmup: iteration < warmupTimes,
+      measurement: command.measurement,
+      memoryKind: command.memory ? memoryKind : undefined,
+      ...details,
+      samples: command.memory?.samples,
+    }),
+  );
+}
+
+async function stopCommand(command: Command) {
+  try {
+    await command.memory?.stop();
+  } finally {
+    const rootPid = command.child.pid!;
+    const signal = async (name: NodeJS.Signals) => {
+      // Enumerate live processes again instead of signalling an already-empty
+      // process group (which can report EPERM on macOS after shutdown).
+      const processes = await memorySampler.snapshot(rootPid);
+      for (const { pid } of processes.reverse()) {
+        try {
+          process.kill(pid, name);
+        } catch (error) {
+          if ((error as NodeJS.ErrnoException).code !== 'ESRCH') throw error;
+        }
+      }
+    };
+    try {
+      await signal('SIGTERM');
+      // Allow graceful shutdown to flush persistent caches. A forced shutdown
+      // must fail the run instead of silently producing a partial warm cache.
+      const deadline = Date.now() + 30000;
+      let exited = false;
+      while (Date.now() < deadline) {
+        if (!(await memorySampler.snapshot(rootPid)).length) {
+          exited = true;
+          break;
+        }
+        await sleep(50);
+      }
+      if (!exited) {
+        await signal('SIGKILL');
+        throw new Error(`Command ${rootPid} did not shut down gracefully`);
+      }
+    } finally {
+      activeCommands.delete(command);
+    }
+  }
+}
+
+const browser: Browser = await puppeteer.launch();
 let perfResults: PerfResultMap[] = [];
 const sizeResults: Partial<Record<string, FileSizes>> = {};
-
-for (let i = 0; i < totalTimes; i++) {
-  await benchAllCases();
+try {
+  for (; iteration < warmupTimes + runTimes; iteration++) await benchAllCases();
+} finally {
+  await browser.close();
+  try {
+    for (const command of activeCommands) await stopCommand(command);
+  } finally {
+    await memorySampler.close();
+  }
 }
 
 async function runDevBenchmark(
   buildTool: BuildTool,
   perfResult: PerfResultMap,
+  measurement: Measurement,
 ): Promise<void> {
-  const metrics = ensureMetrics(perfResult, buildTool.name);
   const { rootFile, leafFile } = config;
-  if (!rootFile || !leafFile) {
-    throw new Error(
-      'Dev benchmarks require both rootFile and leafFile in the case config.',
-    );
-  }
-
-  buildTool.cleanCache();
-  const { time, stopServer } = await buildTool.startServer();
-  const page: Page = await browser.newPage();
-  const start = Date.now();
-
-  logger.info(
-    color.dim('navigating to' + ` http://localhost:${buildTool.port}`),
-  );
-
-  await page.goto(`http://localhost:${buildTool.port}`, {
-    timeout: 60000,
-  });
-
-  // wait for render element
-  await page.waitForSelector('#root > *', {
-    timeout: 60000,
-  });
-  const loadTime = Date.now() - start;
-  logger.success(
-    color.dim(buildTool.name) +
-      ' dev start in ' +
-      color.green(time + loadTime + 'ms'),
-  );
-  metrics.devColdStart = time + loadTime;
-
-  let waitResolve!: () => void;
-  const waitPromise = new Promise<void>((resolve) => {
-    waitResolve = resolve;
-  });
-
-  let hmrRootStart = -1;
-  let hmrLeafStart = -1;
-
-  page.on('console', (event: ConsoleMessage) => {
-    const afterHMR = () => {
-      if (
-        typeof metrics.rootHmr === 'number' &&
-        typeof metrics.leafHmr === 'number'
-      ) {
-        metrics.hmr = (metrics.rootHmr + metrics.leafHmr) / 2;
-        void page.close();
-        waitResolve();
-      }
+  if (!rootFile || !leafFile)
+    throw new Error('Dev benchmarks require rootFile and leafFile');
+  const files = [rootFile, leafFile].map((file, index) => {
+    const filePath = path.join(srcDir, file);
+    const original = readFileSync(filePath, 'utf8');
+    const marker = `benchmark-restored-${index}`;
+    return {
+      path: filePath,
+      original,
+      marker,
+      // The same baseline is used for cold compilation, restoration, and warm
+      // startup. Its console message acknowledges the restoration rebuild.
+      baseline: `${original}\nconsole.log(${JSON.stringify(marker)}, Date.now());\n`,
     };
-
-    if (event.text().includes('root hmr')) {
-      const match = /(\d+)/.exec(event.text());
-      if (!match) {
-        throw new Error('Failed to match root HMR time.');
-      }
-
-      const clientDateNow = Number(match[1]);
-      const hmrTime = clientDateNow - hmrRootStart;
-      logger.success(
-        color.dim(buildTool.name) +
-          ' HMR (root module) in ' +
-          color.green(hmrTime + 'ms'),
-      );
-
-      metrics.rootHmr = hmrTime;
-      if (hmrLeafStart === -1) {
-        triggerLeafHmr();
-      }
-      afterHMR();
-    } else if (event.text().includes('leaf hmr')) {
-      const match = /(\d+)/.exec(event.text());
-      if (!match) {
-        throw new Error('Failed to match leaf HMR time.');
-      }
-
-      const clientDateNow = Number(match[1]);
-      const hmrTime = clientDateNow - hmrLeafStart;
-      logger.success(
-        color.dim(buildTool.name) +
-          ' HMR (leaf module) in ' +
-          color.green(hmrTime + 'ms'),
-      );
-      metrics.leafHmr = hmrTime;
-      afterHMR();
-    }
   });
-
-  await new Promise((resolve) => setTimeout(resolve, 1000));
-  const rootFilePath = path.join(srcDir, rootFile);
-  const leafFilePath = path.join(srcDir, leafFile);
-  const originalRootFileContent = readFileSync(rootFilePath, 'utf-8');
-  const originalLeafFileContent = readFileSync(leafFilePath, 'utf-8');
-
-  const triggerLeafHmr = () => {
-    appendFile(
-      leafFilePath,
-      `
-      console.log('leaf hmr', Date.now());
-      `,
-      (err) => {
-        if (err) throw err;
-        hmrLeafStart = Date.now();
-      },
-    );
-  };
-
-  const triggerRootHmr = () => {
-    appendFile(
-      rootFilePath,
-      `
-    console.log('root hmr', Date.now());
-    `,
-      (err) => {
-        if (err) throw err;
-        hmrRootStart = Date.now();
-      },
-    );
-  };
-
-  triggerRootHmr();
-  await waitPromise;
-
-  // restore files
-  writeFileSync(rootFilePath, originalRootFileContent);
-  writeFileSync(leafFilePath, originalLeafFileContent);
-
-  const rss = await stopServer();
-  metrics.devRSS = rss;
-
-  await coolDown();
-  logger.success(color.dim(buildTool.name) + ' dev server closed');
-
-  // collect memory
-
-  // hot start
-  await runHotStartBenchmark(buildTool, perfResult);
+  try {
+    files.forEach((file) => writeFileSync(file.path, file.baseline));
+    buildTool.cleanCache();
+    await runDevSession(buildTool, perfResult, 'cold', measurement, files);
+    await coolDown();
+    await runDevSession(buildTool, perfResult, 'warm', measurement, files);
+    await coolDown();
+  } finally {
+    files.forEach((file) => writeFileSync(file.path, file.original));
+  }
 }
 
-async function runHotStartBenchmark(
+async function runDevSession(
   buildTool: BuildTool,
   perfResult: PerfResultMap,
-): Promise<void> {
+  cache: 'cold' | 'warm',
+  measurement: Measurement,
+  files: { path: string; baseline: string; marker: string }[],
+) {
   const metrics = ensureMetrics(perfResult, buildTool.name);
-  const { time, stopServer } = await buildTool.startServer();
+  const { time, command } = await buildTool.startServer(measurement);
   const page: Page = await browser.newPage();
-  const start = Date.now();
-
-  logger.info(
-    color.dim(
-      'navigating to' + ` http://localhost:${buildTool.port} (with cache)`,
-    ),
-  );
-
-  await page.goto(`http://localhost:${buildTool.port}`, {
-    timeout: 60000,
-  });
-
-  // wait for render element
-  await page.waitForSelector('#root > *', {
-    timeout: 60000,
-  });
-  const loadTime = Date.now() - start;
-  logger.success(
-    color.dim(buildTool.name) +
-      ' dev start with cache in ' +
-      color.green(time + loadTime + 'ms'),
-  );
-  metrics.devHotStart = time + loadTime;
-
-  await page.close();
-
-  await stopServer();
-
-  await coolDown();
-  logger.success(color.dim(buildTool.name) + ' dev server closed (with cache)');
+  let details: object = { succeeded: false };
+  try {
+    const start = Date.now();
+    await page.goto(`http://localhost:${buildTool.port}`, { timeout: 60000 });
+    await page.waitForSelector('#root > *', { timeout: 60000 });
+    const startupTime = time + Date.now() - start;
+    if (measurement === 'timing')
+      metrics[cache === 'cold' ? 'devColdStart' : 'devHotStart'] = startupTime;
+    // Load the benchmark's / route, without visiting its other lazy routes.
+    await page.waitForNetworkIdle({ idleTime: 500, timeout: 60000 });
+    let navigated = false;
+    page.on('framenavigated', (frame) => {
+      if (frame === page.mainFrame()) navigated = true;
+    });
+    const updateModule = async (
+      file: string,
+      content: string,
+      marker: string,
+    ) => {
+      const started = Date.now();
+      const updated = new Promise<number>((resolve, reject) => {
+        const onConsole = (event: ConsoleMessage) => {
+          const [name, timestamp] = event.text().split(' ');
+          if (name !== marker || Number(timestamp) < started) return;
+          clearTimeout(timeout);
+          page.off('console', onConsole);
+          resolve(Number(timestamp) - started);
+        };
+        const timeout = setTimeout(() => {
+          page.off('console', onConsole);
+          reject(new Error(`${buildTool.name} HMR timed out (${marker})`));
+        }, 60000);
+        page.on('console', onConsole);
+      });
+      writeFileSync(file, content);
+      const duration = await updated;
+      if (navigated)
+        throw new Error(`${buildTool.name} reloaded the page during HMR`);
+      await page.waitForNetworkIdle({ idleTime: 500, timeout: 60000 });
+      return duration;
+    };
+    const hmrTimes: number[] = [];
+    for (let update = 0; update < 10; update++) {
+      const file = files[update % 2];
+      const marker = `benchmark-hmr-${cache}-${update}`;
+      hmrTimes.push(
+        await updateModule(
+          file.path,
+          `${file.baseline}\nconsole.log(${JSON.stringify(marker)}, Date.now());\n`,
+          marker,
+        ),
+      );
+    }
+    if (measurement === 'timing' && cache === 'cold') {
+      metrics.rootHmr = median(hmrTimes.filter((_, index) => index % 2 === 0));
+      metrics.leafHmr = median(hmrTimes.filter((_, index) => index % 2 === 1));
+      metrics.hmr = (metrics.rootHmr + metrics.leafHmr) / 2;
+    }
+    if (command.memory) {
+      const steady = await command.memory.steady();
+      const peak = await command.memory.stop();
+      metrics[cache === 'cold' ? 'devColdSteady' : 'devHotSteady'] =
+        steady.bytes / 1024 ** 2;
+      metrics[cache === 'cold' ? 'devColdPeak' : 'devHotPeak'] =
+        peak / 1024 ** 2;
+      details = { succeeded: false, steady };
+      logger.success(
+        `${buildTool.name} dev (${cache}, memory): steady ${(steady.bytes / 1024 ** 2).toFixed(1)} MiB, peak ${(peak / 1024 ** 2).toFixed(1)} MiB`,
+      );
+    } else {
+      details = { succeeded: false, startupTime, hmrTimes };
+      logger.success(
+        `${buildTool.name} dev (${cache}, timing): ${startupTime}ms`,
+      );
+    }
+    // Measurement is over. Restore the exact baseline while the server is
+    // alive, await each rebuild, then let graceful shutdown flush the cache.
+    for (const file of files)
+      await updateModule(file.path, file.baseline, file.marker);
+    details = { ...details, succeeded: true };
+  } finally {
+    try {
+      await stopCommand(command);
+    } finally {
+      saveRun(buildTool.name, `dev-${cache}`, command, details);
+      await page.close();
+    }
+  }
 }
 
 async function runBuildBenchmark(
   buildTool: BuildTool,
   perfResult: PerfResultMap,
+  measurement: Measurement,
 ): Promise<void> {
   const metrics = ensureMetrics(perfResult, buildTool.name);
   buildTool.cleanCache();
   // Clean up dist dir
   await fse.remove(distDir);
 
-  const { time: buildTime, rss } = await buildTool.build();
-  if (rss !== null) {
-    metrics.buildRSS = rss;
-  }
+  const { time: buildTime, peak } = await buildTool.build('cold', measurement);
+  if (measurement === 'memory') metrics.buildColdPeak = peak!;
 
   const sizes = sizeResults[buildTool.name] ?? (await getFileSizes(distDir));
   sizeResults[buildTool.name] = sizes;
@@ -706,22 +682,24 @@ async function runBuildBenchmark(
       color.green(sizes.gzippedSize + 'kB'),
   );
 
-  metrics.prodBuild = buildTime;
+  if (measurement === 'timing') metrics.prodBuild = buildTime;
 
   await coolDown();
 
-  await runHotBuildBenchmark(buildTool, perfResult);
+  await runHotBuildBenchmark(buildTool, perfResult, measurement);
 }
 
 async function runHotBuildBenchmark(
   buildTool: BuildTool,
   perfResult: PerfResultMap,
+  measurement: Measurement,
 ): Promise<void> {
   const metrics = ensureMetrics(perfResult, buildTool.name);
   // Clean up dist dir
   await fse.remove(distDir);
 
-  const { time: buildTime } = await buildTool.build();
+  const { time: buildTime, peak } = await buildTool.build('warm', measurement);
+  if (measurement === 'memory') metrics.buildHotPeak = peak!;
 
   logger.success(
     color.dim(buildTool.name) +
@@ -729,7 +707,7 @@ async function runHotBuildBenchmark(
       color.green(buildTime + 'ms'),
   );
 
-  metrics.prodHotBuild = buildTime;
+  if (measurement === 'timing') metrics.prodHotBuild = buildTime;
 
   await coolDown();
 }
@@ -741,62 +719,50 @@ async function benchAllCases(): Promise<void> {
 
   for (const buildTool of shuffledBuildTools) {
     ensureMetrics(perfResult, buildTool.name);
-    if (runDev) {
-      await runDevBenchmark(buildTool, perfResult);
+    for (const measurement of ['timing', 'memory'] as const) {
+      logger.info(`${buildTool.name}: ${measurement} pass`);
+      if (runDev) {
+        await runDevBenchmark(buildTool, perfResult, measurement);
+      }
+      await runBuildBenchmark(buildTool, perfResult, measurement);
     }
-    await runBuildBenchmark(buildTool, perfResult);
   }
 
   perfResults.push(perfResult);
+  writeFileSync(
+    path.join(resultDirectory, 'runs.json'),
+    JSON.stringify(perfResults, null, 2),
+  );
 }
 
-// Calculate average results
-const averageResults: Record<string, PerfMetrics> = {};
-
-// Drop the warmup results
-perfResults = perfResults.slice(warmupTimes);
-
-if (perfResults.length === 0) {
-  throw new Error('No measured benchmark runs were collected.');
-}
-
-for (const result of perfResults) {
-  for (const [name, values] of Object.entries(result)) {
-    if (!values) {
-      continue;
-    }
-    const metricBucket = averageResults[name] ?? (averageResults[name] = {});
-
-    for (const [key, rawValue] of Object.entries(values) as [
-      keyof PerfMetrics,
-      PerfMetrics[keyof PerfMetrics],
-    ][]) {
-      if (typeof rawValue !== 'number') {
-        continue;
-      }
-
-      const metricKey = key as NumericPerfMetricKey;
-      const previousValue = metricBucket[metricKey] ?? 0;
-      metricBucket[metricKey] = previousValue + rawValue;
-    }
+// Report medians and ranges across measured runs; preserve each raw run.
+const measuredResults = perfResults.slice(warmupTimes);
+const summaries: Record<
+  string,
+  Partial<
+    Record<NumericPerfMetricKey, { median: number; min: number; max: number }>
+  > &
+    FileSizes
+> = {};
+for (const tool of buildTools) {
+  const summary = { ...sizeResults[tool.name] } as (typeof summaries)[string];
+  const keys = Object.keys(
+    measuredResults[0][tool.name]!,
+  ) as NumericPerfMetricKey[];
+  for (const key of keys) {
+    const values = measuredResults.map((result) => result[tool.name]![key]!);
+    summary[key] = {
+      median: median(values),
+      min: Math.min(...values),
+      max: Math.max(...values),
+    };
   }
+  summaries[tool.name] = summary;
 }
-
-for (const [name, values] of Object.entries(averageResults)) {
-  (Object.keys(values) as (keyof PerfMetrics)[]).forEach((key) => {
-    const metricValue = values[key];
-    if (typeof metricValue === 'number') {
-      const numericKey = key as NumericPerfMetricKey;
-      values[numericKey] = Math.floor(metricValue / perfResults.length);
-    }
-  });
-  // Append size info
-  const sizeInfo = sizeResults[name];
-  if (sizeInfo) {
-    values.outputSize = sizeInfo.outputSize;
-    values.gzippedSize = sizeInfo.gzippedSize;
-  }
-}
+writeFileSync(
+  path.join(resultDirectory, 'summary.json'),
+  JSON.stringify({ ...metadata, tools: summaries }, null, 2),
+);
 
 logger.log('');
 logger.success('Benchmark finished!\n');
@@ -805,26 +771,16 @@ const getData = function (
   fieldName: keyof PerfMetrics,
   unit: string,
 ): string[] | null {
-  const dataset = buildTools.map(
-    ({ name }) => averageResults[name]?.[fieldName],
-  );
-  const hasMissingValue = dataset.some(
-    (item): item is undefined => item === undefined,
-  );
-  if (hasMissingValue) {
-    // Return null means this column has no data
-    // and should be hidden
-    return null;
-  }
-
-  const normalized = dataset.map((item, index) => {
-    if (
-      buildTools[index].skipRss &&
-      ['devRSS', 'buildRSS'].includes(fieldName)
-    ) {
-      return N_A;
-    }
-    return `${item as number | string}${unit}`;
+  const dataset = buildTools.map(({ name }) => summaries[name]?.[fieldName]);
+  if (dataset.some((item) => item === undefined)) return null;
+  const normalized = dataset.map((item) => {
+    if (typeof item === 'string') return `${item}${unit}`;
+    const { median: value, min, max } = item!;
+    const format = (n: number) =>
+      unit === 'MiB' ? n.toFixed(1) : String(Math.round(n));
+    return unit === 'MiB'
+      ? `${format(value)} ${unit} (${format(min)}–${format(max)})`
+      : `${format(value)}${unit}`;
   });
   addRankingEmojis(normalized);
   return normalized;
@@ -868,9 +824,15 @@ if (runDev) {
       },
       { title: 'HMR', data: getData('hmr', 'ms') },
       {
-        title: 'Memory (RSS)',
-        data: getData('devRSS', 'MB'),
+        title: 'Memory steady (no cache)',
+        data: getData('devColdSteady', 'MiB'),
       },
+      { title: 'Memory peak (no cache)', data: getData('devColdPeak', 'MiB') },
+      {
+        title: 'Memory steady (with cache)',
+        data: getData('devHotSteady', 'MiB'),
+      },
+      { title: 'Memory peak (with cache)', data: getData('devHotPeak', 'MiB') },
     ],
   });
 }
@@ -882,9 +844,10 @@ columnGroups.push({
     { title: 'Build (no cache)', data: getData('prodBuild', 'ms') },
     { title: 'Build (with cache)', data: getData('prodHotBuild', 'ms') },
     {
-      title: 'Memory (RSS)',
-      data: getData('buildRSS', 'MB'),
+      title: 'Memory peak (no cache)',
+      data: getData('buildColdPeak', 'MiB'),
     },
+    { title: 'Memory peak (with cache)', data: getData('buildHotPeak', 'MiB') },
     { title: 'Output size', data: getData('outputSize', 'kB') },
     {
       title: 'Gzipped size',
@@ -893,10 +856,12 @@ columnGroups.push({
   ],
 });
 
+let markdown = `Timing and memory are measured in separate passes.\n\nMemory: process-tree ${memoryKind}, MiB; median (min–max), natural GC.\n\n`;
 for (const { label, columns } of columnGroups) {
   logger.log(`${label}:\n`);
   const table = buildMarkdownTable(columns);
   console.log(`${table}\n`);
+  markdown += `### ${label}\n\n${table}\n\n`;
 }
 
-process.exit(0);
+writeFileSync(path.join(resultDirectory, 'summary.md'), markdown);
