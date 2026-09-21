@@ -78,8 +78,8 @@ importers:
         specifier: ^19.3.0
         version: 19.3.0(@types/react@19.3.0)
       '@utoo/pack-cli':
-        specifier: 1.5.19-alpha.1
-        version: 1.5.19-alpha.1(postcss@8.5.28)(supports-color@8.1.1)
+        specifier: 1.5.20
+        version: 1.5.20(postcss@8.5.28)
       '@vitejs/plugin-react':
         specifier: ^6.1.1
         version: 6.1.1(vite@8.3.0(@types/node@24.13.4)(esbuild@0.28.2)(terser@5.51.2))
@@ -4171,63 +4171,63 @@ packages:
     peerDependencies:
       react: '>= 16.8.0'
 
-  '@utoo/pack-cli@1.5.19-alpha.1':
-    resolution: {integrity: sha512-ZZO1QhudQom8yoMWHotqN63Jx/I8RA4iMKsa2fXgKT67k99/utOLj11EvaFth35MONZqhGglbPDkUopInxbFJg==}
+  '@utoo/pack-cli@1.5.20':
+    resolution: {integrity: sha512-J1nFnpqMYX9X0fQWIn7mpchgOZVSGXWRikofqAR4P1AKwye9gpMyCDIdKSwM3rX9L4FROMs/o0IQBEkvYIneRw==}
     engines: {node: '>= 20'}
     hasBin: true
 
-  '@utoo/pack-darwin-arm64@1.5.19-alpha.1':
-    resolution: {integrity: sha512-uFrry2tKQKt3q3Di6Hnj/J0WEy3jiaKO11a0A08y2RRe4THmQyTDrihP8u79ph+Jk0KElsGZHf/GyC9fTIU2GA==}
+  '@utoo/pack-darwin-arm64@1.5.20':
+    resolution: {integrity: sha512-ap3mim2iK9y6qHcshnLhvEDNkguVM5hlG3BNKxXYX5LvHB52KrVxFaAJ/aVl6bbXdM16ArDFaMaRxEg36Uq7sA==}
     engines: {node: '>= 20'}
     cpu: [arm64]
     os: [darwin]
 
-  '@utoo/pack-darwin-x64@1.5.19-alpha.1':
-    resolution: {integrity: sha512-bG+TbN4zWSRFXL77q43oaD4iEzZe+hcX84vO6AWhWr+i7hVZv2Oxf6Y1aejFu7X3t610aDhAlMUOYfxlqL8ehA==}
+  '@utoo/pack-darwin-x64@1.5.20':
+    resolution: {integrity: sha512-YbqbH4mf+Sdk33qMpXfHi69F67JME6EQ6d4k1IzCEqqJ6WI9G4Ta138i7/zLSwrfeQQkNYglnN0RrAcXuuMvPQ==}
     engines: {node: '>= 20'}
     cpu: [x64]
     os: [darwin]
 
-  '@utoo/pack-linux-arm64-gnu@1.5.19-alpha.1':
-    resolution: {integrity: sha512-Nrrug8nrykDiiIsVm8zclgPu5bCzblL3iOxox6UjelF6vnSC7HHePG3SYAauWOVMqu2ZYoIy/i/wV8WaXGqwEg==}
+  '@utoo/pack-linux-arm64-gnu@1.5.20':
+    resolution: {integrity: sha512-9Ef32Oer9GaCrjAQ4Y57/ojHAcqSXFVvTC6Jqp4EAk+HwVUlQjzuYjTDdp0gNVmQ7cS/U9HMGwQMbbXk7h0kLg==}
     engines: {node: '>= 20'}
     cpu: [arm64]
     os: [linux]
     libc: [glibc]
 
-  '@utoo/pack-linux-arm64-musl@1.5.19-alpha.1':
-    resolution: {integrity: sha512-nIZFRErgdiRbGTFB+/sN7k07yodYQKzSmacwP15PMh6AsUu+Tv++ZEdr0AqjL3mtixrx0/hdSbXJwiTjHFDw7Q==}
+  '@utoo/pack-linux-arm64-musl@1.5.20':
+    resolution: {integrity: sha512-eUcY+doMaGv982ag2G54XywrO9t6fUXc0c5CvVyEUOKs+V7qIWyBEKznstnI2YfGSA/DpgKL7t2WTvmyHGlbwQ==}
     engines: {node: '>= 20'}
     cpu: [arm64]
     os: [linux]
     libc: [musl]
 
-  '@utoo/pack-linux-x64-gnu@1.5.19-alpha.1':
-    resolution: {integrity: sha512-ZgKu9ZXZxHvdCVITqplotReJcsSblweZab2kNBY46jkpx0DlZ223qmveeWD9zdW18V/JWMpbwDHwjTBRkNFjCg==}
+  '@utoo/pack-linux-x64-gnu@1.5.20':
+    resolution: {integrity: sha512-I7LqGHIXKoADWFHrt1iZ0JQGKt5SzQcLZAXIHTR45KeTzQ5cCpD1uleHVu2oa+3Af95KB/A2N+T6fmOKaq+YZQ==}
     engines: {node: '>= 20'}
     cpu: [x64]
     os: [linux]
     libc: [glibc]
 
-  '@utoo/pack-linux-x64-musl@1.5.19-alpha.1':
-    resolution: {integrity: sha512-HqzMyEgil0/1wTyh7TP4bfhkAjIbJ5GDoDwOHu2ry6e9eybTUKPgVwYmyOgiXY/t5abklGZekFuRyarEvdZtSA==}
+  '@utoo/pack-linux-x64-musl@1.5.20':
+    resolution: {integrity: sha512-lrpZOagDvUdLV7HMb31zMsz1o5/2fQvWtfzIDHcBLZjBdJXrpjNkdr2oSOhM1oP5QIu3Y0nETVcPUaxpdCNxSQ==}
     engines: {node: '>= 20'}
     cpu: [x64]
     os: [linux]
     libc: [musl]
 
-  '@utoo/pack-shared@1.5.19-alpha.1':
-    resolution: {integrity: sha512-YL3wvTwTwxCn/wbSKphuqR1FjnhyYqOkjqxsb3jnUOThwvwSG5fDW+AR7DV0ymVKY8eRf8WUXB1X2W5Poj5PLg==}
+  '@utoo/pack-shared@1.5.20':
+    resolution: {integrity: sha512-Yw/FKr+l4qfTlgI9QpyyKZ5Ocbjwj1cl7p4XpaJPebNZEqNnscI2rt1IJ3Us5qC9aw25eOu8DwNttHAq/RWUwA==}
     engines: {node: '>= 20'}
 
-  '@utoo/pack-win32-x64-msvc@1.5.19-alpha.1':
-    resolution: {integrity: sha512-XLbAEy0S5k5k+kIJ58nSPoqWzyobjtkHlp8+xvYXIHHNAHIzoXFurx1KIWnzmXRnP8Xj4T51XdQsovzl30mCyw==}
+  '@utoo/pack-win32-x64-msvc@1.5.20':
+    resolution: {integrity: sha512-dCtPGCYsx4QK/AeZn+4YmkJRkyY59WjsA9joSOABYPXg7Eyk8Ko3QZsNFMj7QMEtXGzsBgdF0SeU2Ui+2/Ap6g==}
     engines: {node: '>= 20'}
     cpu: [x64]
     os: [win32]
 
-  '@utoo/pack@1.5.19-alpha.1':
-    resolution: {integrity: sha512-3qR4KnYIyR6NPVo+zfdihtNWjeVCEUYIPrP0fG4ZjzD9b1MbaNNVl7Lg2mKTUhBj29huG5JfsL2A/i/d6xCt5g==}
+  '@utoo/pack@1.5.20':
+    resolution: {integrity: sha512-Arf9tr/4qw2fV1Ba+3uBEQ4EQIq7/PXfx7doj9C0/1iQGsYXAInH8WbseQRAZ236SXyeSiBeAehLBoxJAQHRXg==}
     engines: {node: '>= 20'}
     peerDependencies:
       less: ^4.0.0
@@ -5432,9 +5432,6 @@ packages:
     resolution: {integrity: sha512-0je+qPKHEMohvfRTCEo3CrPG6cAzAYgmzKyxRiYSSDkS6eGJdyVJm7WaYA5ECaAD9wLB2T4EEeymA5aFVcYXCA==}
     engines: {node: '>=6'}
 
-  destroy@1.0.4:
-    resolution: {integrity: sha512-3NdhDuEXnfun/z7x9GOElY49LoqVHoGScmOKwmxhsS8N5Y+Z8KyPPDnaSzqWgYt/ji4mqwfTS34Htrk0zPIXVg==}
-
   destroy@1.2.0:
     resolution: {integrity: sha512-2sJGJTaXIIaR1w4iJSNoN0hnMY7Gpc/n8D4qSCJw8QqFWXf7cuAgnEHxBpweaVcPevC2l3KpjYCx3NypQQgaJg==}
     engines: {node: '>= 0.8', npm: 1.2.8000 || >= 1.4.16}
@@ -6089,10 +6086,6 @@ packages:
 
   http-errors@1.6.3:
     resolution: {integrity: sha512-lks+lVC8dgGyh97jxvxeYTWQFvh4uw4yC12gVl63Cg30sjPX4wuGcdkICVXDAESr6OJGjqGA8Iz5mkeN6zlD7A==}
-    engines: {node: '>= 0.6'}
-
-  http-errors@1.7.3:
-    resolution: {integrity: sha512-ZTTX0MWrsQ2ZAhA1cejAwDLycFsd7I7nVtnkT3Ol0aqodaKW+0CTZDQ1uBv5whptCnc8e8HeRRJxRs0kmm/Qfw==}
     engines: {node: '>= 0.6'}
 
   http-errors@1.8.1:
@@ -6858,9 +6851,6 @@ packages:
   ms@2.0.0:
     resolution: {integrity: sha512-Tpp60P6IUJDTuOq/5Z8cdskzJujfwqfOTkrwIwj7IRISpnkJnT6SyJ4PCPnGMoFjC9ddhal5KVIYtAt97ix05A==}
 
-  ms@2.1.1:
-    resolution: {integrity: sha512-tgp+dl5cGk28utYktBsrFqA7HKgrhgPsg6Z/EfhWI4gl1Hwq8B/GmY/0oXZ6nF8hDVesS/FpnYaD/kOWhYQvyg==}
-
   ms@2.1.3:
     resolution: {integrity: sha512-6FlzubTLZG3J2a/NVCAleEhjzq5oxgHyaCU9yYXvcLsvoVaHJq/s5xXI6/XXP6tz7R9xAOtHnSO/tXtF3WRTlA==}
 
@@ -6983,10 +6973,6 @@ packages:
 
   obuf@1.1.2:
     resolution: {integrity: sha512-PX1wu0AmAdPqOL1mWhqmlOd8kOIZQwGZw6rh7uby9fTc5lhaOWFLX3I6R1hrF9k3zUY40e6igsLGkDXK92LJNg==}
-
-  on-finished@2.3.0:
-    resolution: {integrity: sha512-ikqdkGAAyf/X/gPhXGvfgAytDZtDbr+bkNUJ0N9h5MI/dmdgCs3l6hoHrcUv41sRKew3jIwrp4qQDXiK99Utww==}
-    engines: {node: '>= 0.8'}
 
   on-finished@2.4.1:
     resolution: {integrity: sha512-oVlzkg3ENAhCk2zdv7IJwd/QUD4z2RxRwpkcGY8psCVcCYZNq4wYnVWALHM+brtuJjePWiYF/ClmuDr8Ch5+kg==}
@@ -7960,10 +7946,6 @@ packages:
     engines: {node: '>=10'}
     hasBin: true
 
-  send@0.17.1:
-    resolution: {integrity: sha512-BsVKsiGcQMFwT8UxypobUKyv7irCNRHk1T0G680vk88yf6LBByGcZJOTJCrTP2xVN6yI+XjPJcNuE3V4fT9sAg==}
-    engines: {node: '>= 0.8.0'}
-
   send@0.19.2:
     resolution: {integrity: sha512-VMbMxbDeehAxpOtWJXlcUS5E8iXh6QmN+BkRX1GARS3wRaXEEgzCcB10gTQazO42tpNIya8xIyNx8fll1OFPrg==}
     engines: {node: '>= 0.8.0'}
@@ -7995,9 +7977,6 @@ packages:
 
   setprototypeof@1.1.0:
     resolution: {integrity: sha512-BvE/TwpZX4FXExxOxZyRGQQv651MSwmWKZGqvmPcRIjDqWub67kTKuIMx43cZZrS/cBBzwBcNDWoFxt2XEFIpQ==}
-
-  setprototypeof@1.1.1:
-    resolution: {integrity: sha512-JvdAWfbXeIGaZ9cILp38HntZSFSo3mWg6xGcJJsd+d4aRMOqauag1C63dJfDw7OaMYwEbHMOxEZ1lqVRYP2OAw==}
 
   setprototypeof@1.2.0:
     resolution: {integrity: sha512-E5LDX7Wrp85Kil5bhZv46j8jOeboKq5JMmYM3gVGdGH8xFpPWXUMsNrlODCrkoxMEeNi/XZIwuRvY4XNwYMJpw==}
@@ -8305,10 +8284,6 @@ packages:
   to-regex-range@5.0.1:
     resolution: {integrity: sha512-65P7iz6X5yEr1cwcgvQxbbIw7Uk3gOy5dIdtZ4rDveLqhrdJP+Li/Hx6tyK0NEb+2GCyneCMJiGqrADCSNk8sQ==}
     engines: {node: '>=8.0'}
-
-  toidentifier@1.0.0:
-    resolution: {integrity: sha512-yaOH/Pk/VEhBWWTlhI+qXxDFXlejDGcQipMlyxda9nthulaxLZUNcUqFxokp0vcYnvteJln5FNQDRrxj3YcbVw==}
-    engines: {node: '>=0.6'}
 
   toidentifier@1.0.1:
     resolution: {integrity: sha512-o5sSPKEkg/DIQNmH43V0/uerLrpzVedkUh8tGNvaeXpfpuwjKenlSox/2O/BTlZUtEe+JG7s5YhEz608PlAHRA==}
@@ -13081,9 +13056,9 @@ snapshots:
       '@use-gesture/core': 10.3.0
       react: 19.3.0
 
-  '@utoo/pack-cli@1.5.19-alpha.1(postcss@8.5.28)(supports-color@8.1.1)':
+  '@utoo/pack-cli@1.5.20(postcss@8.5.28)':
     dependencies:
-      '@utoo/pack': 1.5.19-alpha.1(postcss@8.5.28)(supports-color@8.1.1)
+      '@utoo/pack': 1.5.20(postcss@8.5.28)
       citty: 0.1.6
     transitivePeerDependencies:
       - bufferutil
@@ -13094,43 +13069,42 @@ snapshots:
       - sass
       - sass-loader
       - styled-jsx
-      - supports-color
       - utf-8-validate
 
-  '@utoo/pack-darwin-arm64@1.5.19-alpha.1':
+  '@utoo/pack-darwin-arm64@1.5.20':
     optional: true
 
-  '@utoo/pack-darwin-x64@1.5.19-alpha.1':
+  '@utoo/pack-darwin-x64@1.5.20':
     optional: true
 
-  '@utoo/pack-linux-arm64-gnu@1.5.19-alpha.1':
+  '@utoo/pack-linux-arm64-gnu@1.5.20':
     optional: true
 
-  '@utoo/pack-linux-arm64-musl@1.5.19-alpha.1':
+  '@utoo/pack-linux-arm64-musl@1.5.20':
     optional: true
 
-  '@utoo/pack-linux-x64-gnu@1.5.19-alpha.1':
+  '@utoo/pack-linux-x64-gnu@1.5.20':
     optional: true
 
-  '@utoo/pack-linux-x64-musl@1.5.19-alpha.1':
+  '@utoo/pack-linux-x64-musl@1.5.20':
     optional: true
 
-  '@utoo/pack-shared@1.5.19-alpha.1':
+  '@utoo/pack-shared@1.5.20':
     dependencies:
       '@babel/code-frame': 7.22.5
       picocolors: 1.1.1
 
-  '@utoo/pack-win32-x64-msvc@1.5.19-alpha.1':
+  '@utoo/pack-win32-x64-msvc@1.5.20':
     optional: true
 
-  '@utoo/pack@1.5.19-alpha.1(postcss@8.5.28)(supports-color@8.1.1)':
+  '@utoo/pack@1.5.20(postcss@8.5.28)':
     dependencies:
       '@babel/code-frame': 7.22.5
       '@hono/node-server': 1.19.14(hono@4.12.21)
       '@hono/node-ws': 1.3.1(@hono/node-server@1.19.14(hono@4.12.21))(hono@4.12.21)
       '@jridgewell/trace-mapping': 0.3.31
       '@swc/helpers': 0.5.15
-      '@utoo/pack-shared': 1.5.19-alpha.1
+      '@utoo/pack-shared': 1.5.20
       browserslist: 4.28.8
       domparser-rs: 0.0.7
       find-up: 4.1.0
@@ -13140,19 +13114,17 @@ snapshots:
       picocolors: 1.1.1
       postcss: 8.5.28
       semver: 7.8.5
-      send: 0.17.1(supports-color@8.1.1)
       ws: 8.21.0
     optionalDependencies:
-      '@utoo/pack-darwin-arm64': 1.5.19-alpha.1
-      '@utoo/pack-darwin-x64': 1.5.19-alpha.1
-      '@utoo/pack-linux-arm64-gnu': 1.5.19-alpha.1
-      '@utoo/pack-linux-arm64-musl': 1.5.19-alpha.1
-      '@utoo/pack-linux-x64-gnu': 1.5.19-alpha.1
-      '@utoo/pack-linux-x64-musl': 1.5.19-alpha.1
-      '@utoo/pack-win32-x64-msvc': 1.5.19-alpha.1
+      '@utoo/pack-darwin-arm64': 1.5.20
+      '@utoo/pack-darwin-x64': 1.5.20
+      '@utoo/pack-linux-arm64-gnu': 1.5.20
+      '@utoo/pack-linux-arm64-musl': 1.5.20
+      '@utoo/pack-linux-x64-gnu': 1.5.20
+      '@utoo/pack-linux-x64-musl': 1.5.20
+      '@utoo/pack-win32-x64-msvc': 1.5.20
     transitivePeerDependencies:
       - bufferutil
-      - supports-color
       - utf-8-validate
 
   '@vant/popperjs@1.3.0': {}
@@ -14802,8 +14774,6 @@ snapshots:
 
   dequal@2.0.3: {}
 
-  destroy@1.0.4: {}
-
   destroy@1.2.0: {}
 
   detect-indent@6.1.0: {}
@@ -15497,14 +15467,6 @@ snapshots:
       setprototypeof: 1.1.0
       statuses: 1.5.0
 
-  http-errors@1.7.3:
-    dependencies:
-      depd: 1.1.2
-      inherits: 2.0.4
-      setprototypeof: 1.1.1
-      statuses: 1.5.0
-      toidentifier: 1.0.0
-
   http-errors@1.8.1:
     dependencies:
       depd: 1.1.2
@@ -16155,8 +16117,6 @@ snapshots:
 
   ms@2.0.0: {}
 
-  ms@2.1.1: {}
-
   ms@2.1.3: {}
 
   msgpackr-extract@3.0.3:
@@ -16268,10 +16228,6 @@ snapshots:
   object-path@0.11.8: {}
 
   obuf@1.1.2: {}
-
-  on-finished@2.3.0:
-    dependencies:
-      ee-first: 1.1.1
 
   on-finished@2.4.1:
     dependencies:
@@ -17395,24 +17351,6 @@ snapshots:
 
   semver@7.8.5: {}
 
-  send@0.17.1(supports-color@8.1.1):
-    dependencies:
-      debug: 2.6.9(supports-color@8.1.1)
-      depd: 1.1.2
-      destroy: 1.0.4
-      encodeurl: 1.0.2
-      escape-html: 1.0.3
-      etag: 1.8.1
-      fresh: 0.5.2
-      http-errors: 1.7.3
-      mime: 1.6.0
-      ms: 2.1.1
-      on-finished: 2.3.0
-      range-parser: 1.2.1
-      statuses: 1.5.0
-    transitivePeerDependencies:
-      - supports-color
-
   send@0.19.2(supports-color@8.1.1):
     dependencies:
       debug: 2.6.9(supports-color@8.1.1)
@@ -17470,8 +17408,6 @@ snapshots:
       has-property-descriptors: 1.0.2
 
   setprototypeof@1.1.0: {}
-
-  setprototypeof@1.1.1: {}
 
   setprototypeof@1.2.0: {}
 
@@ -17810,8 +17746,6 @@ snapshots:
   to-regex-range@5.0.1:
     dependencies:
       is-number: 7.0.0
-
-  toidentifier@1.0.0: {}
 
   toidentifier@1.0.1: {}
 
