@@ -5,7 +5,7 @@ import {
   RetryableError,
   runPhase,
   runWithRetry,
-} from './benchmark-runtime.ts';
+} from './benchmark-utils.ts';
 import { readFileSync, writeFileSync, mkdirSync } from 'node:fs';
 import fse from 'fs-extra';
 import { createRequire } from 'module';
