@@ -738,23 +738,26 @@ async function runDevSession(
     );
     page.on('pageerror', (error) => logBrowser(`pageerror: ${String(error)}`));
     page.on('error', (error) => logBrowser(`error: ${String(error)}`));
+    const idle = (signal: AbortSignal) =>
+      sessionPage.waitForNetworkIdle({ idleTime: 500, timeout: 0, signal });
     const start = Date.now();
-    await phase('page load', timeouts.page, async (signal) => {
-      await sessionPage.goto(`http://localhost:${buildTool.port}`, {
-        timeout: 0,
-      });
-      signal.throwIfAborted();
-      await sessionPage.waitForSelector('#root > *', { timeout: 0, signal });
-    });
-    const startupTime = time + Date.now() - start;
+    const startupTime = await phase(
+      'page load',
+      timeouts.page,
+      async (signal) => {
+        await sessionPage.goto(`http://localhost:${buildTool.port}`, {
+          timeout: 0,
+        });
+        signal.throwIfAborted();
+        await sessionPage.waitForSelector('#root > *', { timeout: 0, signal });
+        const startupTime = time + Date.now() - start;
+        // Load only the benchmark's / route and settle within the same deadline.
+        await idle(signal);
+        return startupTime;
+      },
+    );
     if (measurement === 'timing')
       metrics[cache === 'cold' ? 'devColdStart' : 'devHotStart'] = startupTime;
-    // Load the benchmark's / route, without visiting its other lazy routes.
-    const idle = () =>
-      phase('network idle', timeouts.page, (signal) =>
-        sessionPage.waitForNetworkIdle({ idleTime: 500, timeout: 0, signal }),
-      );
-    await idle();
     let navigated = false;
     page.on('framenavigated', (frame) => {
       if (frame === sessionPage.mainFrame()) navigated = true;
@@ -765,29 +768,27 @@ async function runDevSession(
       marker: string,
     ) => {
       const started = Date.now();
-      const duration = await phase(
-        `HMR (${marker})`,
-        timeouts.hmr,
-        (signal) =>
-          new Promise<number>((resolve) => {
-            const onConsole = (event: ConsoleMessage) => {
-              const [name, timestamp] = event.text().split(' ');
-              if (name === marker && Number(timestamp) >= started)
-                resolve(Number(timestamp) - started);
-            };
-            sessionPage.on('console', onConsole);
-            signal.addEventListener(
-              'abort',
-              () => sessionPage.off('console', onConsole),
-              { once: true },
-            );
-            writeFileSync(file, content);
-          }),
-      );
-      if (navigated)
-        throw new Error(`${buildTool.name} reloaded the page during HMR`);
-      await idle();
-      return duration;
+      return phase(`HMR (${marker})`, timeouts.hmr, async (signal) => {
+        const duration = await new Promise<number>((resolve) => {
+          const onConsole = (event: ConsoleMessage) => {
+            const [name, timestamp] = event.text().split(' ');
+            if (name === marker && Number(timestamp) >= started)
+              resolve(Number(timestamp) - started);
+          };
+          sessionPage.on('console', onConsole);
+          signal.addEventListener(
+            'abort',
+            () => sessionPage.off('console', onConsole),
+            { once: true },
+          );
+          writeFileSync(file, content);
+        });
+        signal.throwIfAborted();
+        if (navigated)
+          throw new Error(`${buildTool.name} reloaded the page during HMR`);
+        await idle(signal);
+        return duration;
+      });
     };
     const hmrTimes: number[] = [];
     for (let update = 0; update < 10; update++) {
@@ -807,8 +808,10 @@ async function runDevSession(
       metrics.hmr = (metrics.rootHmr + metrics.leafHmr) / 2;
     }
     if (command.memory) {
-      const steady = await phase('steady memory', timeouts.page, () =>
-        command.memory!.steady(),
+      const steady = await phase(
+        'steady memory',
+        steadyIdleMs + steadyWindowMs + 10000,
+        () => command.memory!.steady(),
       );
       const peak = await command.memory.stop();
       metrics[cache === 'cold' ? 'devColdSteady' : 'devHotSteady'] =
