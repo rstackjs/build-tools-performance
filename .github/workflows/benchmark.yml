@@ -51,7 +51,7 @@ jobs:
       - name: Install Dependencies
         run: pnpm install
 
-      - name: Test benchmark helpers
+      - name: Test memory sampler
         run: pnpm test
 
       - name: Run Benchmark

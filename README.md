@@ -378,12 +378,6 @@ Use `FARM=true` to run Farm:
 FARM=true pnpm benchmark
 ```
 
-Startup, page loading, and each HMR update time out after 60 seconds; each production build times out after 180 seconds. Override these limits in a case's `benchmark-config.mjs`, for example `timeouts: { build: 300000 }` (milliseconds).
-
-Transient failures (timeouts, a running dev server exiting, or a browser disconnecting) allow one retry of the entire cold/warm pair with fresh caches and pages. Configuration errors, build errors, and benchmark assertions fail immediately. Only a successful pair contributes to the metrics; valid slow results are never retried. Shutdown allows 10 seconds for SIGTERM before using SIGKILL; forced shutdown invalidates the pair.
-
-Artifacts retain each attempt separately, including failure output, browser logs, and memory samples. `attempts.json` records accepted and failed pairs, and the summary marks results recovered after retry.
-
 ## Credits
 
 Forked from [farm-fe/performance-compare](https://github.com/farm-fe/performance-compare), thanks to the Farm team!
