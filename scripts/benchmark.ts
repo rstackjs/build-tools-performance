@@ -99,7 +99,8 @@ const defaultTimeouts = {
   page: 60000,
   hmr: 60000,
   build: 180000,
-  shutdown: 10000,
+  // Large filesystem caches may take more than 10 seconds to flush on CI.
+  shutdown: 30000,
 };
 
 async function coolDown(): Promise<void> {
