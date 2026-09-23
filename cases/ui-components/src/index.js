@@ -47,8 +47,8 @@ import {
   InputText as PrimeInputText,
 } from 'primereact/inputtext';
 import {
-  Dropdown as PrimeDropdown,
-} from 'primereact/dropdown';
+  Select as PrimeSelect,
+} from 'primereact/select';
 import {
   DataTable as PrimeDataTable,
 } from 'primereact/datatable';
@@ -153,7 +153,7 @@ console.log(
 console.log(
   PrimeButton,
   PrimeInputText,
-  PrimeDropdown,
+  PrimeSelect,
   PrimeDataTable,
   PrimeDialog,
 );
