@@ -16,6 +16,7 @@ on:
   workflow_dispatch:
 
 concurrency:
+  # Group by PR to cancel outdated runs; unique run IDs keep non-PR runs independent.
   group: ${{ github.workflow }}-${{ github.event_name }}-${{ github.event.pull_request.number || github.run_id }}
   cancel-in-progress: ${{ github.event_name == 'pull_request' }}
 
