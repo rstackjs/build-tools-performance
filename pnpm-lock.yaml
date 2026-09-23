@@ -288,8 +288,8 @@ importers:
         specifier: ^1.9.15
         version: 1.9.15
       swiper:
-        specifier: ^12.2.0
-        version: 12.2.0
+        specifier: ^14.2.0
+        version: 14.2.0
       swr:
         specifier: ^2.5.1
         version: 2.5.1(react@19.3.0)
@@ -8212,8 +8212,8 @@ packages:
       '@swc/core': ^1.2.147
       webpack: '>=2'
 
-  swiper@12.2.0:
-    resolution: {integrity: sha512-K8uXsBZU6ME97Ia3xbBge8IRCnR1lOmIILzvY/jGVic7dSTQ530s3uO8RvXbPUtkkXLWIwmZLRPbtDxRWVAFdg==}
+  swiper@14.2.0:
+    resolution: {integrity: sha512-GsL4M9Fq7Sg22OyL3SjdNj/0bxTfIxPJJHHW394Li0u5vYtExi0a09iBUc8CuLafJi5pAlH2AHUe1PocxHl45g==}
     engines: {node: '>= 4.7.0'}
 
   swr@2.5.1:
@@ -17670,7 +17670,7 @@ snapshots:
       '@swc/counter': 0.1.3
       webpack: 5.111.0(@swc/core@1.16.2(@swc/helpers@0.5.23))(cssnano@5.1.15(postcss@8.5.28))(csso@4.2.0)(esbuild@0.28.2)(lightningcss@1.33.0)(postcss@8.5.28)(webpack-cli@7.2.3)
 
-  swiper@12.2.0: {}
+  swiper@14.2.0: {}
 
   swr@2.5.1(react@19.3.0):
     dependencies:
