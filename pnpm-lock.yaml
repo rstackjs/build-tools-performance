@@ -584,8 +584,8 @@ importers:
         specifier: ^2.45.3
         version: 2.45.3(vue@3.5.43(typescript@6.0.3))
       primereact:
-        specifier: ^10.9.9
-        version: 10.9.9(@types/react@19.3.0)(react-dom@19.3.0(react@19.3.0))(react@19.3.0)
+        specifier: ^11.1.0
+        version: 11.1.0(react-dom@19.3.0(react@19.3.0))(react@19.3.0)
       primevue:
         specifier: ^5.0.1
         version: 5.0.1(vue@3.5.43(typescript@6.0.3))
@@ -2242,8 +2242,31 @@ packages:
     peerDependencies:
       vue: ^3
 
+  '@primereact/core@11.1.0':
+    resolution: {integrity: sha512-Z2J2DV22ml5UnlzO3gd4wCGBqN0GeNfzgrozF6RqNs2Udu7H6pZQepn1gWjBqt1APKwT9vSIvl8UDgORuAa08A==}
+    peerDependencies:
+      react: '>=19.0.0'
+
+  '@primereact/headless@11.1.0':
+    resolution: {integrity: sha512-ugegpnog1+MXJWuv/kAjICP2IyNeyaWdb+kIf8ISGpRX/GTAKtM7Rn9UyVOOo+/68YjhAFPFtqL7DRrE5fRiLg==}
+
+  '@primereact/hooks@11.1.0':
+    resolution: {integrity: sha512-+VOuOFuv56IhjD08e/zkNHmJf0apwxW7LMQxji7YK2DnqhcwW02mq0I/Tgn4VvscGlMO9v+Hhtf14Bq0Zw8oIA==}
+    peerDependencies:
+      react: '>=19.0.0'
+
+  '@primereact/types@11.1.0':
+    resolution: {integrity: sha512-N//v6G15SajKJSmqIsQALNPlsQ6AP4A6Uxrfwopnf2hNX3l2vdfGnRDznvG8xF1+NluRljnNtAx47lV+SMPhJQ==}
+    peerDependencies:
+      '@primeuix/motion': ^1.0.0
+      '@primeuix/styled': ^1.0.0
+
   '@primeui/license-manager@1.1.0':
     resolution: {integrity: sha512-irjhOGs6Xjwh1JhMyXtdUsYCsve6kBySZzDUhS/mWxsjwQm/wSN7oulyP/f5huJKdhZSzaN6rVApwpp4nDWE1g==}
+
+  '@primeuix/locale@0.1.0':
+    resolution: {integrity: sha512-/qLGiwQ/YN83GPSygKEI3cwgZ+rb0R0rNNtQrOGGaHIaG3zpkGS3QbK/qtDUi0leC69jJgY39GDX+gCeUXPKdg==}
+    engines: {node: '>=12.11.0'}
 
   '@primeuix/motion@1.0.0':
     resolution: {integrity: sha512-rqpFRKmUVp9BI3YQKdok0rLUwzYShXzuuxy72Kq74xYRV14eR+4+XrIXOdyVs7j7CYV0ajYowiRpJCrVgdrq6A==}
@@ -6806,61 +6829,6 @@ packages:
   minimatch@3.1.5:
     resolution: {integrity: sha512-VgjWUsnnT6n+NUk6eZq77zeFdpW2LWDzP6zFGrCbHXiYNul5Dzqk2HHQ5uFH2DNW5Xbp8+jVzaeNt94ssEEl4w==}
 
-  minimizer-webpack-plugin@5.10.1:
-    resolution: {integrity: sha512-+dsZEyTcy1lkq41lxdiOqvb26gXbYGgwY+30w37f9PqUVkuEBejBLDotsHOTjuga9xJyGLW2DqzKDUyJ4W/PMQ==}
-    engines: {node: '>= 10.13.0'}
-    peerDependencies:
-      '@minify-html/node': '*'
-      '@napi-rs/image': '*'
-      '@swc/core': '*'
-      '@swc/css': '*'
-      '@swc/html': '*'
-      clean-css: '*'
-      cssnano: '*'
-      csso: '*'
-      esbuild: '*'
-      html-minifier-terser: '*'
-      imagemin: '*'
-      lightningcss: '*'
-      postcss: '*'
-      sharp: '*'
-      svgo: '*'
-      uglify-js: '*'
-      webpack: ^5.1.0
-    peerDependenciesMeta:
-      '@minify-html/node':
-        optional: true
-      '@napi-rs/image':
-        optional: true
-      '@swc/core':
-        optional: true
-      '@swc/css':
-        optional: true
-      '@swc/html':
-        optional: true
-      clean-css:
-        optional: true
-      cssnano:
-        optional: true
-      csso:
-        optional: true
-      esbuild:
-        optional: true
-      html-minifier-terser:
-        optional: true
-      imagemin:
-        optional: true
-      lightningcss:
-        optional: true
-      postcss:
-        optional: true
-      sharp:
-        optional: true
-      svgo:
-        optional: true
-      uglify-js:
-        optional: true
-
   minimizer-webpack-plugin@5.11.0:
     resolution: {integrity: sha512-2JVy2DY+iBtfRyrQB5cRM7lfurnJIi6jFTgLip/7FxDu0WxswrIRzr4fBySQ0X7HqM7BcwE28zm+HfQ5V6y4Cg==}
     engines: {node: '>= 10.13.0'}
@@ -7502,16 +7470,11 @@ packages:
     engines: {node: '>=14'}
     hasBin: true
 
-  primereact@10.9.9:
-    resolution: {integrity: sha512-cM2mI1+usdIhQQQZre85Lv2GaiYrKaRlTUT+xXQSWwhPmel+YwhljNQ210mpjuY30aF3eQg6hU5Yl0VwJp0PWQ==}
-    engines: {node: '>=14.0.0'}
+  primereact@11.1.0:
+    resolution: {integrity: sha512-0/q9fAkF2ULM+2XImBbPpcOTfYatGpqzpCXm9N26fmA2EZxKQyKbQXfJC1mx0dozoFnvllyCwvSYSk59fhIwLw==}
     peerDependencies:
-      '@types/react': ^17.0.0 || ^18.0.0 || ^19.0.0
-      react: ^17.0.0 || ^18.0.0 || ^19.0.0
-      react-dom: ^17.0.0 || ^18.0.0 || ^19.0.0
-    peerDependenciesMeta:
-      '@types/react':
-        optional: true
+      react: '>=19.0.0'
+      react-dom: '>=19.0.0'
 
   primevue@5.0.1:
     resolution: {integrity: sha512-nnQmoerXzrDDIeVXw8Ve1JnIaDPapwN51tOf5s4saih69ocZNVs2U1nXmEdc0ajJwpTzh/Wr3lLbub5cyItQ2Q==}
@@ -11054,7 +11017,42 @@ snapshots:
       '@primeuix/utils': 0.8.2
       vue: 3.5.43(typescript@6.0.3)
 
+  '@primereact/core@11.1.0(react@19.3.0)':
+    dependencies:
+      '@primereact/hooks': 11.1.0(react@19.3.0)
+      '@primereact/types': 11.1.0(@primeuix/motion@1.0.0)(@primeuix/styled@1.0.0)
+      '@primeui/license-manager': 1.1.0
+      '@primeuix/locale': 0.1.0
+      '@primeuix/motion': 1.0.0
+      '@primeuix/styled': 1.0.0
+      '@primeuix/utils': 0.8.2
+      react: 19.3.0
+
+  '@primereact/headless@11.1.0(react@19.3.0)':
+    dependencies:
+      '@primereact/core': 11.1.0(react@19.3.0)
+      '@primereact/hooks': 11.1.0(react@19.3.0)
+      '@primeui/license-manager': 1.1.0
+      '@primeuix/styled': 1.0.0
+      '@primeuix/utils': 0.8.2
+    transitivePeerDependencies:
+      - react
+
+  '@primereact/hooks@11.1.0(react@19.3.0)':
+    dependencies:
+      '@primeuix/utils': 0.8.2
+      react: 19.3.0
+
+  '@primereact/types@11.1.0(@primeuix/motion@1.0.0)(@primeuix/styled@1.0.0)':
+    dependencies:
+      '@primeuix/motion': 1.0.0
+      '@primeuix/styled': 1.0.0
+
   '@primeui/license-manager@1.1.0': {}
+
+  '@primeuix/locale@0.1.0':
+    dependencies:
+      '@primeuix/utils': 0.8.2
 
   '@primeuix/motion@1.0.0':
     dependencies:
@@ -16140,22 +16138,6 @@ snapshots:
     dependencies:
       brace-expansion: 1.1.13
 
-  minimizer-webpack-plugin@5.10.1(@swc/core@1.16.2(@swc/helpers@0.5.23))(cssnano@5.1.15(postcss@8.5.28))(csso@4.2.0)(esbuild@0.28.2)(lightningcss@1.33.0)(postcss@8.5.28)(svgo@2.8.2)(webpack@5.111.1):
-    dependencies:
-      '@jridgewell/trace-mapping': 0.3.31
-      jest-worker: 27.5.1
-      schema-utils: 4.5.0
-      terser: 5.51.2
-      webpack: 5.111.1(@swc/core@1.16.2(@swc/helpers@0.5.23))(cssnano@5.1.15(postcss@8.5.28))(csso@4.2.0)(esbuild@0.28.2)(lightningcss@1.33.0)(postcss@8.5.28)(svgo@2.8.2)(webpack-cli@7.2.3)
-    optionalDependencies:
-      '@swc/core': 1.16.2(@swc/helpers@0.5.23)
-      cssnano: 5.1.15(postcss@8.5.28)
-      csso: 4.2.0
-      esbuild: 0.28.2
-      lightningcss: 1.33.0
-      postcss: 8.5.28
-      svgo: 2.8.2
-
   minimizer-webpack-plugin@5.11.0(@swc/core@1.16.2(@swc/helpers@0.5.23))(cssnano@5.1.15(postcss@8.5.28))(csso@4.2.0)(esbuild@0.28.2)(lightningcss@1.33.0)(postcss@8.5.28)(svgo@2.8.2)(webpack@5.111.1):
     dependencies:
       '@jridgewell/trace-mapping': 0.3.31
@@ -16737,14 +16719,12 @@ snapshots:
 
   prettier@3.9.8: {}
 
-  primereact@10.9.9(@types/react@19.3.0)(react-dom@19.3.0(react@19.3.0))(react@19.3.0):
+  primereact@11.1.0(react-dom@19.3.0(react@19.3.0))(react@19.3.0):
     dependencies:
-      '@types/react-transition-group': 4.4.12(@types/react@19.3.0)
+      '@primereact/core': 11.1.0(react@19.3.0)
+      '@primereact/headless': 11.1.0(react@19.3.0)
       react: 19.3.0
       react-dom: 19.3.0(react@19.3.0)
-      react-transition-group: 4.4.5(react-dom@19.3.0(react@19.3.0))(react@19.3.0)
-    optionalDependencies:
-      '@types/react': 19.3.0
 
   primevue@5.0.1(vue@3.5.43(typescript@6.0.3)):
     dependencies:
@@ -18178,7 +18158,7 @@ snapshots:
       events: 3.3.0
       graceful-fs: 4.2.11
       mime-db: 1.54.0
-      minimizer-webpack-plugin: 5.10.1(@swc/core@1.16.2(@swc/helpers@0.5.23))(cssnano@5.1.15(postcss@8.5.28))(csso@4.2.0)(esbuild@0.28.2)(lightningcss@1.33.0)(postcss@8.5.28)(svgo@2.8.2)(webpack@5.111.1)
+      minimizer-webpack-plugin: 5.11.0(@swc/core@1.16.2(@swc/helpers@0.5.23))(cssnano@5.1.15(postcss@8.5.28))(csso@4.2.0)(esbuild@0.28.2)(lightningcss@1.33.0)(postcss@8.5.28)(svgo@2.8.2)(webpack@5.111.1)
       schema-utils: 4.5.0
       tapable: 2.3.3
       watchpack: 2.5.2
