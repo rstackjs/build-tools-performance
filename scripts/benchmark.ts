@@ -934,6 +934,7 @@ async function benchAllCases(): Promise<void> {
   for (const buildTool of shuffledBuildTools) {
     ensureMetrics(perfResult, buildTool.name);
     for (const measurement of ['timing', 'memory'] as const) {
+      if (measurement === 'memory' && iteration < warmupTimes) continue;
       logger.info(`${buildTool.name}: ${measurement} pass`);
       for (const unit of runDev ? ['dev', 'build'] : ['build']) {
         const context = { tool: buildTool.name, measurement, unit, iteration };
