@@ -791,17 +791,21 @@ async function runDevSession(
         return duration;
       });
     };
+    // Warm timing sessions only measure startup; memory sessions need HMR load.
+    const runHmr = cache === 'cold' || measurement === 'memory';
     const hmrTimes: number[] = [];
-    for (let update = 0; update < 10; update++) {
-      const file = files[update % 2];
-      const marker = `benchmark-hmr-${cache}-${update}`;
-      hmrTimes.push(
-        await updateModule(
-          file.path,
-          `${file.baseline}\nconsole.log(${JSON.stringify(marker)}, Date.now());\n`,
-          marker,
-        ),
-      );
+    if (runHmr) {
+      for (let update = 0; update < 10; update++) {
+        const file = files[update % 2];
+        const marker = `benchmark-hmr-${cache}-${update}`;
+        hmrTimes.push(
+          await updateModule(
+            file.path,
+            `${file.baseline}\nconsole.log(${JSON.stringify(marker)}, Date.now());\n`,
+            marker,
+          ),
+        );
+      }
     }
     if (measurement === 'timing' && cache === 'cold') {
       metrics.rootHmr = median(hmrTimes.filter((_, index) => index % 2 === 0));
@@ -831,8 +835,10 @@ async function runDevSession(
     }
     // Measurement is over. Restore the exact baseline while the server is
     // alive, await each rebuild, then let graceful shutdown flush the cache.
-    for (const file of files)
-      await updateModule(file.path, file.baseline, file.marker);
+    if (runHmr) {
+      for (const file of files)
+        await updateModule(file.path, file.baseline, file.marker);
+    }
     details = { ...details, succeeded: true };
   } catch (error) {
     command.error ??= String(error);
