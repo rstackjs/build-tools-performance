@@ -833,9 +833,9 @@ async function runDevSession(
         `${buildTool.name} dev (${cache}, timing): ${startupTime}ms`,
       );
     }
-    // Measurement is over. Restore the exact baseline while the server is
-    // alive, await each rebuild, then let graceful shutdown flush the cache.
-    if (runHmr) {
+    // Restore the baseline for the following warm startup, awaiting each
+    // rebuild before graceful shutdown flushes the cache.
+    if (cache === 'cold') {
       for (const file of files)
         await updateModule(file.path, file.baseline, file.marker);
     }
