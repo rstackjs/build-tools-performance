@@ -481,7 +481,6 @@ const metadata = {
   maxAttempts: 2,
   measurements: ['timing', 'memory'],
   warmupTimes,
-  memoryWarmupTimes: 0,
   runTimes,
   node: process.version,
   platform: process.platform,
