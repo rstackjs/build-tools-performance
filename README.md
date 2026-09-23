@@ -366,7 +366,7 @@ Use `RUN_TIMES` to specify the number of runs (defaults to `3`):
 RUN_TIMES=3 pnpm benchmark
 ```
 
-Use `WARMUP_TIMES` to specify the number of timing warmup runs (defaults to `2`):
+Use `WARMUP_TIMES` to specify the number of warmup runs (defaults to `2`):
 
 ```bash
 WARMUP_TIMES=2 pnpm benchmark
