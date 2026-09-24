@@ -93,7 +93,7 @@ interface Column {
   data: string[] | null;
 }
 
-const COOL_DOWN_TIME = 3000;
+const COOL_DOWN_TIME = 1000;
 const defaultTimeouts = {
   startup: 60000,
   page: 60000,
@@ -947,7 +947,7 @@ async function benchAllCases(): Promise<void> {
           async (attempt) => {
             currentAttempt = attempt;
             const pending: PerfResultMap = {};
-            if (attempt > 1) await coolDown();
+            if (attempt > 1) await sleep(3000);
             if (unit === 'dev')
               await runDevBenchmark(buildTool, pending, measurement);
             else await runBuildBenchmark(buildTool, pending, measurement);
