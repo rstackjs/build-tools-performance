@@ -1,4 +1,8 @@
-import { spawn, type ChildProcess } from 'node:child_process';
+import {
+  execFileSync,
+  spawn,
+  type ChildProcess,
+} from 'node:child_process';
 import os from 'node:os';
 import {
   monitorProcess,
@@ -144,7 +148,12 @@ interface BuildToolOptions {
   startScript: string;
   startedRegex: RegExp;
   buildScript: string;
-  binFilePath: string;
+  /**
+   * Path under `node_modules` to a CLI entry that can be patched with the
+   * benchmark start timestamp. Omit for tools that ship their own wrapper
+   * (for example Bun) and already print `Benchmark Start Time`.
+   */
+  binFilePath?: string;
 }
 
 class BuildTool {
@@ -153,7 +162,7 @@ class BuildTool {
   private readonly startScript: string;
   private readonly startedRegex: RegExp;
   private readonly buildScript: string;
-  private readonly binFilePath: string;
+  private readonly binFilePath?: string;
 
   constructor({
     name,
@@ -168,8 +177,10 @@ class BuildTool {
     this.startScript = startScript;
     this.startedRegex = startedRegex;
     this.buildScript = buildScript;
-    this.binFilePath = path.join(process.cwd(), 'node_modules', binFilePath);
-    this.hackBinFile();
+    if (binFilePath) {
+      this.binFilePath = path.join(process.cwd(), 'node_modules', binFilePath);
+      this.hackBinFile();
+    }
   }
 
   cleanCache(): void {
@@ -180,6 +191,8 @@ class BuildTool {
         'node_modules/.vite',
         'node_modules/.farm',
         '.turbopack',
+        // Bun may write compile/cache artifacts under the case directory.
+        '.bun',
       ]) {
         fse.removeSync(path.join(dir, cache));
       }
@@ -188,6 +201,8 @@ class BuildTool {
 
   // Add a `console.log('Benchmark start', Date.now())` to the bin file's second line
   private hackBinFile(): void {
+    if (!this.binFilePath) return;
+
     logger.info(
       'Setup bin file for',
       color.green(this.name),
@@ -439,6 +454,30 @@ parseToolNames().forEach((name) => {
         }),
       );
       break;
+    case 'bun': {
+      // Bun is a system binary (not an npm package). Wrappers under the case
+      // directory print `Benchmark Start Time` themselves.
+      let bunVersion: string;
+      try {
+        bunVersion = execFileSync('bun', ['--version'], {
+          encoding: 'utf8',
+        }).trim();
+      } catch {
+        throw new Error(
+          'Bun is not installed or not on PATH. Install Bun to run this benchmark tool.',
+        );
+      }
+      buildTools.push(
+        new BuildTool({
+          name: 'Bun ' + bunVersion,
+          port: 3000,
+          startScript: 'start:bun',
+          startedRegex: /dev server ready in (.+) (s|ms)/,
+          buildScript: 'build:bun',
+        }),
+      );
+      break;
+    }
   }
 });
 

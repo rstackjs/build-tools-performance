@@ -2,6 +2,7 @@
   "name": "react-1k",
   "version": "0.0.0",
   "scripts": {
+    "build:bun": "node ./bun-build.mjs",
     "build:farm": "farm build",
     "build:parcel": "parcel build index.html",
     "build:rolldown": "cross-env NODE_ENV=production rolldown -c ./rolldown.config.mjs",
@@ -10,6 +11,7 @@
     "build:utoo": "cross-env NODE_ENV=production up build",
     "build:vite": "vite build",
     "build:webpack": "cross-env NODE_ENV=production webpack build --mode production",
+    "start:bun": "node ./bun-dev.mjs",
     "start:farm": "farm start",
     "start:parcel": "parcel -p 3200 index.html",
     "start:rsbuild": "rsbuild dev",
