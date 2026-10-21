@@ -11,6 +11,8 @@ const child = spawn(
     '--outdir=dist',
     '--target=browser',
     '--minify',
+    // Split React.lazy route imports into chunks, matching the other tools.
+    '--splitting',
     '--production',
     '--define',
     'process.env.NODE_ENV:"production"',
