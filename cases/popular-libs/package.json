@@ -46,7 +46,7 @@
     "nanoid": "^5.1.16",
     "pinia": "^4.0.3",
     "preact": "^10.29.8",
-    "query-string": "^9.5.1",
+    "query-string": "^10.0.0",
     "react": "^19.3.0",
     "react-dom": "^19.3.0",
     "react-hook-form": "^7.90.0",
