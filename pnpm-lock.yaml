@@ -482,8 +482,8 @@ importers:
   cases/react-10k:
     dependencies:
       '@iconify-icons/material-symbols':
-        specifier: ^1.2.59
-        version: 1.2.59
+        specifier: ^2.0.8
+        version: 2.0.8
       '@iconify/react':
         specifier: ^6.0.3
         version: 6.0.3(react@19.3.1)
@@ -500,8 +500,8 @@ importers:
   cases/react-1k:
     dependencies:
       '@iconify-icons/material-symbols':
-        specifier: ^1.2.59
-        version: 1.2.59
+        specifier: ^2.0.8
+        version: 2.0.8
       '@iconify/react':
         specifier: ^6.0.3
         version: 6.0.3(react@19.3.1)
@@ -518,8 +518,8 @@ importers:
   cases/react-5k:
     dependencies:
       '@iconify-icons/material-symbols':
-        specifier: ^1.2.59
-        version: 1.2.59
+        specifier: ^2.0.8
+        version: 2.0.8
       '@iconify/react':
         specifier: ^6.0.3
         version: 6.0.3(react@19.3.1)
@@ -1400,8 +1400,8 @@ packages:
       '@hono/node-server': ^1.19.11
       hono: ^4.6.0
 
-  '@iconify-icons/material-symbols@1.2.59':
-    resolution: {integrity: sha512-BwNKTZN9XWtH4S13Kzwrsk+JbfQ7oGSF8ryc4AmxNTeWZ2sW35F5BryRqW4PsQdExrrMbOiXygkxIj4UkE7Uxg==}
+  '@iconify-icons/material-symbols@2.0.8':
+    resolution: {integrity: sha512-+aH+hhGSACN4LjJPzgrmVVXpL99nJ7jVV+zOUGmu4HPwXafRCnYnU64TcLlhRv2R4zmQckD0YHmIcApc0h8rgA==}
 
   '@iconify/react@6.0.3':
     resolution: {integrity: sha512-2x7gVs+tpUG75aXYo/0c5wPOqrFy75YSGKmuJZyuHyrHMydzXpI/+i9/USIzWXJL9WWc2BCgPVnGY2FhbeiiDQ==}
@@ -10065,7 +10065,7 @@ snapshots:
       - bufferutil
       - utf-8-validate
 
-  '@iconify-icons/material-symbols@1.2.59':
+  '@iconify-icons/material-symbols@2.0.8':
     dependencies:
       '@iconify/types': 2.0.0
 
