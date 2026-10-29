@@ -20,10 +20,10 @@
   },
   "dependencies": {
     "@iconify-icons/material-symbols": "^1.2.59",
-    "@iconify/react": "^6.0.2",
-    "react": "^19.3.0",
-    "react-dom": "^19.3.0",
-    "react-router-dom": "^7.18.4"
+    "@iconify/react": "^6.0.3",
+    "react": "^19.3.1",
+    "react-dom": "^19.3.1",
+    "react-router-dom": "^7.18.5"
   },
   "browserslist": "Chrome >= 93"
 }
