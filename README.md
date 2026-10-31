@@ -22,6 +22,8 @@ Benchmark comparing JavaScript bundlers and build tools ([Rspack](https://github
   `react-app-10k` (Tailwind CSS 4), and `es2022` / `Chrome >= 93` for older cases.
 - Minification is enabled in production for all tools.
 - Source map is enabled in development and disabled in production for all tools.
+- Each development session starts in a fresh browser context, isolating HTTP cache
+  and site storage. Cold/warm refers to build-tool caches; OS caches are not flushed.
 - Benchmarks run on GitHub Actions with variable hardware, which may cause inconsistent results.
 
 Tooling details:

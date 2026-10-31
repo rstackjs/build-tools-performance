@@ -99,7 +99,10 @@ startup is not an equal-number-of-transformed-files test. Matching these setting
 does not make the internal algorithms or output byte-identical. Rspack and
 webpack use SWC for application TSX; Vite uses its normal React/Oxc pipeline.
 Rsbuild's additional vendor chunk presets are disabled. Persistent caches are
-enabled where supported and cleared by the runner for cold measurements.
+enabled where supported and cleared by the runner for cold measurements. Each
+development session uses a fresh browser context, so HTTP cache, cookies, storage,
+and service workers cannot leak between tools or cold/warm sessions. OS caches
+are not flushed; warm measurements retain only the tool cache.
 
 ## Run and validate
 
