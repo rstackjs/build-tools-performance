@@ -1,0 +1,16 @@
+@import 'tailwindcss' source(none);
+/* Explicitly include generated sources even though they are gitignored. */
+@source "./";
+@source "./generated";
+
+@theme {
+  --font-sans: Inter, ui-sans-serif, system-ui, sans-serif;
+}
+
+body {
+  margin: 0;
+}
+button,
+input {
+  font: inherit;
+}

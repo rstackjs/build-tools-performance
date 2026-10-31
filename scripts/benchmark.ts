@@ -47,6 +47,8 @@ type BenchmarkConfig = {
   dev?: boolean;
   rootFile?: string;
   leafFile?: string;
+  readySelector?: string;
+  port?: number;
   timeouts?: Partial<typeof defaultTimeouts>;
 };
 
@@ -173,7 +175,7 @@ class BuildTool {
     binFilePath,
   }: BuildToolOptions) {
     this.name = name;
-    this.port = port;
+    this.port = config.port ?? port;
     this.startScript = startScript;
     this.startedRegex = startedRegex;
     this.buildScript = buildScript;
@@ -789,7 +791,10 @@ async function runDevSession(
           timeout: 0,
         });
         signal.throwIfAborted();
-        await sessionPage.waitForSelector('#root > *', { timeout: 0, signal });
+        await sessionPage.waitForSelector(config.readySelector ?? '#root > *', {
+          timeout: 0,
+          signal,
+        });
         const startupTime = time + Date.now() - start;
         // Load only the benchmark's / route and settle within the same deadline.
         await idle(signal);

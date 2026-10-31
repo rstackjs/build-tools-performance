@@ -18,7 +18,8 @@ Benchmark comparing JavaScript bundlers and build tools ([Rspack](https://github
 
 ## Notes
 
-- Build target is set to `es2022` (`Chrome >= 93`) for all tools.
+- Browser targets are aligned within each case: `Chrome >= 111` for
+  `react-app-10k` (Tailwind CSS 4), and `es2022` / `Chrome >= 93` for older cases.
 - Minification is enabled in production for all tools.
 - Source map is enabled in development and disabled in production for all tools.
 - Benchmarks run on GitHub Actions with variable hardware, which may cause inconsistent results.
@@ -31,6 +32,31 @@ Tooling details:
 ## Results
 
 > Data from [GitHub Actions](https://github.com/rstackjs/build-tools-performance/actions/runs/40882896569) (2026-10-29, commit `2361c7c3`). Values are medians of three measured runs; timing includes two warmups, while memory skips warmups. Memory is process-tree physical footprint in MiB. See [memory methodology](#memory-methodology).
+
+---
+
+### react-app-10k
+
+A synthetic operations workspace using React 19, Tailwind CSS 4, Zod 4, and
+TanStack Router, with **10,049 reachable application modules** across 40 lazy
+business routes. It includes tables, charts, activity lists, URL-driven filters,
+sorting and pagination, and validated forms in feature-oriented directories.
+
+All five tools use the same source graph, route boundaries, PostCSS pipeline,
+browser target, and minification/source-map policy. CI checks identical content
+and styles across all routes in development and production, plus state-preserving
+React HMR and Tailwind/CSS updates, before measuring performance.
+
+Startup loads the default route; production builds cover the entire graph.
+Native eager/on-demand compilation and cache implementations remain tool-specific.
+Source generation is excluded from measurements. See the [case methodology](cases/react-app-10k/README.md)
+for configuration details, limitations, and tool selection.
+
+```bash
+CASE=react-app-10k pnpm benchmark
+```
+
+Results pending this PR's complete Benchmark CI run.
 
 ---
 
