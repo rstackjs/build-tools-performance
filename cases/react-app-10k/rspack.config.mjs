@@ -11,6 +11,7 @@ export default {
   output: { path: `${import.meta.dirname}/dist`, publicPath: '/', clean: true },
   resolve: { extensions: ['.tsx', '.ts', '.jsx', '.js', '.json'] },
   cache: { type: 'persistent' },
+  lazyCompilation: production ? false : { entries: false, imports: true },
   module: {
     rules: [
       {

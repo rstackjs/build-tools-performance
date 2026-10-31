@@ -76,24 +76,26 @@ To change the workload, edit `workload.mjs` or `generate.mjs`. Keep at least
 
 ## Configuration parity
 
-| Setting               | Contract for every included tool                                        |
-| --------------------- | ----------------------------------------------------------------------- |
-| Browser target        | Chrome 111 (Tailwind 4 baseline; older cases use Chrome 93)             |
-| Input                 | Same TS/TSX source, React automatic JSX runtime, no React Compiler      |
-| Routing               | Same explicit TanStack route tree and dynamic import boundaries         |
-| CSS                   | Same `@tailwindcss/postcss` version, options, source set, and CSS entry |
-| Tailwind optimization | Disabled inside PostCSS; production bundler minifies CSS                |
-| Development           | Source maps, React Fast Refresh, CSS HMR, SPA fallback                  |
-| Production            | JS/CSS minification and tree shaking enabled; source maps disabled      |
-| Dependencies          | Bundled, with no externalization or import rewriting                    |
-| Assets                | Emitted files, no data URL inlining; public path `/`                    |
-| Extra work            | No type checking, linting, PWA, analyzer, or compressed-size reporting  |
+| Setting               | Contract for every included tool                                             |
+| --------------------- | ---------------------------------------------------------------------------- |
+| Browser target        | Chrome 111 (Tailwind 4 baseline; older cases use Chrome 93)                  |
+| Input                 | Same TS/TSX source, React automatic JSX runtime, no React Compiler           |
+| Routing               | Same explicit TanStack route tree and dynamic import boundaries              |
+| CSS                   | Same `@tailwindcss/postcss` version, options, source set, and CSS entry      |
+| Tailwind optimization | Disabled inside PostCSS; production bundler minifies CSS                     |
+| Development           | Lazy dynamic imports, source maps, React Fast Refresh, CSS HMR, SPA fallback |
+| Production            | JS/CSS minification and tree shaking enabled; source maps disabled           |
+| Dependencies          | Bundled, with no externalization or import rewriting                         |
+| Assets                | Emitted files, no data URL inlining; public path `/`                         |
+| Extra work            | No type checking, linting, PWA, analyzer, or compressed-size reporting       |
 
 Native compiler, minifier, module runtime, chunk layout, and cache implementations
-remain tool-specific, as in the existing benchmarks. Rspack/webpack process the
-full development graph; Vite/Utoo can defer unloaded routes. The same initial
-URL, disabled route preloading, ready marker, and root/leaf edits define the
-user-visible workload; startup is not an equal-number-of-transformed-files test. Matching these settings
+remain tool-specific, as in the existing benchmarks. Development explicitly uses
+lazy dynamic-import compilation in Rspack, Rsbuild, webpack, and Utoo; Vite
+serves modules on demand. Entries are not lazy in the bundler configurations.
+All tools use the same initial URL, disabled route preloading, ready marker,
+and root/leaf edits. Dependency scanning and prebundling can still differ, so
+startup is not an equal-number-of-transformed-files test. Matching these settings
 does not make the internal algorithms or output byte-identical. Rspack and
 webpack use SWC for application TSX; Vite uses its normal React/Oxc pipeline.
 Rsbuild's additional vendor chunk presets are disabled. Persistent caches are

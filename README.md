@@ -48,7 +48,8 @@ and styles across all routes in development and production, plus state-preservin
 React HMR and Tailwind/CSS updates, before measuring performance.
 
 Startup loads the default route; production builds cover the entire graph.
-Native eager/on-demand compilation and cache implementations remain tool-specific.
+Development uses lazy dynamic imports / on-demand modules for every tool;
+native dependency scanning, prebundling, and cache implementations still differ.
 Source generation is excluded from measurements. See the [case methodology](cases/react-app-10k/README.md)
 for configuration details, limitations, and tool selection.
 

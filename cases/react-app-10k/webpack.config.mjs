@@ -15,7 +15,10 @@ export default {
     type: 'filesystem',
     name: `react-app-10k-${production ? 'prod' : 'dev'}`,
   },
-  experiments: { css: true },
+  experiments: {
+    css: true,
+    lazyCompilation: production ? false : { entries: false, imports: true },
+  },
   module: {
     rules: [
       {

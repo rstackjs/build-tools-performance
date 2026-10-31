@@ -5,6 +5,7 @@ import postcss from './postcss-options.mjs';
 
 export default defineConfig({
   plugins: [pluginReact()],
+  dev: { lazyCompilation: { entries: false, imports: true } },
   source: { entry: { index: './src/index.tsx' } },
   html: { template: './index-template.html' },
   // Use Rspack's ordinary shared-chunk rules, without Rsbuild's vendor presets.
