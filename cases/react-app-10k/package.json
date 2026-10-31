@@ -1,0 +1,38 @@
+{
+  "name": "react-app-10k",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "generate": "node generate.mjs",
+    "verify": "node verify.mjs",
+    "typecheck": "node generate.mjs && tsc --project tsconfig.json",
+    "build:rspack": "cross-env NODE_ENV=production rspack build",
+    "build:rsbuild": "cross-env NODE_ENV=production rsbuild build",
+    "build:webpack": "cross-env NODE_ENV=production webpack build --mode production",
+    "build:vite": "cross-env NODE_ENV=production vite build",
+    "build:utoo": "cross-env NODE_ENV=production up build",
+    "start:rspack": "cross-env NODE_ENV=development rspack serve",
+    "start:rsbuild": "cross-env NODE_ENV=development rsbuild dev",
+    "start:webpack": "cross-env NODE_ENV=development webpack serve --mode development",
+    "start:vite": "cross-env NODE_ENV=development vite",
+    "start:utoo": "cross-env NODE_ENV=development node start-utoo.mjs",
+    "verify:all": "node verify-all.mjs"
+  },
+  "dependencies": {
+    "@tanstack/react-router": "1.170.46",
+    "react": "19.3.1",
+    "react-dom": "19.3.1",
+    "zod": "4.6.7"
+  },
+  "devDependencies": {
+    "@tailwindcss/postcss": "4.3.3",
+    "@utoo/pack": "1.5.34",
+    "html-webpack-plugin": "5.6.8",
+    "postcss-loader": "8.2.1",
+    "tailwindcss": "4.3.3"
+  },
+  "browserslist": [
+    "Chrome >= 111"
+  ]
+}

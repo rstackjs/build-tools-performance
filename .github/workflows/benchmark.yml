@@ -31,7 +31,15 @@ jobs:
       fail-fast: true
       matrix:
         os: [macos-15]
-        case: [react-1k, react-5k, react-10k, ui-components, popular-libs]
+        case:
+          [
+            react-app-10k,
+            react-1k,
+            react-5k,
+            react-10k,
+            ui-components,
+            popular-libs,
+          ]
 
     steps:
       - name: Checkout
@@ -61,6 +69,12 @@ jobs:
 
       - name: Test memory sampler
         run: pnpm test
+
+      - name: Verify application parity
+        if: matrix.case == 'react-app-10k'
+        run: |
+          pnpm --filter react-app-10k typecheck
+          pnpm --filter react-app-10k verify:all
 
       - name: Run Benchmark
         run: cross-env CASE=${{ matrix.case }} pnpm benchmark
