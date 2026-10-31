@@ -158,4 +158,5 @@ rather than counting the shell or a loading placeholder as a loaded page.
 Its HMR metrics edit `app/Shell.tsx` and the overview summary's `Metric.tsx`.
 The CSS HMR checks above validate compatibility; they are not a new timed metric.
 
-No benchmark results are published for this case until a full CI measurement.
+Published results are in the [repository README](../../README.md#react-app-10k),
+with the successful CI run, date, and benchmark commit recorded alongside them.
