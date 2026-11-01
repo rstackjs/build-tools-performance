@@ -23,6 +23,10 @@ To change the workload, edit `workload.mjs` or `generate.mjs`. Keep at least
 
 ## Configuration parity
 
+Rspack and webpack extend the repository's shared configurations, as the other
+cases do. All tools load the same `postcss.config.mjs`; defaults are only
+overridden where needed for the contract below.
+
 | Setting               | Contract for every included tool                                             |
 | --------------------- | ---------------------------------------------------------------------------- |
 | Browser target        | Chrome 111 (Tailwind 4 baseline; older cases use Chrome 93)                  |
@@ -37,7 +41,7 @@ To change the workload, edit `workload.mjs` or `generate.mjs`. Keep at least
 | Extra work            | No type checking, linting, PWA, analyzer, or compressed-size reporting       |
 
 Native compiler, minifier, module runtime, chunk layout, and cache implementations
-remain tool-specific, as in the existing benchmarks. Development explicitly uses
+remain tool-specific, as in the existing benchmarks. Development uses
 lazy dynamic-import compilation in Rspack, Rsbuild, webpack, and Utoo; Vite
 serves modules on demand. Entries are not lazy in the bundler configurations.
 All tools use the same initial URL, disabled route preloading, ready marker,

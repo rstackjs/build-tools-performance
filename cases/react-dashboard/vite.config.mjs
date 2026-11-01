@@ -1,22 +1,14 @@
 import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
-import { port, browserTarget, sourceMap } from './settings.mjs';
-import postcss from './postcss-options.mjs';
+import { port, browserTarget } from './settings.mjs';
 
 export default defineConfig({
   plugins: [react()],
-  base: '/',
-  css: { postcss, devSourcemap: sourceMap },
+  css: { devSourcemap: true },
   build: {
     target: browserTarget,
-    sourcemap: sourceMap,
-    minify: 'oxc',
-    cssMinify: 'lightningcss',
-    cssTarget: browserTarget,
     assetsInlineLimit: 0,
     reportCompressedSize: false,
-    outDir: 'dist',
-    emptyOutDir: true,
   },
   server: { port, strictPort: true },
 });
