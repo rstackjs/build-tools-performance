@@ -192,11 +192,13 @@ export function Panel({ query, activeOnly, sort, page }: { query: string; active
       `
 import { useWorkspaceSearch } from '../../shared/useWorkspaceSearch';
 import { FeatureHeader } from '../../shared/FeatureHeader';
+${feature === 'overview' ? "import { Insights } from '../../features/insights/Insights';" : ''}
 ${panels.map((panel, i) => `import { Panel as Panel${i} } from './${panel}/Panel';`).join('\n')}
 export default function ${title(feature)}Page() {
   const { search: { query, activeOnly, sort, page }, updateSearch } = useWorkspaceSearch();
   return <div data-benchmark-ready="true" data-feature="${feature}">
     <FeatureHeader title="${title(feature)}" description="${title(feature)} workspace reports, records, and team activity." query={query} onQueryChange={query => updateSearch({ query, page: 1 })} activeOnly={activeOnly} onActiveOnlyChange={activeOnly => updateSearch({ activeOnly, page: 1 })} sort={sort} onSortChange={sort => updateSearch({ sort, page: 1 })} page={page} onPageChange={page => updateSearch({ page })} />
+    ${feature === 'overview' ? '<Insights />' : ''}
     <div className="grid grid-cols-1 gap-5 lg:grid-cols-2 2xl:grid-cols-3">${panels.map((_, i) => `<Panel${i} query={query} activeOnly={activeOnly} sort={sort} page={page} />`).join('\n')}</div>
   </div>;
 }

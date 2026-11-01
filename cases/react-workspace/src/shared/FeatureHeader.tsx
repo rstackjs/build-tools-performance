@@ -1,5 +1,8 @@
 import { useState } from 'react';
 import { z } from 'zod';
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { toast } from 'sonner';
 import type { WorkspaceSearch } from './search-schema';
 
 const savedViewSchema = z.object({ name: z.string().trim().min(3).max(40) });
@@ -27,7 +30,10 @@ export function FeatureHeader({
   page: number;
   onPageChange: (value: number) => void;
 }) {
-  const [name, setName] = useState('');
+  const { register, handleSubmit } = useForm<z.infer<typeof savedViewSchema>>({
+    resolver: zodResolver(savedViewSchema),
+    defaultValues: { name: '' },
+  });
   const [message, setMessage] = useState('');
   return (
     <header className="mb-6 space-y-5">
@@ -86,21 +92,18 @@ export function FeatureHeader({
         </div>
         <form
           className="ml-auto flex items-center gap-2"
-          onSubmit={(event) => {
-            event.preventDefault();
-            const result = savedViewSchema.safeParse({ name });
-            setMessage(
-              result.success
-                ? `Saved view: ${result.data.name}`
-                : 'Use 3–40 characters for the view name.',
-            );
-          }}
+          onSubmit={handleSubmit(
+            ({ name }) => {
+              setMessage(`Saved view: ${name}`);
+              toast.success(`Saved view: ${name}`);
+            },
+            () => setMessage('Use 3–40 characters for the view name.'),
+          )}
         >
           <input
             aria-label="View name"
             placeholder="View name"
-            value={name}
-            onChange={(event) => setName(event.target.value)}
+            {...register('name')}
             className="w-36 rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm"
           />
           <button className="rounded-lg bg-indigo-600 px-3 py-2 text-sm font-medium text-white hover:bg-indigo-700">

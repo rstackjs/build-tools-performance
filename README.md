@@ -18,7 +18,7 @@ Benchmark comparing JavaScript bundlers and build tools ([Rspack](https://github
 
 ## Notes
 
-- The `react-app-10k` case targets `Chrome >= 111` for every included tool,
+- The `react-workspace` case targets `Chrome >= 111` for every included tool,
   matching Tailwind CSS 4. Older cases retain their existing target configurations.
 - Minification is enabled in production for all tools.
 - Source map is enabled in development and disabled in production for all tools.
@@ -37,67 +37,30 @@ Tooling details:
 
 ---
 
-### react-app-10k
+### react-workspace
 
-A synthetic operations workspace using React 19, Tailwind CSS 4, Zod 4, and
-TanStack Router, with **10,049 reachable application modules** across 40 lazy
-business routes. It includes tables, charts, activity lists, URL-driven filters,
-sorting and pagination, and validated forms in feature-oriented directories.
+A synthetic enterprise operations SPA with customer, order, finance, and team workspaces:
+40 lazy routes, 10,000+ application modules, dashboards, virtualized tables,
+charts, forms, command search, and Markdown reports.
 
-All five tools use the same source graph, route boundaries, PostCSS pipeline,
-browser target, and minification/source-map policy. CI checks identical content
-and styles across all routes in development and production, plus state-preserving
-React HMR and Tailwind/CSS updates, before measuring performance.
+| Area | Libraries |
+| --- | --- |
+| Application | React, React DOM, TanStack Router, Tailwind CSS, Zod |
+| Data and tables | TanStack Query, TanStack Table, TanStack Virtual, Axios |
+| Forms and state | React Hook Form, Hook Form Resolvers, Zustand, Immer |
+| UI and commands | Radix Dialog / Dropdown Menu / Tooltip, cmdk, Sonner, Lucide React |
+| Styling | clsx, tailwind-merge, Class Variance Authority |
+| Reports and content | Recharts, react-markdown, remark-gfm |
+| Utilities | date-fns, lodash-es, Fuse.js, react-error-boundary |
 
-Startup loads the default route; production builds cover the entire graph.
-Development uses lazy dynamic imports / on-demand modules for every tool;
-native dependency scanning, prebundling, and cache implementations still differ.
-Source generation is excluded from measurements. See the [case methodology](cases/react-app-10k/README.md)
-for configuration details, limitations, and tool selection.
+See [case details](cases/react-workspace/README.md) and
+[benchmark methodology](cases/react-workspace/METHODOLOGY.md).
 
 ```bash
-CASE=react-app-10k pnpm benchmark
+CASE=react-workspace pnpm benchmark
 ```
 
-Development metrics:
-
-| Name             | Startup (no cache) | Startup (with cache) | HMR     |
-| ---------------- | ------------------ | -------------------- | ------- |
-| Rspack CLI 2.3.0 | 1328ms🥇           | 856ms🥈              | 417ms🥉 |
-| Rsbuild 2.3.0    | 1689ms🥈           | 829ms🥇              | 449ms   |
-| Vite 8.3.5       | 2813ms             | 1667ms🥉             | 392ms🥈 |
-| webpack 5.112.2  | 3614ms             | 2068ms               | 511ms   |
-| Utoo 1.5.34      | 2789ms🥉           | 2749ms               | 301ms🥇 |
-
-Build metrics:
-
-| Name             | Build (no cache) | Build (with cache) | Output size | Gzipped size |
-| ---------------- | ---------------- | ------------------ | ----------- | ------------ |
-| Rspack CLI 2.3.0 | 1968ms🥈         | 924ms🥇            | 3204.0kB    | 351.5kB🥉    |
-| Rsbuild 2.3.0    | 2082ms🥉         | 929ms🥈            | 3202.4kB🥈  | 350.2kB🥈    |
-| Vite 8.3.5       | 1621ms🥇         | 1853ms🥉           | 3216.6kB    | 359.3kB      |
-| webpack 5.112.2  | 11703ms          | 3907ms             | 3203.3kB🥉  | 352.0kB      |
-| Utoo 1.5.34      | 13995ms          | 2135ms             | 3191.2kB🥇  | 332.6kB🥇    |
-
-Dev memory (MiB):
-
-| Name             | Steady (no cache) | Steady (with cache) | Peak (no cache) | Peak (with cache) |
-| ---------------- | ----------------- | ------------------- | --------------- | ----------------- |
-| Rspack CLI 2.3.0 | 487.9🥉           | 444.7               | 487.9🥈         | 444.7🥉           |
-| Rsbuild 2.3.0    | 292.1🥇           | 284.8🥈             | 570.3🥉         | 504.5             |
-| Vite 8.3.5       | 876.8             | 328.0🥉             | 908.3           | 336.7🥇           |
-| webpack 5.112.2  | 627.1             | 643.0               | 680.0           | 716.9             |
-| Utoo 1.5.34      | 295.2🥈           | 264.4🥇             | 457.2🥇         | 352.2🥈           |
-
-Build memory (MiB):
-
-| Name             | Peak (no cache) | Peak (with cache) |
-| ---------------- | --------------- | ----------------- |
-| Rspack CLI 2.3.0 | 553.5🥇         | 443.9🥈           |
-| Rsbuild 2.3.0    | 606.6🥈         | 500.1🥉           |
-| Vite 8.3.5       | 792.1🥉         | 806.8             |
-| webpack 5.112.2  | 1379.0          | 1056.4            |
-| Utoo 1.5.34      | 1103.3          | 251.9🥇           |
+Results pending CI for the expanded workload.
 
 ---
 

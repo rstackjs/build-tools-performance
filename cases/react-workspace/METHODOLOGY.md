@@ -1,57 +1,4 @@
-# React application with 10k modules
-
-A deterministic synthetic operations workspace using React 19, Tailwind CSS 4,
-Zod 4, and TanStack Router. It models CRM, commerce, support, finance, and team
-workspaces with lazy routes, shared navigation, URL-driven filtering, sorting, pagination, tables,
-progress charts, activity lists, and validated forms. No backend, authentication
-service, external fonts, or network data is required.
-
-## Workload
-
-- 40 business routes, each loading 25 panels through a literal dynamic import.
-- Each panel has 10 runtime modules: four React components, a Zod schema,
-  deterministic fixtures, selectors, formatting, labels, and trend calculations.
-- 10,042 generated runtime modules plus 7 handwritten runtime modules:
-  **10,049 reachable application modules**, excluding dependencies, declarations,
-  CSS, and assets. Zod schemas parse the data actually rendered by the panels.
-- All generated modules are reachable from the application entry, including
-  lazy imports. The graph verifier rejects missing, unreferenced, or type-only
-  filler modules. Bundlers may combine or remove modules during optimization;
-  this count describes their input graph, not output chunks.
-- The initial route loads 250 panel modules and its page, plus shared code and
-  dependencies. Other routes stay lazy. Startup and memory therefore measure
-  the overview route, **not all 10k modules loaded in the browser**. Production
-  builds include all routes.
-
-The architecture follows a client-rendered business SPA: feature-colocated TSX
-and domain utilities, schema validation at route/form/data boundaries, shareable
-URL state, shared UI, lazy routes, imported assets, and utility CSS. It does not
-model SSR/RSC, authentication, backend latency, or a particular production app.
-[Router search state](https://tanstack.com/router/latest/docs/guide/search-params)
-and [Tailwind compatibility](https://tailwindcss.com/docs/compatibility) inform
-the routing and browser-target choices.
-
-The fixture is synthetic: its repeated domain patterns make the workload
-reproducible, but do not reproduce the distribution of a particular real app.
-It complements the existing generated React trees and dependency-heavy cases.
-
-```text
-src/
-  app/                 # Router, root route, persistent application shell
-  shared/              # Search schema, router-state hook, filter / saved-view form
-  assets/              # Imported SVG
-  styles.css           # Tailwind entry and explicit source scanning
-  generated/
-    routes.ts          # Code-based TanStack routes; no router build plugin
-    navigation.ts
-    customers/
-      page.tsx
-      summary/
-        Panel.tsx, PanelHeader.tsx, Metric.tsx, Details.tsx
-        schema.ts, data.ts, selectors.ts, format.ts, labels.ts, trend.ts
-      pipeline/ ...
-    orders/ ...
-```
+# Benchmark methodology
 
 ## Generation
 
@@ -62,13 +9,13 @@ CLI use. A generator-content fingerprint avoids rewriting unchanged files,
 including between cold/warm builds and HMR updates.
 
 ```bash
-pnpm --filter react-app-10k generate
-pnpm --filter react-app-10k verify
-pnpm --filter react-app-10k verify:all
-pnpm --filter react-app-10k typecheck
+pnpm --filter react-workspace generate
+pnpm --filter react-workspace verify
+pnpm --filter react-workspace verify:all
+pnpm --filter react-workspace typecheck
 
 # Restore generated files after manual edits or partial deletion
-pnpm --filter react-app-10k generate --force
+pnpm --filter react-workspace generate --force
 ```
 
 To change the workload, edit `workload.mjs` or `generate.mjs`. Keep at least
@@ -107,8 +54,8 @@ are not flushed; warm measurements retain only the tool cache.
 ## Run and validate
 
 The default matrix includes **Rspack, Rsbuild, Vite, webpack, and Utoo**. All
-pass both production and development checks. Parcel 2.16.4 was tried with this
-workload and failed during production scope hoisting (`@parcel/packager-js: Asset was skipped or not found`), so it is
+pass both production and development checks. Parcel 2.16.4 was tried with the earlier version of this
+fixture and failed during production scope hoisting (`@parcel/packager-js: Asset was skipped or not found`), so it is
 excluded without turning off scope hoisting.
 
 Farm, standalone Rollup, Rolldown, esbuild, and the existing Bun adapter are not
@@ -120,9 +67,9 @@ tools cannot bundle the application's JavaScript.
 From the repository root:
 
 ```bash
-CASE=react-app-10k pnpm benchmark
-CASE=react-app-10k TOOLS=rspack,rsbuild,vite,webpack,utoo pnpm benchmark
-pnpm --filter react-app-10k start:vite
+CASE=react-workspace pnpm benchmark
+CASE=react-workspace TOOLS=rspack,rsbuild,vite,webpack,utoo pnpm benchmark
+pnpm --filter react-workspace start:vite
 ```
 
 From this case directory, validate each included tool before changing the matrix:
@@ -155,8 +102,32 @@ Run these checks sequentially: builds share `dist/`, and HMR checks edit sources
 
 The benchmark waits for the overview page's `data-benchmark-ready` marker,
 rather than counting the shell or a loading placeholder as a loaded page.
+The ready selector also waits for the overview account query to resolve.
 Its HMR metrics edit `app/Shell.tsx` and the overview summary's `Metric.tsx`.
 The CSS HMR checks above validate compatibility; they are not a new timed metric.
 
-Published results are in the [repository README](../../README.md#react-app-10k),
-with the successful CI run, date, and benchmark commit recorded alongside them.
+## Workload and tree shaking
+
+The generator creates 40 lazy business routes with 25 panels each, and ten runtime
+modules per panel. Handwritten application code provides shared navigation,
+forms, preferences, and an overview dashboard. The graph verifier enforces at
+least 10,000 reachable application modules, excluding dependencies, declarations,
+CSS, and assets, and checks that every declared runtime dependency is imported.
+Startup loads only the overview route; production builds include all routes.
+
+Lucide, date-fns, lodash-es, Recharts, and TanStack Table use selected exports
+from their public package entries. Table registers only the features it uses.
+No tool-specific import rewriting or dependency externalization is configured.
+Unused library exports remain available for the bundlers to eliminate. Output
+and gzip sizes measure the combined result of tree shaking, minification, and
+chunking; they are not an isolated per-library tree-shaking score.
+
+TanStack Query loads fixed account fixtures through an Axios in-process adapter;
+there is no backend or external network dependency. Recharts animations are
+turned off. CI also checks the chart, virtualized account table, Markdown/GFM,
+command search, pinned state, and action notifications. Account content is
+included in the cross-tool parity checks, and startup waits for its data.
+
+This is a reproducible synthetic client-rendered SPA, with repeated domain
+patterns. It does not model SSR/RSC or the dependency distribution of a specific
+production application.

@@ -23,6 +23,7 @@ ensureGenerated();
 // Follow actual value imports, including literal dynamic imports. Type-only
 // imports, declarations, CSS and assets do not contribute to the 10k minimum.
 const visited = new Set();
+const dependencies = new Set();
 function visit(file) {
   if (visited.has(file)) return;
   visited.add(file);
@@ -31,7 +32,15 @@ function visit(file) {
     tsx: file.endsWith('.tsx'),
   });
   const follow = (specifier) => {
-    if (!specifier.startsWith('.')) return;
+    if (!specifier.startsWith('.')) {
+      dependencies.add(
+        specifier
+          .split('/')
+          .slice(0, specifier.startsWith('@') ? 2 : 1)
+          .join('/'),
+      );
+      return;
+    }
     const base = path.resolve(path.dirname(file), specifier);
     const resolved = [
       base,
@@ -80,6 +89,19 @@ function visit(file) {
   walk(ast);
 }
 visit(path.join(src, 'index.tsx'));
+const declaredDependencies = Object.keys(
+  JSON.parse(readFileSync(path.join(root, 'package.json'), 'utf8'))
+    .dependencies,
+);
+assert.ok(
+  declaredDependencies.length >= 24,
+  'Keep at least 20 libraries in addition to the original four dependencies',
+);
+for (const dependency of declaredDependencies)
+  assert.ok(
+    dependencies.has(dependency),
+    `Unused runtime dependency: ${dependency}`,
+  );
 const generatedModules = readdirSync(path.join(src, 'generated'), {
   recursive: true,
 }).filter((file) => /\.tsx?$/.test(file));
@@ -205,6 +227,54 @@ try {
   const base = `http://${dev ? 'localhost' : '127.0.0.1'}:${port}`;
   await page.goto(base);
   await page.waitForSelector('[data-feature="overview"]');
+  await page.waitForSelector('[data-insights-ready="true"]');
+  await page.waitForSelector('[data-testid="account-scroll"] [role="cell"]');
+  const insights = await page.$eval('[data-insights-ready]', (el) =>
+    el.textContent.replace(/\s+/g, ' ').trim(),
+  );
+  assert.match(insights, /200 accounts/);
+  assert.match(insights, /Jan 15, 2026/);
+  assert.ok(await page.$('.recharts-area'), 'Revenue chart did not render');
+  assert.equal(
+    await page.$$eval(
+      '[data-insights-ready] table tbody tr',
+      (nodes) => nodes.length,
+    ),
+    2,
+    'GFM table did not render',
+  );
+  const visibleAccounts = await page.$$eval(
+    '[data-testid="account-scroll"] [role="row"]',
+    (nodes) => nodes.length,
+  );
+  assert.ok(
+    visibleAccounts > 0 && visibleAccounts < 200,
+    'Account table must be virtualized',
+  );
+  const initialAccounts = await page.$eval(
+    '[data-testid="account-scroll"]',
+    (el) => el.textContent,
+  );
+  await page.$eval('[data-testid="account-scroll"]', (el) => {
+    el.scrollTop = 3600;
+  });
+  await page.waitForFunction(
+    (initial) =>
+      document.querySelector('[data-testid="account-scroll"]').textContent !==
+      initial,
+    {},
+    initialAccounts,
+  );
+  await page.$eval('[data-testid="account-scroll"]', (el) => {
+    el.scrollTop = 0;
+  });
+  await page.waitForFunction(
+    (initial) =>
+      document.querySelector('[data-testid="account-scroll"]').textContent ===
+      initial,
+    {},
+    initialAccounts,
+  );
   const styles = await page.$eval('[data-panel]', (element) => ({
     padding: getComputedStyle(element).paddingTop,
     background: getComputedStyle(element).backgroundColor,
@@ -243,12 +313,51 @@ try {
       'same-document',
       'Client navigation reloaded the page',
     );
+    if (feature === 'overview') {
+      await page.waitForSelector('[data-insights-ready="true"]');
+      await page.waitForSelector(
+        '[data-testid="account-scroll"] [role="cell"]',
+      );
+    }
     const content = await page.$eval('[data-feature]', (element) =>
       element.textContent.replace(/\s+/g, ' ').trim(),
     );
     routeDigests.push(createHash('sha256').update(content).digest('hex'));
   }
   console.log(`${tool}: all routes and styles checked`);
+  await page.click('[aria-label="Pin overview"]');
+  assert.equal(
+    await page.$eval('[aria-label="Pin overview"]', (el) =>
+      el.getAttribute('aria-pressed'),
+    ),
+    'true',
+  );
+  await page.mouse.move(0, 0);
+  await page.hover('[aria-label="Pin overview"]');
+  await page.waitForSelector('[role="tooltip"]');
+  await page.click('[aria-haspopup="menu"]');
+  await page.click('[role="menuitem"]');
+  await page.waitForFunction(() =>
+    document
+      .querySelector('[data-sonner-toast]')
+      ?.textContent.includes('Report queued for export'),
+  );
+  await page.click('[aria-haspopup="dialog"]');
+  await page.type('[aria-label="Search workspaces"]', 'invo');
+  await page.waitForFunction(() => {
+    const matches = [...document.querySelectorAll('[cmdk-item]')];
+    return (
+      matches.length < 40 &&
+      matches.some((item) => item.textContent === 'Invoices')
+    );
+  });
+  await page.click('[cmdk-item][data-value="Invoices"]');
+  await page.waitForSelector('[data-feature="invoices"]');
+  assert.equal(
+    await page.$('[role="dialog"]'),
+    null,
+    'Command menu should close after navigation',
+  );
   await page.goto(`${base}/customers?page=invalid`);
   await page.waitForSelector('[data-feature="customers"]');
   assert.equal(
@@ -401,6 +510,8 @@ try {
       JSON.stringify({
         modules: visited.size,
         routeDigests,
+        insights,
+        dependencies: [...dependencies].sort(),
         styles,
       }),
     );

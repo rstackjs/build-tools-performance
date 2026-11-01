@@ -13,7 +13,7 @@ export default {
   resolve: { extensions: ['.tsx', '.ts', '.jsx', '.js', '.json'] },
   cache: {
     type: 'filesystem',
-    name: `react-app-10k-${production ? 'prod' : 'dev'}`,
+    name: `react-workspace-${production ? 'prod' : 'dev'}`,
   },
   experiments: {
     css: true,

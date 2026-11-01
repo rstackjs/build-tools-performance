@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { Link, Outlet } from '@tanstack/react-router';
 import { navigation } from '../generated/navigation';
+import { WorkspaceTools } from './WorkspaceTools';
 import logo from '../assets/logo.svg';
 
 export function Shell() {
@@ -39,6 +40,7 @@ export function Shell() {
       <div className="ml-56">
         <header className="flex items-center justify-between border-b border-slate-200 bg-white px-8 py-4">
           <span className="text-sm">Acme / Operations</span>
+          <WorkspaceTools />
           <button
             data-testid="density"
             aria-pressed={compact}

@@ -6,5 +6,5 @@ export const config = {
   supportedTools: ['rspack', 'rsbuild', 'vite', 'webpack', 'utoo'],
   rootFile: 'app/Shell.tsx',
   leafFile: 'generated/overview/summary/Metric.tsx',
-  readySelector: '[data-benchmark-ready="true"]',
+  readySelector: '[data-benchmark-ready="true"] [data-insights-ready="true"]',
 };
