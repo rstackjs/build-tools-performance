@@ -33,7 +33,7 @@ jobs:
         os: [macos-15]
         case:
           [
-            react-workspace,
+            react-dashboard,
             react-1k,
             react-5k,
             react-10k,
@@ -71,10 +71,10 @@ jobs:
         run: pnpm test
 
       - name: Verify application parity
-        if: matrix.case == 'react-workspace'
+        if: matrix.case == 'react-dashboard'
         run: |
-          pnpm --filter react-workspace typecheck
-          pnpm --filter react-workspace verify:all
+          pnpm --filter react-dashboard typecheck
+          pnpm --filter react-dashboard verify:all
 
       - name: Run Benchmark
         run: cross-env CASE=${{ matrix.case }} pnpm benchmark

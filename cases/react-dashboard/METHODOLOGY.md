@@ -9,13 +9,13 @@ CLI use. A generator-content fingerprint avoids rewriting unchanged files,
 including between cold/warm builds and HMR updates.
 
 ```bash
-pnpm --filter react-workspace generate
-pnpm --filter react-workspace verify
-pnpm --filter react-workspace verify:all
-pnpm --filter react-workspace typecheck
+pnpm --filter react-dashboard generate
+pnpm --filter react-dashboard verify
+pnpm --filter react-dashboard verify:all
+pnpm --filter react-dashboard typecheck
 
 # Restore generated files after manual edits or partial deletion
-pnpm --filter react-workspace generate --force
+pnpm --filter react-dashboard generate --force
 ```
 
 To change the workload, edit `workload.mjs` or `generate.mjs`. Keep at least
@@ -67,9 +67,9 @@ tools cannot bundle the application's JavaScript.
 From the repository root:
 
 ```bash
-CASE=react-workspace pnpm benchmark
-CASE=react-workspace TOOLS=rspack,rsbuild,vite,webpack,utoo pnpm benchmark
-pnpm --filter react-workspace start:vite
+CASE=react-dashboard pnpm benchmark
+CASE=react-dashboard TOOLS=rspack,rsbuild,vite,webpack,utoo pnpm benchmark
+pnpm --filter react-dashboard start:vite
 ```
 
 From this case directory, validate each included tool before changing the matrix:

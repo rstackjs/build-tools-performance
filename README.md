@@ -18,7 +18,7 @@ Benchmark comparing JavaScript bundlers and build tools ([Rspack](https://github
 
 ## Notes
 
-- The `react-workspace` case targets `Chrome >= 111` for every included tool,
+- The `react-dashboard` case targets `Chrome >= 111` for every included tool,
   matching Tailwind CSS 4. Older cases retain their existing target configurations.
 - Minification is enabled in production for all tools.
 - Source map is enabled in development and disabled in production for all tools.
@@ -33,11 +33,11 @@ Tooling details:
 
 ## Results
 
-> Data from [GitHub Actions](https://github.com/rstackjs/build-tools-performance/actions/runs/41259504730) (2026-11-01, benchmark commit `2c3f960d`). Values are medians of three measured runs; timing includes two warmups, while memory skips warmups. Memory is process-tree physical footprint in MiB. See [memory methodology](#memory-methodology). One Farm dev-memory attempt in `react-5k` exited early and succeeded on retry; the failed attempt is excluded.
+> Data from [GitHub Actions](https://github.com/rstackjs/build-tools-performance/actions/runs/41259504730) (2026-11-01, benchmark commit `2c3f960d`). Values are medians of three measured runs; timing includes two warmups, while memory skips warmups. Memory is process-tree physical footprint in MiB. See [memory methodology](#memory-methodology). The `react-dashboard` results were recorded under the former case name `react-workspace`; the workload is unchanged. One Farm dev-memory attempt in `react-5k` exited early and succeeded on retry; the failed attempt is excluded.
 
 ---
 
-### react-workspace
+### react-dashboard
 
 A synthetic enterprise operations SPA with customer, order, finance, and team workspaces:
 40 lazy routes, 10,000+ application modules, dashboards, virtualized tables,
@@ -53,11 +53,11 @@ charts, forms, command search, and Markdown reports.
 | Reports and content | Recharts, react-markdown, remark-gfm                               |
 | Utilities           | date-fns, lodash-es, Fuse.js, react-error-boundary                 |
 
-See [case details](cases/react-workspace/README.md) and
-[benchmark methodology](cases/react-workspace/METHODOLOGY.md).
+See [case details](cases/react-dashboard/README.md) and
+[benchmark methodology](cases/react-dashboard/METHODOLOGY.md).
 
 ```bash
-CASE=react-workspace pnpm benchmark
+CASE=react-dashboard pnpm benchmark
 ```
 
 Development metrics:

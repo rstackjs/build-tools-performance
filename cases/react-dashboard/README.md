@@ -1,4 +1,4 @@
-# React workspace
+# React dashboard
 
 A synthetic enterprise operations SPA covering customers, orders, finance, and
 team management. It has 40 lazy business routes and over 10,000 application
@@ -20,10 +20,10 @@ shaking. All five tools build the same application with the same browser target,
 CSS pipeline, and development/production policies.
 
 ```bash
-CASE=react-workspace pnpm benchmark
-pnpm --filter react-workspace start:vite
-pnpm --filter react-workspace verify:all
+CASE=react-dashboard pnpm benchmark
+pnpm --filter react-dashboard start:vite
+pnpm --filter react-dashboard verify:all
 ```
 
 See [methodology](./METHODOLOGY.md) for generation, configuration parity,
-verification, and limitations, and the [results](../../README.md#react-workspace).
+verification, and limitations, and the [results](../../README.md#react-dashboard).

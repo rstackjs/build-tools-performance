@@ -533,7 +533,7 @@ importers:
         specifier: ^7.18.5
         version: 7.18.5(react-dom@19.3.1(react@19.3.1))(react@19.3.1)
 
-  cases/react-workspace:
+  cases/react-dashboard:
     dependencies:
       '@hookform/resolvers':
         specifier: 6.0.2
