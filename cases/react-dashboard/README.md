@@ -17,7 +17,7 @@ validated forms, command search, and Markdown reports.
 
 Libraries are used by working features, with selective imports to exercise tree
 shaking. All five tools build the same application with the same browser target,
-CSS pipeline, and development/production policies.
+Tailwind version and source set, and development/production policies.
 
 ```bash
 CASE=react-dashboard pnpm benchmark

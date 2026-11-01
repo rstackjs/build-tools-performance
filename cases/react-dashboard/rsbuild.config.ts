@@ -1,9 +1,10 @@
 import { defineConfig } from '@rsbuild/core';
 import { pluginReact } from '@rsbuild/plugin-react';
+import { pluginTailwindcss } from '@rsbuild/plugin-tailwindcss';
 import { port, browserslist, sourceMap } from './settings.mjs';
 
 export default defineConfig({
-  plugins: [pluginReact()],
+  plugins: [pluginReact(), pluginTailwindcss({ optimize: false })],
   html: { template: './index-template.html' },
   // Use Rspack's ordinary shared-chunk rules, without Rsbuild's vendor presets.
   splitChunks: { preset: 'none', chunks: 'async' },

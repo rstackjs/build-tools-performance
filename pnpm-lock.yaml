@@ -620,9 +620,15 @@ importers:
         specifier: 5.0.16
         version: 5.0.16(@types/react@19.3.0)(immer@11.2.9)(react@19.3.1)(use-sync-external-store@1.6.0(react@19.3.1))
     devDependencies:
-      '@tailwindcss/postcss':
+      '@rsbuild/plugin-tailwindcss':
+        specifier: 2.0.3
+        version: 2.0.3(@rsbuild/core@2.3.0(core-js@3.48.0))(@rspack/core@2.3.0(@swc/helpers@0.5.23))(webpack@5.112.2)
+      '@tailwindcss/vite':
         specifier: 4.3.3
-        version: 4.3.3
+        version: 4.3.3(vite@8.3.5(@types/node@24.19.2)(esbuild@0.28.2)(jiti@2.7.0)(terser@5.51.2))
+      '@tailwindcss/webpack':
+        specifier: 4.3.3
+        version: 4.3.3(@rspack/core@2.3.0(@swc/helpers@0.5.23))(webpack@5.112.2)
       '@types/lodash-es':
         specifier: 4.17.12
         version: 4.17.12
@@ -632,9 +638,6 @@ importers:
       html-webpack-plugin:
         specifier: 5.6.8
         version: 5.6.8(@rspack/core@2.3.0(@swc/helpers@0.5.23))(webpack@5.112.2)
-      postcss-loader:
-        specifier: 8.2.1
-        version: 8.2.1(@rspack/core@2.3.0(@swc/helpers@0.5.23))(postcss@8.5.32)(typescript@7.0.2)(webpack@5.112.2)
       tailwindcss:
         specifier: 4.3.3
         version: 4.3.3
@@ -4220,6 +4223,14 @@ packages:
       '@rsbuild/core':
         optional: true
 
+  '@rsbuild/plugin-tailwindcss@2.0.3':
+    resolution: {integrity: sha512-sl7mN0fyoP0W+zEyFR2xEMVAS2cZPlOAqsXwI8Ei9tUSvV7V4G8Xw2WBVCOQ/B4KEFfJ6H1+TEuPlAzHLEfc4g==}
+    peerDependencies:
+      '@rsbuild/core': ^2.0.0
+    peerDependenciesMeta:
+      '@rsbuild/core':
+        optional: true
+
   '@rsdoctor/client@1.6.5':
     resolution: {integrity: sha512-k/k1X8Y+/7JbAiE7ELdSfTbRP51fKY0stHc1y1N2s0uF7RRBSozN5ENyD+5yJSIDgNP5N5lRnZF+1Pp4BOhhjA==}
 
@@ -4656,8 +4667,21 @@ packages:
     resolution: {integrity: sha512-krXjAikiaFSPaK/FkAQT5UTx3VormQaiZ5hBFlJZ9UFQGB/rwg1MZIhHAG9smMQRTdyJxP6Qt5MwMtdyU5FWrA==}
     engines: {node: '>= 20'}
 
-  '@tailwindcss/postcss@4.3.3':
-    resolution: {integrity: sha512-JTSZZGQi1AyKirbLN3azmjVzef92tcX7h+iSqPdaeStyFpGpDlKvvpxeOE8njhbUanbRwr3z8DyzhICWnMtQeg==}
+  '@tailwindcss/vite@4.3.3':
+    resolution: {integrity: sha512-yYU8cogLeSh/ms2jh8Fj7jaba/EWa7Ja6GoUqYZaraEuCI5YS6ms6ObZgjjedm+jm6XZjdNRWBpPP6Z86oOxcw==}
+    peerDependencies:
+      vite: ^5.2.0 || ^6 || ^7 || ^8
+
+  '@tailwindcss/webpack@4.3.3':
+    resolution: {integrity: sha512-e7A7ubt+D+MzXAlQcOaDaHMD5oYzxULVdZVjLzGVStIXebGfD4RcVHxBSRP7xE+G8sS3o691zyfIbhm/veOLjQ==}
+    peerDependencies:
+      '@rspack/core': ^1.0.0 || ^2.0.0
+      webpack: ^5.0.0
+    peerDependenciesMeta:
+      '@rspack/core':
+        optional: true
+      webpack:
+        optional: true
 
   '@tanstack/history@1.162.5':
     resolution: {integrity: sha512-w1+YvwmTkwt5n8yUqEH3IWZ9DsmorCZW/EQ3KYHnqEgIkOZpH54NvW6/Epq3Dzb8H0ifIeYX8PExvrNLIH5FIA==}
@@ -8490,19 +8514,6 @@ packages:
       postcss:
         optional: true
       ts-node:
-        optional: true
-
-  postcss-loader@8.2.1:
-    resolution: {integrity: sha512-k98jtRzthjj3f76MYTs9JTpRqV1RaaMhEU0Lpw9OTmQZQdppg4B30VZ74BojuBHt3F4KyubHJoXCMUeM8Bqeow==}
-    engines: {node: '>= 18.12.0'}
-    peerDependencies:
-      '@rspack/core': 0.x || ^1.0.0 || ^2.0.0-0
-      postcss: ^7.0.0 || ^8.0.1
-      webpack: ^5.0.0
-    peerDependenciesMeta:
-      '@rspack/core':
-        optional: true
-      webpack:
         optional: true
 
   postcss-merge-longhand@5.1.7:
@@ -14230,6 +14241,15 @@ snapshots:
     transitivePeerDependencies:
       - '@rspack/core'
 
+  '@rsbuild/plugin-tailwindcss@2.0.3(@rsbuild/core@2.3.0(core-js@3.48.0))(@rspack/core@2.3.0(@swc/helpers@0.5.23))(webpack@5.112.2)':
+    dependencies:
+      '@tailwindcss/webpack': 4.3.3(@rspack/core@2.3.0(@swc/helpers@0.5.23))(webpack@5.112.2)
+    optionalDependencies:
+      '@rsbuild/core': 2.3.0(core-js@3.48.0)
+    transitivePeerDependencies:
+      - '@rspack/core'
+      - webpack
+
   '@rsdoctor/client@1.6.5': {}
 
   '@rsdoctor/core@1.6.5(@emnapi/core@1.11.3)(@emnapi/runtime@1.11.3)(@rsbuild/core@2.3.0(core-js@3.48.0))(@rspack/core@2.3.0(@swc/helpers@0.5.23))(supports-color@8.1.1)(webpack@5.112.2)':
@@ -14633,13 +14653,22 @@ snapshots:
       '@tailwindcss/oxide-win32-arm64-msvc': 4.3.3
       '@tailwindcss/oxide-win32-x64-msvc': 4.3.3
 
-  '@tailwindcss/postcss@4.3.3':
+  '@tailwindcss/vite@4.3.3(vite@8.3.5(@types/node@24.19.2)(esbuild@0.28.2)(jiti@2.7.0)(terser@5.51.2))':
+    dependencies:
+      '@tailwindcss/node': 4.3.3
+      '@tailwindcss/oxide': 4.3.3
+      tailwindcss: 4.3.3
+      vite: 8.3.5(@types/node@24.19.2)(esbuild@0.28.2)(jiti@2.7.0)(terser@5.51.2)
+
+  '@tailwindcss/webpack@4.3.3(@rspack/core@2.3.0(@swc/helpers@0.5.23))(webpack@5.112.2)':
     dependencies:
       '@alloc/quick-lru': 5.3.0
       '@tailwindcss/node': 4.3.3
       '@tailwindcss/oxide': 4.3.3
-      postcss: 8.5.32
       tailwindcss: 4.3.3
+    optionalDependencies:
+      '@rspack/core': 2.3.0(@swc/helpers@0.5.23)
+      webpack: 5.112.2(@swc/core@1.16.20(@swc/helpers@0.5.23))(clean-css@5.3.3)(cssnano@5.1.15(postcss@8.5.32))(csso@4.2.0)(esbuild@0.28.2)(html-minifier-terser@6.1.0)(lightningcss@1.33.0)(postcss@8.5.32)(svgo@2.8.2)(webpack-cli@7.2.3)
 
   '@tanstack/history@1.162.5': {}
 
@@ -19048,18 +19077,6 @@ snapshots:
       yaml: 1.10.2
     optionalDependencies:
       postcss: 8.5.32
-
-  postcss-loader@8.2.1(@rspack/core@2.3.0(@swc/helpers@0.5.23))(postcss@8.5.32)(typescript@7.0.2)(webpack@5.112.2):
-    dependencies:
-      cosmiconfig: 9.0.0(typescript@7.0.2)
-      jiti: 2.7.0
-      postcss: 8.5.32
-      semver: 7.8.5
-    optionalDependencies:
-      '@rspack/core': 2.3.0(@swc/helpers@0.5.23)
-      webpack: 5.112.2(@swc/core@1.16.20(@swc/helpers@0.5.23))(clean-css@5.3.3)(cssnano@5.1.15(postcss@8.5.32))(csso@4.2.0)(esbuild@0.28.2)(html-minifier-terser@6.1.0)(lightningcss@1.33.0)(postcss@8.5.32)(svgo@2.8.2)(webpack-cli@7.2.3)
-    transitivePeerDependencies:
-      - typescript
 
   postcss-merge-longhand@5.1.7(postcss@8.5.32):
     dependencies:

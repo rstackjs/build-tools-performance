@@ -22,7 +22,7 @@ export default {
       {
         test: /\.css$/,
         type: 'css/auto',
-        use: 'postcss-loader',
+        use: { loader: '@tailwindcss/webpack', options: { optimize: false } },
       },
       { test: /\.svg$/, type: 'asset/resource' },
     ],

@@ -24,16 +24,28 @@ To change the workload, edit `workload.mjs` or `generate.mjs`. Keep at least
 ## Configuration parity
 
 Rspack and webpack extend the repository's shared configurations, as the other
-cases do. All tools load the same `postcss.config.mjs`; defaults are only
-overridden where needed for the contract below.
+cases do. Tailwind uses dedicated integrations instead of `@tailwindcss/postcss`:
+
+| Tool             | Tailwind integration                                                                                                   |
+| ---------------- | ---------------------------------------------------------------------------------------------------------------------- |
+| Rsbuild          | [`@rsbuild/plugin-tailwindcss`](https://rsbuild.rs/plugins/list/plugin-tailwindcss)                                    |
+| Vite             | [`@tailwindcss/vite`](https://tailwindcss.com/docs/installation/using-vite)                                            |
+| Rspack / webpack | [`@tailwindcss/webpack`](https://github.com/tailwindlabs/tailwindcss/tree/main/packages/%40tailwindcss-webpack) loader |
+| Utoo             | `@tailwindcss/webpack` through its webpack-loader compatibility layer                                                  |
+
+All integrations resolve Tailwind CSS 4.3.3 and scan the explicit `@source`
+directives in the same CSS entry. `optimize: false` skips Tailwind's additional
+Lightning CSS pass; production CSS minification remains enabled in each build
+tool. No global PostCSS configuration is present, avoiding duplicate Tailwind
+processing. Defaults are only overridden where needed for the contract below.
 
 | Setting               | Contract for every included tool                                             |
 | --------------------- | ---------------------------------------------------------------------------- |
 | Browser target        | Chrome 111 (Tailwind 4 baseline; older cases use Chrome 93)                  |
 | Input                 | Same TS/TSX source, React automatic JSX runtime, no React Compiler           |
 | Routing               | Same explicit TanStack route tree and dynamic import boundaries              |
-| CSS                   | Same `@tailwindcss/postcss` version, options, source set, and CSS entry      |
-| Tailwind optimization | Disabled inside PostCSS; production bundler minifies CSS                     |
+| CSS                   | Same Tailwind version, source set, and CSS entry; dedicated integrations     |
+| Tailwind optimization | Disabled in each Tailwind integration; production bundler minifies CSS       |
 | Development           | Lazy dynamic imports, source maps, React Fast Refresh, CSS HMR, SPA fallback |
 | Production            | JS/CSS minification and tree shaking enabled; source maps disabled           |
 | Dependencies          | Bundled, with no externalization or import rewriting                         |
@@ -65,7 +77,7 @@ excluded without turning off scope hoisting.
 Farm, standalone Rollup, Rolldown, esbuild, and the existing Bun adapter are not
 included in this full dev/build matrix. Their adapters have not been implemented
 and validated against the complete contract above (including the browser target,
-React Fast Refresh, and shared PostCSS pipeline). This does not imply that these
+React Fast Refresh, and equivalent Tailwind processing). This does not imply that these
 tools cannot bundle the application's JavaScript.
 
 From the repository root:

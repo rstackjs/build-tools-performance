@@ -16,7 +16,10 @@ export default {
         exclude: /node_modules/,
         use: { loader: 'builtin:swc-loader', options: swcOptions },
       },
-      { test: /\.css$/, use: 'postcss-loader' },
+      {
+        test: /\.css$/,
+        use: { loader: '@tailwindcss/webpack', options: { optimize: false } },
+      },
       { test: /\.svg$/, type: 'asset/resource' },
     ],
   },

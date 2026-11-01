@@ -60,6 +60,9 @@ See [case details](cases/react-dashboard/README.md) and
 CASE=react-dashboard pnpm benchmark
 ```
 
+The figures below use the earlier PostCSS integration (commit `2c3f960d`).
+The current configuration uses dedicated Tailwind integrations; its CI results are pending.
+
 Development metrics:
 
 | Name             | Startup (no cache) | Startup (with cache) | HMR     |

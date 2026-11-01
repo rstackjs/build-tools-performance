@@ -50,11 +50,12 @@
     "zustand": "5.0.16"
   },
   "devDependencies": {
-    "@tailwindcss/postcss": "4.3.3",
+    "@rsbuild/plugin-tailwindcss": "2.0.3",
+    "@tailwindcss/vite": "4.3.3",
+    "@tailwindcss/webpack": "4.3.3",
     "@types/lodash-es": "4.17.12",
     "@utoo/pack": "1.5.34",
     "html-webpack-plugin": "5.6.8",
-    "postcss-loader": "8.2.1",
     "tailwindcss": "4.3.3"
   },
   "browserslist": [
