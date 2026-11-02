@@ -6,7 +6,7 @@ export default {
   extends: '../../shared/rspack.config.mjs',
   entry: './src/index.tsx',
   devtool: sourceMap ? 'source-map' : false,
-  output: { publicPath: '/', clean: true },
+  output: { publicPath: '/', clean: production },
   lazyCompilation: production ? false : { entries: false, imports: true },
   module: {
     rules: [
