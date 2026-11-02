@@ -39,22 +39,9 @@ Tooling details:
 
 ### react-dashboard
 
-A synthetic enterprise operations SPA with customer, order, finance, and team workspaces:
-40 lazy routes, 10,000+ application modules, dashboards, virtualized tables,
-charts, forms, command search, and Markdown reports.
+A synthetic enterprise operations dashboard with 40 lazy routes and 29 common libraries, including React, Tailwind CSS, TanStack Router, Zod, and Recharts.
 
-| Area                | Libraries                                                          |
-| ------------------- | ------------------------------------------------------------------ |
-| Application         | React, React DOM, TanStack Router, Tailwind CSS, Zod               |
-| Data and tables     | TanStack Query, TanStack Table, TanStack Virtual, Axios            |
-| Forms and state     | React Hook Form, Hook Form Resolvers, Zustand, Immer               |
-| UI and commands     | Radix Dialog / Dropdown Menu / Tooltip, cmdk, Sonner, Lucide React |
-| Styling             | clsx, tailwind-merge, Class Variance Authority                     |
-| Reports and content | Recharts, react-markdown, remark-gfm                               |
-| Utilities           | date-fns, lodash-es, Fuse.js, react-error-boundary                 |
-
-See [case details](cases/react-dashboard/README.md) and
-[benchmark methodology](cases/react-dashboard/METHODOLOGY.md).
+See [case details](cases/react-dashboard/README.md).
 
 ```bash
 CASE=react-dashboard pnpm benchmark
