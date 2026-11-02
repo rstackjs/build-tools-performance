@@ -8,7 +8,7 @@ import replace from '@rollup/plugin-replace';
 import postcss from 'rollup-plugin-postcss';
 import postcssUrl from 'postcss-url';
 import { minify, swc } from 'rollup-plugin-swc3';
-import { isProd, target } from './constants.mjs';
+import { isProd, target, targetBrowser } from './constants.mjs';
 
 const extensions = ['.mjs', '.js', '.jsx', '.ts', '.tsx', '.json'];
 
@@ -68,9 +68,7 @@ export default {
       tsconfig: false,
       include: /\.[mc]?[jt]sx?$/,
       exclude: [],
-      jsc: {
-        target,
-      },
+      env: { targets: targetBrowser },
       module: {
         type: 'es6',
       },

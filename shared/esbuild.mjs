@@ -1,5 +1,5 @@
 import { build } from 'esbuild';
-import { isProd, target } from './constants.mjs';
+import { isProd, targetVite } from './constants.mjs';
 
 export default async (config) => {
   const startTime = Date.now();
@@ -7,7 +7,7 @@ export default async (config) => {
   await build({
     outdir: 'dist',
     format: 'esm',
-    target,
+    target: targetVite,
     bundle: true,
     define: {
       'process.env.NODE_ENV': JSON.stringify(

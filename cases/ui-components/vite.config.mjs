@@ -1,9 +1,9 @@
 // @ts-check
 import { defineConfig } from 'vite';
-import { target } from '../../shared/constants.mjs';
+import { targetVite } from '../../shared/constants.mjs';
 
 export default defineConfig({
   build: {
-    target,
+    target: targetVite,
   },
 });
