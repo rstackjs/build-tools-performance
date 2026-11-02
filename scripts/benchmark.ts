@@ -16,6 +16,7 @@ import { createRequire } from 'module';
 import path from 'path';
 import puppeteer, {
   type Browser,
+  type BrowserContext,
   type ConsoleMessage,
   type Page,
 } from 'puppeteer';
@@ -47,6 +48,8 @@ type BenchmarkConfig = {
   dev?: boolean;
   rootFile?: string;
   leafFile?: string;
+  readySelector?: string;
+  port?: number;
   timeouts?: Partial<typeof defaultTimeouts>;
 };
 
@@ -173,7 +176,7 @@ class BuildTool {
     binFilePath,
   }: BuildToolOptions) {
     this.name = name;
-    this.port = port;
+    this.port = config.port ?? port;
     this.startScript = startScript;
     this.startedRegex = startedRegex;
     this.buildScript = buildScript;
@@ -516,6 +519,7 @@ const metadata = {
   steadyIdleMs,
   steadyWindowMs,
   hmrUpdates: 10,
+  browserIsolation: 'fresh context per development session',
   timeouts,
   maxAttempts: 2,
   measurements: ['timing', 'memory'],
@@ -732,6 +736,7 @@ async function runDevSession(
   const metrics = ensureMetrics(perfResult, buildTool.name);
   const { time, command } = await buildTool.startServer(measurement, cache);
   let page: Page | undefined;
+  let browserContext: BrowserContext | undefined;
   let details = { succeeded: false } as {
     succeeded: boolean;
     steady?: object;
@@ -761,9 +766,12 @@ async function runDevSession(
       'new page',
       timeouts.page,
       async (signal) => {
-        const created = await browser.newPage();
+        // Isolate HTTP cache, storage and service workers across tools and
+        // cold/warm runs. "Warm" refers only to the build tool's disk cache.
+        browserContext = await browser.createBrowserContext();
+        const created = await browserContext.newPage();
         if (signal.aborted) {
-          await created.close();
+          await browserContext.close();
           signal.throwIfAborted();
         }
         return created;
@@ -789,7 +797,10 @@ async function runDevSession(
           timeout: 0,
         });
         signal.throwIfAborted();
-        await sessionPage.waitForSelector('#root > *', { timeout: 0, signal });
+        await sessionPage.waitForSelector(config.readySelector ?? '#root > *', {
+          timeout: 0,
+          signal,
+        });
         const startupTime = time + Date.now() - start;
         // Load only the benchmark's / route and settle within the same deadline.
         await idle(signal);
@@ -887,8 +898,10 @@ async function runDevSession(
   } finally {
     browser.off('disconnected', onDisconnected!);
     try {
-      if (browser.connected && page && !page.isClosed()) {
-        await runPhase('page shutdown', timeouts.shutdown, () => page!.close());
+      if (browser.connected && browserContext) {
+        await runPhase('browser context shutdown', timeouts.shutdown, () =>
+          browserContext!.close(),
+        );
       }
       // Cancel a pending newPage() before retrying a failed page creation.
       if (!page || !browser.connected) await closeBrowser();
