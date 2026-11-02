@@ -224,17 +224,6 @@ try {
   page.setDefaultTimeout(60000);
   const errors = [];
   page.on('pageerror', (error) => errors.push(String(error)));
-  page.on('console', (event) => {
-    output = (output + `\nBrowser ${event.type()}: ${event.text()}`).slice(
-      -50000,
-    );
-  });
-  page.on('response', (response) => {
-    if (response.status() >= 400)
-      output = (
-        output + `\nHTTP ${response.status()}: ${response.url()}`
-      ).slice(-50000);
-  });
   const base = `http://${dev ? 'localhost' : '127.0.0.1'}:${port}`;
   await page.goto(base);
   await page.waitForSelector('[data-feature="overview"]');

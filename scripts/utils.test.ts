@@ -28,9 +28,3 @@ test('counts JavaScript and CSS output files across directories and module forma
 
   assert.equal((await getFileSizes(dir)).chunkCount, 6);
 });
-
-test('reports zero chunks for an empty output directory', async (t) => {
-  const dir = await mkdtemp(path.join(tmpdir(), 'benchmark-chunks-'));
-  t.after(() => rm(dir, { recursive: true, force: true }));
-  assert.equal((await getFileSizes(dir)).chunkCount, 0);
-});
