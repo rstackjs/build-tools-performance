@@ -20,7 +20,7 @@ function formatFileSize(len: number) {
 }
 
 /**
- * Get output sizes and the number of emitted JavaScript files.
+ * Get output sizes and the number of emitted JavaScript and CSS files.
  */
 export async function getFileSizes(targetDir: string) {
   let files = await glob(convertPath(path.join(targetDir, '**/*')));
@@ -47,7 +47,8 @@ export async function getFileSizes(targetDir: string) {
   return {
     outputSize: formatFileSize(outputSize),
     gzippedSize: formatFileSize(gzippedSize),
-    chunkCount: files.filter((file) => /\.(?:js|mjs|cjs)$/.test(file)).length,
+    chunkCount: files.filter((file) => /\.(?:js|mjs|cjs|css)$/.test(file))
+      .length,
   };
 }
 
