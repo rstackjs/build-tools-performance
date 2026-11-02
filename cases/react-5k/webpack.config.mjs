@@ -1,6 +1,6 @@
 // @ts-check
 import ReactRefreshWebpackPlugin from '@pmmmwh/react-refresh-webpack-plugin';
-import { target, isProd } from '../../shared/constants.mjs';
+import { targetBrowser, isProd } from '../../shared/constants.mjs';
 
 export default {
   extends: '../../shared/webpack.config.mjs',
@@ -12,8 +12,8 @@ export default {
         use: {
           loader: 'swc-loader',
           options: {
+            env: { targets: targetBrowser },
             jsc: {
-              target,
               parser: {
                 syntax: 'typescript',
                 tsx: true,
@@ -31,7 +31,5 @@ export default {
       },
     ],
   },
-  plugins: [
-    isProd ? null : new ReactRefreshWebpackPlugin(),
-  ].filter(Boolean),
+  plugins: [isProd ? null : new ReactRefreshWebpackPlugin()].filter(Boolean),
 };

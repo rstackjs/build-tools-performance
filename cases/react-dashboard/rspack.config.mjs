@@ -4,7 +4,6 @@ import { port, production, sourceMap, swcOptions } from './settings.mjs';
 
 export default {
   extends: '../../shared/rspack.config.mjs',
-  target: ['web', 'browserslist:Chrome >= 111'],
   entry: './src/index.tsx',
   devtool: sourceMap ? 'source-map' : false,
   output: { publicPath: '/', clean: true },

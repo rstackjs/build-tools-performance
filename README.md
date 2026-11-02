@@ -18,22 +18,20 @@ Benchmark comparing JavaScript bundlers and build tools ([Rspack](https://github
 
 ## Notes
 
-- The `react-dashboard` case targets `Chrome >= 111` for every included tool,
-  matching Tailwind CSS 4. Older cases retain their existing target configurations.
+- Build targets are `Chrome >= 111` or `es2022`.
 - Minification is enabled in production for all tools.
 - Source map is enabled in development and disabled in production for all tools.
-- Each development session starts in a fresh browser context, isolating HTTP cache
-  and site storage. Cold/warm refers to build-tool caches; OS caches are not flushed.
 - Benchmarks run on GitHub Actions with variable hardware, which may cause inconsistent results.
 
 Tooling details:
 
 - webpack is configured to use SWC instead of Babel / Terser.
 - Vite uses Rolldown and Oxc.
+- Bun uses its built-in browser target; it does not support browser or ES version targets.
 
 ## Results
 
-> Data from [GitHub Actions](https://github.com/rstackjs/build-tools-performance/actions/runs/41301198735) (2026-11-01, benchmark commit `8d085d4d`). Values are medians of three measured runs; timing includes two warmups, while memory skips warmups. Memory is process-tree physical footprint in MiB. See [memory methodology](#memory-methodology). One Farm dev-memory attempt in `react-5k` exited early and succeeded on retry; the failed attempt is excluded.
+> Data from [GitHub Actions](https://github.com/rstackjs/build-tools-performance/actions/runs/41301198735) (2026-11-01, benchmark commit `8d085d4d`).
 
 ---
 

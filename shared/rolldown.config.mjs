@@ -1,10 +1,10 @@
 // @ts-check
 import { defineConfig } from 'rolldown';
-import { isProd, target } from './constants.mjs';
+import { isProd, targetVite } from './constants.mjs';
 
 export default defineConfig({
   transform: {
-    target,
+    target: targetVite,
     define: {
       'process.env.NODE_ENV': JSON.stringify(
         isProd ? 'production' : 'development',
