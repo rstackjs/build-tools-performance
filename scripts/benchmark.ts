@@ -1,8 +1,4 @@
-import {
-  execFileSync,
-  spawn,
-  type ChildProcess,
-} from 'node:child_process';
+import { execFileSync, spawn, type ChildProcess } from 'node:child_process';
 import os from 'node:os';
 import {
   monitorProcess,
@@ -946,6 +942,9 @@ async function runBuildBenchmark(
       ' gzipped size: ' +
       color.green(sizes.gzippedSize + 'kB'),
   );
+  logger.success(
+    color.dim(buildTool.name) + ' JS chunks: ' + color.green(sizes.chunkCount),
+  );
 
   if (measurement === 'timing') metrics.prodBuild = buildTime;
 
@@ -1137,6 +1136,10 @@ columnGroups.push({
     {
       title: 'Gzipped size',
       data: getData('gzippedSize', 'kB'),
+    },
+    {
+      title: 'JS chunks',
+      data: buildTools.map(({ name }) => String(summaries[name].chunkCount)),
     },
   ],
 });

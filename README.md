@@ -15,6 +15,7 @@ Benchmark comparing JavaScript bundlers and build tools ([Rspack](https://github
 | **Memory peak**          | Sampled peak memory during dev or a production build, with and without cache           |
 | **Output size**          | Total size of the output bundle, minified with the configured minifier                 |
 | **Gzipped size**         | Gzipped size of the output bundle, represents actual network transfer size             |
+| **JS chunks**            | Number of emitted JavaScript files, including entry, runtime, and async chunks         |
 
 ## Notes
 
