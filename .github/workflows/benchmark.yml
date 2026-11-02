@@ -28,7 +28,7 @@ jobs:
       PUPPETEER_SKIP_DOWNLOAD: 'true'
       PUPPETEER_EXECUTABLE_PATH: '/Applications/Google Chrome for Testing.app/Contents/MacOS/Google Chrome for Testing'
     strategy:
-      fail-fast: true
+      fail-fast: false
       matrix:
         os: [macos-15]
         case:
