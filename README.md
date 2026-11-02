@@ -18,7 +18,7 @@ Benchmark comparing JavaScript bundlers and build tools ([Rspack](https://github
 
 ## Notes
 
-- Build targets are `Chrome >= 111` or `es2022`.
+- Build targets are `Chrome >= 93` or `es2022`.
 - Minification is enabled in production for all tools.
 - Source map is enabled in development and disabled in production for all tools.
 - Benchmarks run on GitHub Actions with variable hardware, which may cause inconsistent results.
@@ -27,7 +27,6 @@ Tooling details:
 
 - webpack is configured to use SWC instead of Babel / Terser.
 - Vite uses Rolldown and Oxc.
-- Bun uses its built-in browser target; it does not support browser or ES version targets.
 
 ## Results
 

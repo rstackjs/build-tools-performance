@@ -41,5 +41,5 @@
     "vue": "^3.5.44",
     "vuetify": "^4.3.1"
   },
-  "browserslist": "Chrome >= 111"
+  "browserslist": "Chrome >= 93"
 }

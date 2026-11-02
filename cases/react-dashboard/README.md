@@ -19,7 +19,7 @@ pnpm --filter react-dashboard generate --force
 - Startup loads only the overview route and waits for its data; production builds
   include all routes. Data is deterministic and requires no backend. This is a
   client-rendered SPA, not an SSR/RSC benchmark.
-- Rspack, Rsbuild, Vite, webpack, and Utoo share the source, Chrome 111 target,
+- Rspack, Rsbuild, Vite, webpack, and Utoo share the source, Chrome 93 target,
   Tailwind version, and CSS scan scope, using dedicated Tailwind integrations
   with `optimize: false`; each bundler handles production CSS minification.
   Development uses on-demand loading, source maps, and React/CSS HMR; production

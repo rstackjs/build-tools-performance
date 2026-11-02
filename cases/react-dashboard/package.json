@@ -59,6 +59,6 @@
     "tailwindcss": "4.3.3"
   },
   "browserslist": [
-    "Chrome >= 111"
+    "Chrome >= 93"
   ]
 }
