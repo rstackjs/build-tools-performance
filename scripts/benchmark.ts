@@ -946,9 +946,6 @@ async function runBuildBenchmark(
       ' gzipped size: ' +
       color.green(sizes.gzippedSize + 'kB'),
   );
-  logger.success(
-    color.dim(buildTool.name) + ' chunks: ' + color.green(sizes.chunkCount),
-  );
 
   if (measurement === 'timing') metrics.prodBuild = buildTime;
 
@@ -1140,10 +1137,6 @@ columnGroups.push({
     {
       title: 'Gzipped size',
       data: getData('gzippedSize', 'kB'),
-    },
-    {
-      title: 'Chunks',
-      data: buildTools.map(({ name }) => String(summaries[name].chunkCount)),
     },
   ],
 });

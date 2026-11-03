@@ -5,7 +5,7 @@
   "scripts": {
     "benchmark": "node ./scripts/benchmark.ts",
     "build:cases": "node ./scripts/build-rspack-cases.ts",
-    "test": "node --test scripts/*.test.ts"
+    "test": "node --test scripts/memory.test.ts"
   },
   "devDependencies": {
     "@farmfe/cli": "^1.0.5",

@@ -32,8 +32,7 @@ description: 'Refresh README benchmark results from a successful GitHub Actions 
 ## Result layout
 
 - **Development metrics:** startup without cache, startup with cache, and HMR. Omit this table for build-only cases.
-- **Build metrics:** build without cache, build with cache, output size, gzipped size, and Chunks.
-- **Chunks:** display `chunkCount`, the total number of emitted `.js`, `.mjs`, `.cjs`, and `.css` files, as one integer without ranking emojis.
+- **Build metrics:** build without cache, build with cache, output size, and gzipped size.
 - **Dev memory (MiB):** a separate table immediately below Build metrics, with Name, Steady (no cache), Steady (with cache), Peak (no cache), and Peak (with cache). Omit this table for build-only cases.
 - **Build memory (MiB):** follows Dev memory, or Build metrics for build-only cases, with Name, Peak (no cache), and Peak (with cache).
 - Keep memory out of the Development and Build tables. Put `MiB` in the table labels and display memory medians to one decimal place without repeating the unit in cells, for example `365.9🥇`, without a suffix such as `(365.9–377.5)`. Raw JSON can retain minimum and maximum values.

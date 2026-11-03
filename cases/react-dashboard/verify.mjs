@@ -439,10 +439,6 @@ try {
     await page.goto(base);
     await page.waitForSelector('[data-feature="overview"]');
     await page.waitForSelector('[data-insights-ready="true"]');
-    // Module evaluation and computed styles can precede completion of an HMR
-    // update. Settle requests before checking state or starting another edit.
-    const settle = () => page.waitForNetworkIdle({ idleTime: 500 });
-    await settle();
     await page.click('[data-testid="density"]');
     await page.evaluate(() => {
       window.__verificationDocument = 'hmr-document';
@@ -464,7 +460,6 @@ try {
         {},
         marker,
       );
-      await settle();
       assert.equal(
         await page.evaluate(() => window.__verificationDocument),
         'hmr-document',
@@ -493,7 +488,6 @@ try {
         getComputedStyle(document.querySelector('[data-feature] > header'))
           .minHeight === '123px',
     );
-    await settle();
     writeFileSync(
       cssFile,
       originals.get(cssFile) + '\n:root { --benchmark-hmr: verified; }\n',
@@ -504,7 +498,6 @@ try {
           .getPropertyValue('--benchmark-hmr')
           .trim() === 'verified',
     );
-    await settle();
     assert.equal(
       await page.evaluate(() => window.__verificationDocument),
       'hmr-document',
