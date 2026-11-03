@@ -438,6 +438,7 @@ try {
   if (dev) {
     await page.goto(base);
     await page.waitForSelector('[data-feature="overview"]');
+    await page.waitForSelector('[data-insights-ready="true"]');
     await page.click('[data-testid="density"]');
     await page.evaluate(() => {
       window.__verificationDocument = 'hmr-document';
