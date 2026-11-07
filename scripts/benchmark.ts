@@ -1,4 +1,8 @@
-import { execFileSync, spawn, type ChildProcess } from 'node:child_process';
+import {
+  execFileSync,
+  spawn,
+  type ChildProcess,
+} from 'node:child_process';
 import os from 'node:os';
 import {
   monitorProcess,

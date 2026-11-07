@@ -5,7 +5,7 @@ import { define } from 'rstack';
 // are not rewritten through Rstack CLI.
 define.fmt({
   singleQuote: true,
-  ignorePatterns: ['cases/**', 'shared/**', 'results/**'],
+  ignorePatterns: ['cases/**', 'shared/**', 'scripts/**', 'results/**'],
 });
 
 define.test({
