@@ -10,3 +10,4 @@ dist-*
 tsconfig.tsbuildinfo
 
 results/
+.rstack/cache

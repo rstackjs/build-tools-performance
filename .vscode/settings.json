@@ -8,8 +8,9 @@
     "rspack",
     "turbopack"
   ],
-  "editor.defaultFormatter": "esbenp.prettier-vscode",
+  "editor.defaultFormatter": "rstack.rstack",
+  "editor.formatOnSave": true,
   "[javascript]": {
-    "editor.defaultFormatter": "esbenp.prettier-vscode"
+    "editor.defaultFormatter": "rstack.rstack"
   }
 }
