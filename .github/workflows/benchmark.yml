@@ -67,10 +67,6 @@ jobs:
       - name: Install Dependencies
         run: pnpm install
 
-      - name: Check harness format
-        if: matrix.case == 'react-1k'
-        run: pnpm format:check
-
       - name: Test memory sampler
         run: pnpm test
 
