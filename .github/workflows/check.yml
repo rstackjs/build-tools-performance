@@ -1,24 +1,14 @@
 name: Check
 
 on:
-  pull_request:
-    branches: [main]
-    paths-ignore:
-      - '**/*.md'
-
   push:
     branches: [main]
-    paths-ignore:
-      - '**/*.md'
 
-  merge_group:
-
-  workflow_dispatch:
+  pull_request:
 
 concurrency:
-  # Group by PR to cancel outdated runs; unique run IDs keep non-PR runs independent.
-  group: ${{ github.workflow }}-${{ github.event_name }}-${{ github.event.pull_request.number || github.run_id }}
-  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.sha }}
+  cancel-in-progress: ${{ github.ref_name != 'main' }}
 
 jobs:
   check:
