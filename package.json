@@ -5,7 +5,7 @@
   "scripts": {
     "benchmark": "node ./scripts/benchmark.ts",
     "build:cases": "node ./scripts/build-rspack-cases.ts",
-    "test": "node --test scripts/memory.test.ts"
+    "test": "node --test scripts/memory.test.ts scripts/process-shutdown.test.ts"
   },
   "devDependencies": {
     "@farmfe/cli": "^1.0.5",
@@ -31,7 +31,7 @@
     "@types/node": "^24.19.2",
     "@types/react": "^19.3.0",
     "@types/react-dom": "^19.3.0",
-    "@utoo/pack-cli": "1.5.34",
+    "@utoo/pack-cli": "1.6.2",
     "@vitejs/plugin-react": "^6.1.2",
     "buffer": "^6.0.3",
     "cross-env": "^10.1.0",
