@@ -1,4 +1,8 @@
-import { execFileSync, spawn, type ChildProcess } from 'node:child_process';
+import {
+  execFileSync,
+  spawn,
+  type ChildProcess,
+} from 'node:child_process';
 import os from 'node:os';
 import {
   monitorProcess,
@@ -6,7 +10,6 @@ import {
   runPhase,
   runWithRetry,
 } from './benchmark-utils.ts';
-import { stopProcessTree } from './process-shutdown.ts';
 import { readFileSync, writeFileSync, mkdirSync } from 'node:fs';
 import fse from 'fs-extra';
 import { createRequire } from 'module';
@@ -65,7 +68,6 @@ type Command = {
   error?: string;
   browserLog: string;
   attempt: number;
-  gracefulRoot: boolean;
 };
 type DevServerResult = { time: number; command: Command };
 type BuildResult = { time: number; peak?: number };
@@ -155,9 +157,6 @@ interface BuildToolOptions {
    * (for example Bun) and already print `Benchmark Start Time`.
    */
   binFilePath?: string;
-  /** Start Node directly so wrapper processes cannot forward duplicate signals. */
-  startFilePath?: string;
-  startArgs?: string[];
 }
 
 class BuildTool {
@@ -167,8 +166,6 @@ class BuildTool {
   private readonly startedRegex: RegExp;
   private readonly buildScript: string;
   private readonly binFilePath?: string;
-  private readonly startFilePath?: string;
-  private readonly startArgs: string[];
 
   constructor({
     name,
@@ -177,16 +174,12 @@ class BuildTool {
     startedRegex,
     buildScript,
     binFilePath,
-    startFilePath,
-    startArgs = [],
   }: BuildToolOptions) {
     this.name = name;
     this.port = config.port ?? port;
     this.startScript = startScript;
     this.startedRegex = startedRegex;
     this.buildScript = buildScript;
-    this.startFilePath = startFilePath;
-    this.startArgs = startArgs;
     if (binFilePath) {
       this.binFilePath = path.join(process.cwd(), 'node_modules', binFilePath);
       this.hackBinFile();
@@ -229,19 +222,11 @@ class BuildTool {
   }
 
   private launch(script: string, measurement: Measurement): Command {
-    const gracefulRoot = script === this.startScript && !!this.startFilePath;
-    const args = gracefulRoot
-      ? [this.startFilePath!, ...this.startArgs]
-      : ['--run', script];
-    const child = spawn(process.execPath, args, {
+    const child = spawn(process.execPath, ['--run', script], {
       cwd: caseDir,
       detached: true,
       stdio: ['ignore', 'pipe', 'pipe'],
-      env: {
-        ...process.env,
-        NO_COLOR: '1',
-        ...(gracefulRoot ? { NODE_ENV: 'development' } : {}),
-      },
+      env: { ...process.env, NO_COLOR: '1' },
     });
     const command: Command = {
       monitor: monitorProcess(child),
@@ -250,7 +235,6 @@ class BuildTool {
       attempt: currentAttempt,
       child,
       measurement,
-      gracefulRoot,
       memory:
         measurement === 'memory' && child.pid
           ? memorySampler.start(child.pid)
@@ -470,11 +454,6 @@ parseToolNames().forEach((name) => {
           startedRegex: /Local:\s+http:\/\/localhost:(\d+)/,
           buildScript: 'build:utoo',
           binFilePath: '@utoo/pack-cli/bin/run.js',
-          startFilePath:
-            caseName === 'react-dashboard'
-              ? path.join(caseDir, 'start-utoo.mjs')
-              : require.resolve('@utoo/pack-cli/bin/run.js'),
-          startArgs: caseName === 'react-dashboard' ? [] : ['dev'],
         }),
       );
       break;
@@ -637,18 +616,40 @@ async function stopCommand(command: Command) {
   try {
     await command.memory?.stop();
   } finally {
-    try {
-      await stopProcessTree(command.child, {
-        snapshot: memorySampler.snapshot,
-        timeoutMs: timeouts.shutdown,
-        gracefulRoot: command.gracefulRoot,
-      });
-    } catch (error) {
-      // A retryable shutdown error means forced cleanup already finished.
-      if (error instanceof RetryableError) activeCommands.delete(command);
-      throw error;
+    const rootPid = command.child.pid;
+    if (!rootPid) {
+      activeCommands.delete(command);
+      return;
     }
-    activeCommands.delete(command);
+    const signal = async (name: NodeJS.Signals) => {
+      const processes = await memorySampler.snapshot(rootPid);
+      for (const { pid } of processes.reverse()) {
+        try {
+          process.kill(pid, name);
+        } catch (error) {
+          if ((error as NodeJS.ErrnoException).code !== 'ESRCH') throw error;
+        }
+      }
+    };
+    const waitForExit = async (timeout: number) => {
+      const deadline = Date.now() + timeout;
+      do {
+        if (!(await memorySampler.snapshot(rootPid)).length) return true;
+        await sleep(50);
+      } while (Date.now() < deadline);
+      return false;
+    };
+    await signal('SIGTERM');
+    if (await waitForExit(timeouts.shutdown)) {
+      activeCommands.delete(command);
+    } else {
+      await signal('SIGKILL');
+      if (!(await waitForExit(5000)))
+        throw new Error(`Command ${rootPid} survived SIGKILL`);
+      activeCommands.delete(command);
+      // Discard the entire cold/warm pair: the cache may not have been flushed.
+      throw new RetryableError(`Command ${rootPid} required SIGKILL`);
+    }
   }
 }
 
@@ -740,8 +741,6 @@ async function runDevSession(
     succeeded: boolean;
     steady?: object;
     startupTime?: number;
-    serverReadyTime?: number;
-    pageReadyTime?: number;
     hmrTimes?: number[];
   };
   let onDisconnected: () => void;
@@ -879,13 +878,7 @@ async function runDevSession(
         `${buildTool.name} dev (${cache}, memory): steady ${(steady.bytes / 1024 ** 2).toFixed(1)} MiB, peak ${(peak / 1024 ** 2).toFixed(1)} MiB`,
       );
     } else {
-      details = {
-        succeeded: false,
-        startupTime,
-        serverReadyTime: time,
-        pageReadyTime: startupTime - time,
-        hmrTimes,
-      };
+      details = { succeeded: false, startupTime, hmrTimes };
       logger.success(
         `${buildTool.name} dev (${cache}, timing): ${startupTime}ms`,
       );
