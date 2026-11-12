@@ -2,12 +2,11 @@ import assert from 'node:assert/strict';
 import { spawn } from 'node:child_process';
 import { once } from 'node:events';
 import { setTimeout as sleep } from 'node:timers/promises';
-import { test } from 'node:test';
+import { test } from 'rstack/test';
 import { createMemorySampler } from './memory.ts';
 
 test(
   'samples child allocations, preserves their peak, and excludes the driver',
-  { timeout: 20000 },
   async () => {
     const sampler = await createMemorySampler();
     const root = spawn(
