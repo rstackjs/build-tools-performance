@@ -2,33 +2,9 @@
 
 Benchmark comparing JavaScript bundlers and build tools ([Rspack](https://github.com/web-infra-dev/rspack), [Rsbuild](https://github.com/web-infra-dev/rsbuild), [webpack](https://github.com/webpack/webpack), [Vite](https://github.com/vitejs/vite), [Rolldown](https://github.com/rolldown/rolldown), [esbuild](https://github.com/evanw/esbuild), [Rollup](https://github.com/rollup/rollup), [Parcel](https://github.com/parcel-bundler/parcel), [Farm](https://github.com/farm-fe/farm), [Utoo](https://github.com/utooland/utoo) and [Bun](https://bun.com)) for dev server startup time, build performance and bundle size for applications with different module sizes.
 
-## Metrics
-
-| Name                     | Description                                                                            |
-| ------------------------ | -------------------------------------------------------------------------------------- |
-| **Startup (no cache)**   | Time from starting the dev server to page loaded                                       |
-| **Startup (with cache)** | Time from starting the dev server to page loaded with cache                            |
-| **HMR**                  | Time to HMR after changing a module                                                    |
-| **Build (no cache)**     | Time taken to build the production bundles                                             |
-| **Build (with cache)**   | Time taken to build the production bundles with cache                                  |
-| **Memory steady**        | Dev server memory after 10 HMR updates and a fixed idle window, with and without cache |
-| **Memory peak**          | Sampled peak memory during dev or a production build, with and without cache           |
-| **Output size**          | Total size of the output bundle, minified with the configured minifier                 |
-| **Gzipped size**         | Gzipped size of the output bundle, represents actual network transfer size             |
-
-## Notes
-
-- Build targets are `Chrome >= 93` or `es2022`.
-- Minification is enabled in production for all tools.
-- Source map is enabled in development and disabled in production for all tools.
-- Benchmarks run on GitHub Actions with variable hardware, which may cause inconsistent results.
-
-Tooling details:
-
-- webpack is configured to use SWC instead of Babel / Terser.
-- Vite uses Rolldown and Oxc.
-
 ## Results
+
+See [metrics](#metrics) and [notes](#notes) for details.
 
 > Data from [GitHub Actions](https://github.com/rstackjs/build-tools-performance/actions/runs/41301198735) (2026-11-01, benchmark commit `8d085d4d`).
 
@@ -357,6 +333,32 @@ Build memory (MiB):
 | Utoo 1.5.34      | 457.8🥉         | 130.0🥇           |
 
 ---
+
+## Metrics
+
+| Name                     | Description                                                                            |
+| ------------------------ | -------------------------------------------------------------------------------------- |
+| **Startup (no cache)**   | Time from starting the dev server to page loaded                                       |
+| **Startup (with cache)** | Time from starting the dev server to page loaded with cache                            |
+| **HMR**                  | Time to HMR after changing a module                                                    |
+| **Build (no cache)**     | Time taken to build the production bundles                                             |
+| **Build (with cache)**   | Time taken to build the production bundles with cache                                  |
+| **Memory steady**        | Dev server memory after 10 HMR updates and a fixed idle window, with and without cache |
+| **Memory peak**          | Sampled peak memory during dev or a production build, with and without cache           |
+| **Output size**          | Total size of the output bundle, minified with the configured minifier                 |
+| **Gzipped size**         | Gzipped size of the output bundle, represents actual network transfer size             |
+
+## Notes
+
+- Build targets are `Chrome >= 93` or `es2022`.
+- Minification is enabled in production for all tools.
+- Source map is enabled in development and disabled in production for all tools.
+- Benchmarks run on GitHub Actions with variable hardware, which may cause inconsistent results.
+
+Tooling details:
+
+- webpack is configured to use SWC instead of Babel / Terser.
+- Vite uses Rolldown and Oxc.
 
 ## Run locally
 
