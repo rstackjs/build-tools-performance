@@ -4,10 +4,6 @@ Benchmark comparing JavaScript bundlers and build tools ([Rspack](https://github
 
 ## Results
 
-Charts show all metrics; expand **Full benchmark data** under each chart to view the same measurements in tables. Lower is better. Each chart uses its own linear scale from zero to its maximum; compare numeric values across charts.
-
-Bar colors indicate rank within each chart, progressing from teal through blue to violet from best to worst. Ranks use the displayed values; ties share a rank and skip the next place (for example, 1, 1, 3).
-
 See [metrics](#metrics) and [notes](#notes) for details.
 
 > Data from [GitHub Actions](https://github.com/rstackjs/build-tools-performance/actions/runs/43649700631) (2026-11-15 UTC+8, benchmark commit `0dffa8f5`). Memory uses macOS process-tree physical footprint.
