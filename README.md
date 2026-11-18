@@ -4,6 +4,10 @@ Benchmark comparing JavaScript bundlers and build tools ([Rspack](https://github
 
 ## Results
 
+Charts show all metrics; expand **Full benchmark data** under each chart to view the same measurements in tables. Lower is better. Each chart uses its own linear scale from zero to its maximum; compare numeric values across charts.
+
+Bar colors indicate rank within each chart, progressing from teal through blue to violet from best to worst. Ranks use the displayed values; ties share a rank and skip the next place (for example, 1, 1, 3).
+
 See [metrics](#metrics) and [notes](#notes) for details.
 
 > Data from [GitHub Actions](https://github.com/rstackjs/build-tools-performance/actions/runs/43649700631) (2026-11-15 UTC+8, benchmark commit `0dffa8f5`). Memory uses macOS process-tree physical footprint.
@@ -19,6 +23,16 @@ See [case details](cases/react-dashboard/README.md).
 ```bash
 CASE=react-dashboard pnpm benchmark
 ```
+
+<!-- benchmark-chart:start -->
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="assets/charts/react-dashboard-dark.svg">
+  <img alt="react-dashboard" src="assets/charts/react-dashboard-light.svg" width="1040">
+</picture>
+<!-- benchmark-chart:end -->
+
+<details>
+<summary>Full benchmark data</summary>
 
 Development metrics:
 
@@ -60,6 +74,8 @@ Build memory (MiB):
 | webpack 5.112.2  | 1627.8          | 1292.4            |
 | Utoo 1.6.3       | 1154.4          | 280.7🥇           |
 
+</details>
+
 ---
 
 ### react-1k
@@ -69,6 +85,16 @@ A React app with 1,000 components and 1,500 modules from node_modules, using dyn
 ```bash
 CASE=react-1k pnpm benchmark
 ```
+
+<!-- benchmark-chart:start -->
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="assets/charts/react-1k-dark.svg">
+  <img alt="react-1k" src="assets/charts/react-1k-light.svg" width="1040">
+</picture>
+<!-- benchmark-chart:end -->
+
+<details>
+<summary>Full benchmark data</summary>
 
 Development metrics:
 
@@ -122,6 +148,8 @@ Build memory (MiB):
 | Utoo 1.6.3       | 343.2           | 136.6🥈           |
 | Bun 1.4.4        | 97.2🥇          | 100.1🥇           |
 
+</details>
+
 ---
 
 ### react-5k
@@ -131,6 +159,16 @@ A React app with 5,000 components and 5,000 modules from node_modules, using dyn
 ```bash
 CASE=react-5k pnpm benchmark
 ```
+
+<!-- benchmark-chart:start -->
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="assets/charts/react-5k-dark.svg">
+  <img alt="react-5k" src="assets/charts/react-5k-light.svg" width="1040">
+</picture>
+<!-- benchmark-chart:end -->
+
+<details>
+<summary>Full benchmark data</summary>
 
 Development metrics:
 
@@ -176,6 +214,8 @@ Build memory (MiB):
 | Farm 1.7.11      | 432.7🥈         | 378.8🥈           |
 | Parcel 2.16.4    | 1786.2          | 576.7             |
 
+</details>
+
 ---
 
 ### react-10k
@@ -185,6 +225,16 @@ A React app with 10,000 components and 10,000 modules from node_modules, using d
 ```bash
 CASE=react-10k pnpm benchmark
 ```
+
+<!-- benchmark-chart:start -->
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="assets/charts/react-10k-dark.svg">
+  <img alt="react-10k" src="assets/charts/react-10k-light.svg" width="1040">
+</picture>
+<!-- benchmark-chart:end -->
+
+<details>
+<summary>Full benchmark data</summary>
 
 Development metrics:
 
@@ -222,6 +272,8 @@ Build memory (MiB):
 | Vite 8.3.8       | 1204.9🥉        | 1201.4🥉          |
 | webpack 5.112.2  | 1849.3          | 1543.6            |
 
+</details>
+
 ---
 
 ### ui-components
@@ -233,6 +285,16 @@ Including [@mui/material](https://npmjs.com/package/@mui/material), [@radix-ui/t
 ```bash
 CASE=ui-components pnpm benchmark
 ```
+
+<!-- benchmark-chart:start -->
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="assets/charts/ui-components-dark.svg">
+  <img alt="ui-components" src="assets/charts/ui-components-light.svg" width="1040">
+</picture>
+<!-- benchmark-chart:end -->
+
+<details>
+<summary>Full benchmark data</summary>
 
 Build metrics:
 
@@ -259,6 +321,8 @@ Build memory (MiB):
 | Farm 1.7.11      | 1700.2          | 1395.5            |
 | Parcel 2.16.4    | 3396.0          | 929.0🥈           |
 | Utoo 1.6.3       | 1084.0🥈        | 247.8🥇           |
+
+</details>
 
 ---
 
@@ -304,6 +368,16 @@ frontend packages with ESM-friendly entry points where practical, including
 CASE=popular-libs pnpm benchmark
 ```
 
+<!-- benchmark-chart:start -->
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="assets/charts/popular-libs-dark.svg">
+  <img alt="popular-libs" src="assets/charts/popular-libs-light.svg" width="1040">
+</picture>
+<!-- benchmark-chart:end -->
+
+<details>
+<summary>Full benchmark data</summary>
+
 Build metrics:
 
 | Name             | Build (no cache) | Build (with cache) | Output size | Gzipped size |
@@ -331,6 +405,8 @@ Build memory (MiB):
 | esbuild 0.28.2   | 439.2           | 448.7🥉           |
 | Farm 1.7.11      | 582.4           | 515.4             |
 | Utoo 1.6.3       | 420.4🥉         | 128.7🥇           |
+
+</details>
 
 ---
 
@@ -361,6 +437,12 @@ Tooling details:
 - Vite uses Rolldown and Oxc.
 
 ## Run locally
+
+To regenerate the charts from the current README tables without running benchmarks:
+
+```bash
+pnpm charts
+```
 
 Run the `benchmark.ts` script to get the results (requires Node.js >= 22):
 

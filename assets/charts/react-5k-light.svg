@@ -1,0 +1,296 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1040" height="872" viewBox="0 0 1040 872" role="img" aria-labelledby="title description">
+<title id="title">react-5k benchmark results</title>
+<desc id="description">Startup · no cache (ms); Startup · with cache (ms); HMR (ms); Build · no cache (ms); Build · with cache (ms); Output size (kB); Build peak memory · no cache (MiB); Build peak memory · with cache (MiB); Gzipped size (kB); Dev steady memory · no cache (MiB); Dev steady memory · with cache (MiB); Dev peak memory · no cache (MiB); Dev peak memory · with cache (MiB). Each chart shows one metric on its own linear scale from zero to its maximum. Lower is better. Colors indicate rank within each chart, progressing from teal through blue to violet as rank increases. Equal displayed values share a rank. Bar lengths are comparable within a chart; compare numeric values across charts. Tool order is consistent across charts. Versions and the same measurements are available in the README tables.</desc>
+<g font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif" style="font-variant-numeric:tabular-nums">
+<rect width="1040" height="872" rx="12" fill="#f6f8fb"/>
+<text x="16" y="23" font-size="10" fill="#596779" font-weight="700" letter-spacing="1.5">BUILD TOOLS COMPARISON</text>
+<text x="16" y="49" font-size="24" fill="#182230" font-weight="700">react-5k</text>
+<g class="chart" data-metric="Startup (no cache)" data-table="Development metrics" data-scale="15405">
+<rect x="16" y="64" width="329.3333333333333" height="148" rx="8" fill="#ffffff" stroke="#dce3ec"/>
+<text x="26" y="85" font-size="12" fill="#182230" font-weight="650">Startup · no cache (ms)</text>
+<text x="26" y="109" font-size="10.5" fill="#182230" >Rspack CLI</text>
+<rect class="bar" data-rank="2" x="96" y="100" width="20.009" height="10" rx="2" fill="#2f9faf"/>
+<text x="120.00895813047711" y="109" font-size="10" fill="#182230" >1,611</text>
+<text x="26" y="127" font-size="10.5" fill="#182230" >Rsbuild</text>
+<rect class="bar" data-rank="1" x="96" y="118" width="17.488" height="10" rx="2" fill="#219e91"/>
+<text x="117.48765552309857" y="127" font-size="10" fill="#182230" >1,408</text>
+<text x="26" y="145" font-size="10.5" fill="#182230" >Vite</text>
+<rect class="bar" data-rank="4" x="96" y="136" width="70.236" height="10" rx="2" fill="#617cd0"/>
+<text x="170.23628691983123" y="145" font-size="10" fill="#182230" >5,655</text>
+<text x="26" y="163" font-size="10.5" fill="#182230" >webpack</text>
+<rect class="bar" data-rank="5" x="96" y="154" width="184.229" height="10" rx="2" fill="#856ac3"/>
+<text x="284.2289732770745" y="163" font-size="10" fill="#182230" >14,833</text>
+<text x="26" y="181" font-size="10.5" fill="#182230" >Farm</text>
+<rect class="bar" data-rank="3" x="96" y="172" width="27.560" height="10" rx="2" fill="#4390c9"/>
+<text x="127.56044574272423" y="181" font-size="10" fill="#182230" >2,219</text>
+<text x="26" y="199" font-size="10.5" fill="#182230" >Parcel</text>
+<rect class="bar" data-rank="6" x="96" y="190" width="191.333" height="10" rx="2" fill="#ad63ad"/>
+<text x="291.3333333333333" y="199" font-size="10" fill="#182230" >15,405</text>
+</g>
+<g class="chart" data-metric="Startup (with cache)" data-table="Development metrics" data-scale="13862">
+<rect x="355.3333333333333" y="64" width="329.3333333333333" height="148" rx="8" fill="#ffffff" stroke="#dce3ec"/>
+<text x="365.3333333333333" y="85" font-size="12" fill="#182230" font-weight="650">Startup · with cache (ms)</text>
+<text x="365.3333333333333" y="109" font-size="10.5" fill="#182230" >Rspack CLI</text>
+<rect class="bar" data-rank="3" x="435.3333333333333" y="100" width="26.156" height="10" rx="2" fill="#4390c9"/>
+<text x="465.4894916558457" y="109" font-size="10" fill="#182230" >1,895</text>
+<text x="365.3333333333333" y="127" font-size="10.5" fill="#182230" >Rsbuild</text>
+<rect class="bar" data-rank="2" x="435.3333333333333" y="118" width="14.728" height="10" rx="2" fill="#2f9faf"/>
+<text x="454.06083778194585" y="127" font-size="10" fill="#182230" >1,067</text>
+<text x="365.3333333333333" y="145" font-size="10.5" fill="#182230" >Vite</text>
+<rect class="bar" data-rank="5" x="435.3333333333333" y="136" width="63.672" height="10" rx="2" fill="#856ac3"/>
+<text x="503.0052902419083" y="145" font-size="10" fill="#182230" >4,613</text>
+<text x="365.3333333333333" y="163" font-size="10.5" fill="#182230" >webpack</text>
+<rect class="bar" data-rank="6" x="435.3333333333333" y="154" width="191.333" height="10" rx="2" fill="#ad63ad"/>
+<text x="630.6666666666666" y="163" font-size="10" fill="#182230" >13,862</text>
+<text x="365.3333333333333" y="181" font-size="10.5" fill="#182230" >Farm</text>
+<rect class="bar" data-rank="1" x="435.3333333333333" y="172" width="12.091" height="10" rx="2" fill="#219e91"/>
+<text x="451.4245178665897" y="181" font-size="10" fill="#182230" >876</text>
+<text x="365.3333333333333" y="199" font-size="10.5" fill="#182230" >Parcel</text>
+<rect class="bar" data-rank="4" x="435.3333333333333" y="190" width="33.955" height="10" rx="2" fill="#617cd0"/>
+<text x="473.2880296253547" y="199" font-size="10" fill="#182230" >2,460</text>
+</g>
+<g class="chart" data-metric="HMR" data-table="Development metrics" data-scale="1486">
+<rect x="694.6666666666666" y="64" width="329.3333333333333" height="148" rx="8" fill="#ffffff" stroke="#dce3ec"/>
+<text x="704.6666666666666" y="85" font-size="12" fill="#182230" font-weight="650">HMR (ms)</text>
+<text x="704.6666666666666" y="109" font-size="10.5" fill="#182230" >Rspack CLI</text>
+<rect class="bar" data-rank="1" x="774.6666666666666" y="100" width="10.558" height="10" rx="2" fill="#219e91"/>
+<text x="789.2247644683714" y="109" font-size="10" fill="#182230" >82</text>
+<text x="704.6666666666666" y="127" font-size="10.5" fill="#182230" >Rsbuild</text>
+<rect class="bar" data-rank="2" x="774.6666666666666" y="118" width="13.648" height="10" rx="2" fill="#2f9faf"/>
+<text x="792.314939434724" y="127" font-size="10" fill="#182230" >106</text>
+<text x="704.6666666666666" y="145" font-size="10.5" fill="#182230" >Vite</text>
+<rect class="bar" data-rank="3" x="774.6666666666666" y="136" width="16.352" height="10" rx="2" fill="#4390c9"/>
+<text x="795.0188425302827" y="145" font-size="10" fill="#182230" >127</text>
+<text x="704.6666666666666" y="163" font-size="10.5" fill="#182230" >webpack</text>
+<rect class="bar" data-rank="6" x="774.6666666666666" y="154" width="191.333" height="10" rx="2" fill="#ad63ad"/>
+<text x="970" y="163" font-size="10" fill="#182230" >1,486</text>
+<text x="704.6666666666666" y="181" font-size="10.5" fill="#182230" >Farm</text>
+<rect class="bar" data-rank="4" x="774.6666666666666" y="172" width="18.026" height="10" rx="2" fill="#617cd0"/>
+<text x="796.6926873037236" y="181" font-size="10" fill="#182230" >140</text>
+<text x="704.6666666666666" y="199" font-size="10.5" fill="#182230" >Parcel</text>
+<rect class="bar" data-rank="5" x="774.6666666666666" y="190" width="57.039" height="10" rx="2" fill="#856ac3"/>
+<text x="835.7061462539255" y="199" font-size="10" fill="#182230" >443</text>
+</g>
+<g class="chart" data-metric="Build (no cache)" data-table="Build metrics" data-scale="16445">
+<rect x="16" y="222" width="329.3333333333333" height="148" rx="8" fill="#ffffff" stroke="#dce3ec"/>
+<text x="26" y="243" font-size="12" fill="#182230" font-weight="650">Build · no cache (ms)</text>
+<text x="26" y="267" font-size="10.5" fill="#182230" >Rspack CLI</text>
+<rect class="bar" data-rank="2" x="96" y="258" width="22.653" height="10" rx="2" fill="#2f9faf"/>
+<text x="122.65284280936454" y="267" font-size="10" fill="#182230" >1,947</text>
+<text x="26" y="285" font-size="10.5" fill="#182230" >Rsbuild</text>
+<rect class="bar" data-rank="3" x="96" y="276" width="26.283" height="10" rx="2" fill="#4390c9"/>
+<text x="126.28288233505624" y="285" font-size="10" fill="#182230" >2,259</text>
+<text x="26" y="303" font-size="10.5" fill="#182230" >Vite</text>
+<rect class="bar" data-rank="1" x="96" y="294" width="17.115" height="10" rx="2" fill="#219e91"/>
+<text x="117.11470558427081" y="303" font-size="10" fill="#182230" >1,471</text>
+<text x="26" y="321" font-size="10.5" fill="#182230" >webpack</text>
+<rect class="bar" data-rank="6" x="96" y="312" width="191.333" height="10" rx="2" fill="#ad63ad"/>
+<text x="291.3333333333333" y="321" font-size="10" fill="#182230" >16,445</text>
+<text x="26" y="339" font-size="10.5" fill="#182230" >Farm</text>
+<rect class="bar" data-rank="4" x="96" y="330" width="82.572" height="10" rx="2" fill="#617cd0"/>
+<text x="182.57176446741664" y="339" font-size="10" fill="#182230" >7,097</text>
+<text x="26" y="357" font-size="10.5" fill="#182230" >Parcel</text>
+<rect class="bar" data-rank="5" x="96" y="348" width="188.948" height="10" rx="2" fill="#856ac3"/>
+<text x="288.94821120908074" y="357" font-size="10" fill="#182230" >16,240</text>
+</g>
+<g class="chart" data-metric="Build (with cache)" data-table="Build metrics" data-scale="4748">
+<rect x="355.3333333333333" y="222" width="329.3333333333333" height="148" rx="8" fill="#ffffff" stroke="#dce3ec"/>
+<text x="365.3333333333333" y="243" font-size="12" fill="#182230" font-weight="650">Build · with cache (ms)</text>
+<text x="365.3333333333333" y="267" font-size="10.5" fill="#182230" >Rspack CLI</text>
+<rect class="bar" data-rank="1" x="435.3333333333333" y="258" width="42.192" height="10" rx="2" fill="#219e91"/>
+<text x="481.5249929795001" y="267" font-size="10" fill="#182230" >1,047</text>
+<text x="365.3333333333333" y="285" font-size="10.5" fill="#182230" >Rsbuild</text>
+<rect class="bar" data-rank="2" x="435.3333333333333" y="276" width="46.101" height="10" rx="2" fill="#2f9faf"/>
+<text x="485.4338668913226" y="285" font-size="10" fill="#182230" >1,144</text>
+<text x="365.3333333333333" y="303" font-size="10.5" fill="#182230" >Vite</text>
+<rect class="bar" data-rank="3" x="435.3333333333333" y="294" width="58.109" height="10" rx="2" fill="#4390c9"/>
+<text x="497.4425723111485" y="303" font-size="10" fill="#182230" >1,442</text>
+<text x="365.3333333333333" y="321" font-size="10.5" fill="#182230" >webpack</text>
+<rect class="bar" data-rank="6" x="435.3333333333333" y="312" width="191.333" height="10" rx="2" fill="#ad63ad"/>
+<text x="630.6666666666666" y="321" font-size="10" fill="#182230" >4,748</text>
+<text x="365.3333333333333" y="339" font-size="10.5" fill="#182230" >Farm</text>
+<rect class="bar" data-rank="4" x="435.3333333333333" y="330" width="101.510" height="10" rx="2" fill="#617cd0"/>
+<text x="540.8431620331368" y="339" font-size="10" fill="#182230" >2,519</text>
+<text x="365.3333333333333" y="357" font-size="10.5" fill="#182230" >Parcel</text>
+<rect class="bar" data-rank="5" x="435.3333333333333" y="348" width="114.083" height="10" rx="2" fill="#856ac3"/>
+<text x="553.4160348216793" y="357" font-size="10" fill="#182230" >2,831</text>
+</g>
+<g class="chart" data-metric="Output size" data-table="Build metrics" data-scale="3459.4">
+<rect x="694.6666666666666" y="222" width="329.3333333333333" height="148" rx="8" fill="#ffffff" stroke="#dce3ec"/>
+<text x="704.6666666666666" y="243" font-size="12" fill="#182230" font-weight="650">Output size (kB)</text>
+<text x="704.6666666666666" y="267" font-size="10.5" fill="#182230" >Rspack CLI</text>
+<rect class="bar" data-rank="3" x="774.6666666666666" y="258" width="149.758" height="10" rx="2" fill="#4390c9"/>
+<text x="928.4247942803183" y="267" font-size="10" fill="#182230" >2,707.7</text>
+<text x="704.6666666666666" y="285" font-size="10.5" fill="#182230" >Rsbuild</text>
+<rect class="bar" data-rank="2" x="774.6666666666666" y="276" width="145.892" height="10" rx="2" fill="#2f9faf"/>
+<text x="924.5587481451504" y="285" font-size="10" fill="#182230" >2,637.8</text>
+<text x="704.6666666666666" y="303" font-size="10.5" fill="#182230" >Vite</text>
+<rect class="bar" data-rank="1" x="774.6666666666666" y="294" width="140.588" height="10" rx="2" fill="#219e91"/>
+<text x="919.2546877107783" y="303" font-size="10" fill="#182230" >2,541.9</text>
+<text x="704.6666666666666" y="321" font-size="10.5" fill="#182230" >webpack</text>
+<rect class="bar" data-rank="4" x="774.6666666666666" y="312" width="149.924" height="10" rx="2" fill="#617cd0"/>
+<text x="928.5907190071496" y="321" font-size="10" fill="#182230" >2,710.7</text>
+<text x="704.6666666666666" y="339" font-size="10.5" fill="#182230" >Farm</text>
+<rect class="bar" data-rank="6" x="774.6666666666666" y="330" width="191.333" height="10" rx="2" fill="#ad63ad"/>
+<text x="970" y="339" font-size="10" fill="#182230" >3,459.4</text>
+<text x="704.6666666666666" y="357" font-size="10.5" fill="#182230" >Parcel</text>
+<rect class="bar" data-rank="5" x="774.6666666666666" y="348" width="188.264" height="10" rx="2" fill="#856ac3"/>
+<text x="966.9303925536219" y="357" font-size="10" fill="#182230" >3,403.9</text>
+</g>
+<g class="chart" data-metric="Peak (no cache)" data-table="Build memory (MiB)" data-scale="1786.2">
+<rect x="16" y="380" width="329.3333333333333" height="148" rx="8" fill="#ffffff" stroke="#dce3ec"/>
+<text x="26" y="401" font-size="12" fill="#182230" font-weight="650">Build peak memory · no cache (MiB)</text>
+<text x="26" y="425" font-size="10.5" fill="#182230" >Rspack CLI</text>
+<rect class="bar" data-rank="1" x="96" y="416" width="45.107" height="10" rx="2" fill="#219e91"/>
+<text x="145.10719217706117" y="425" font-size="10" fill="#182230" >421.1</text>
+<text x="26" y="443" font-size="10.5" fill="#182230" >Rsbuild</text>
+<rect class="bar" data-rank="3" x="96" y="434" width="46.596" height="10" rx="2" fill="#4390c9"/>
+<text x="146.59612585376777" y="443" font-size="10" fill="#182230" >435.0</text>
+<text x="26" y="461" font-size="10.5" fill="#182230" >Vite</text>
+<rect class="bar" data-rank="4" x="96" y="452" width="67.281" height="10" rx="2" fill="#617cd0"/>
+<text x="167.28052103161275" y="461" font-size="10" fill="#182230" >628.1</text>
+<text x="26" y="479" font-size="10.5" fill="#182230" >webpack</text>
+<rect class="bar" data-rank="5" x="96" y="470" width="121.536" height="10" rx="2" fill="#856ac3"/>
+<text x="221.53555033031012" y="479" font-size="10" fill="#182230" >1,134.6</text>
+<text x="26" y="497" font-size="10.5" fill="#182230" >Farm</text>
+<rect class="bar" data-rank="2" x="96" y="488" width="46.350" height="10" rx="2" fill="#2f9faf"/>
+<text x="146.34975553316164" y="497" font-size="10" fill="#182230" >432.7</text>
+<text x="26" y="515" font-size="10.5" fill="#182230" >Parcel</text>
+<rect class="bar" data-rank="6" x="96" y="506" width="191.333" height="10" rx="2" fill="#ad63ad"/>
+<text x="291.3333333333333" y="515" font-size="10" fill="#182230" >1,786.2</text>
+</g>
+<g class="chart" data-metric="Peak (with cache)" data-table="Build memory (MiB)" data-scale="929.7">
+<rect x="355.3333333333333" y="380" width="329.3333333333333" height="148" rx="8" fill="#ffffff" stroke="#dce3ec"/>
+<text x="365.3333333333333" y="401" font-size="12" fill="#182230" font-weight="650">Build peak memory · with cache (MiB)</text>
+<text x="365.3333333333333" y="425" font-size="10.5" fill="#182230" >Rspack CLI</text>
+<rect class="bar" data-rank="3" x="435.3333333333333" y="416" width="86.869" height="10" rx="2" fill="#4390c9"/>
+<text x="526.2020006453695" y="425" font-size="10" fill="#182230" >422.1</text>
+<text x="365.3333333333333" y="443" font-size="10.5" fill="#182230" >Rsbuild</text>
+<rect class="bar" data-rank="1" x="435.3333333333333" y="434" width="76.044" height="10" rx="2" fill="#219e91"/>
+<text x="515.3768599189702" y="443" font-size="10" fill="#182230" >369.5</text>
+<text x="365.3333333333333" y="461" font-size="10.5" fill="#182230" >Vite</text>
+<rect class="bar" data-rank="5" x="435.3333333333333" y="452" width="128.626" height="10" rx="2" fill="#856ac3"/>
+<text x="567.9590548922591" y="461" font-size="10" fill="#182230" >625.0</text>
+<text x="365.3333333333333" y="479" font-size="10.5" fill="#182230" >webpack</text>
+<rect class="bar" data-rank="6" x="435.3333333333333" y="470" width="191.333" height="10" rx="2" fill="#ad63ad"/>
+<text x="630.6666666666666" y="479" font-size="10" fill="#182230" >929.7</text>
+<text x="365.3333333333333" y="497" font-size="10.5" fill="#182230" >Farm</text>
+<rect class="bar" data-rank="2" x="435.3333333333333" y="488" width="77.957" height="10" rx="2" fill="#2f9faf"/>
+<text x="517.290810655767" y="497" font-size="10" fill="#182230" >378.8</text>
+<text x="365.3333333333333" y="515" font-size="10.5" fill="#182230" >Parcel</text>
+<rect class="bar" data-rank="4" x="435.3333333333333" y="506" width="118.686" height="10" rx="2" fill="#617cd0"/>
+<text x="558.0188591301853" y="515" font-size="10" fill="#182230" >576.7</text>
+</g>
+<g class="chart" data-metric="Gzipped size" data-table="Build metrics" data-scale="803.2">
+<rect x="694.6666666666666" y="380" width="329.3333333333333" height="148" rx="8" fill="#ffffff" stroke="#dce3ec"/>
+<text x="704.6666666666666" y="401" font-size="12" fill="#182230" font-weight="650">Gzipped size (kB)</text>
+<text x="704.6666666666666" y="425" font-size="10.5" fill="#182230" >Rspack CLI</text>
+<rect class="bar" data-rank="3" x="774.6666666666666" y="416" width="162.557" height="10" rx="2" fill="#4390c9"/>
+<text x="941.2237715803452" y="425" font-size="10" fill="#182230" >682.4</text>
+<text x="704.6666666666666" y="443" font-size="10.5" fill="#182230" >Rsbuild</text>
+<rect class="bar" data-rank="1" x="774.6666666666666" y="434" width="160.937" height="10" rx="2" fill="#219e91"/>
+<text x="939.6039176626825" y="443" font-size="10" fill="#182230" >675.6</text>
+<text x="704.6666666666666" y="461" font-size="10.5" fill="#182230" >Vite</text>
+<rect class="bar" data-rank="4" x="774.6666666666666" y="452" width="165.273" height="10" rx="2" fill="#617cd0"/>
+<text x="943.9394090305444" y="461" font-size="10" fill="#182230" >693.8</text>
+<text x="704.6666666666666" y="479" font-size="10.5" fill="#182230" >webpack</text>
+<rect class="bar" data-rank="2" x="774.6666666666666" y="470" width="162.509" height="10" rx="2" fill="#2f9faf"/>
+<text x="941.176128818061" y="479" font-size="10" fill="#182230" >682.2</text>
+<text x="704.6666666666666" y="497" font-size="10.5" fill="#182230" >Farm</text>
+<rect class="bar" data-rank="6" x="774.6666666666666" y="488" width="191.333" height="10" rx="2" fill="#ad63ad"/>
+<text x="970" y="497" font-size="10" fill="#182230" >803.2</text>
+<text x="704.6666666666666" y="515" font-size="10.5" fill="#182230" >Parcel</text>
+<rect class="bar" data-rank="5" x="774.6666666666666" y="506" width="182.877" height="10" rx="2" fill="#856ac3"/>
+<text x="961.5434096945551" y="515" font-size="10" fill="#182230" >767.7</text>
+</g>
+<g class="chart" data-metric="Steady (no cache)" data-table="Dev memory (MiB)" data-scale="1390">
+<rect x="16" y="538" width="329.3333333333333" height="148" rx="8" fill="#ffffff" stroke="#dce3ec"/>
+<text x="26" y="559" font-size="12" fill="#182230" font-weight="650">Dev steady memory · no cache (MiB)</text>
+<text x="26" y="583" font-size="10.5" fill="#182230" >Rspack CLI</text>
+<rect class="bar" data-rank="2" x="96" y="574" width="26.222" height="10" rx="2" fill="#2f9faf"/>
+<text x="126.22230215827338" y="583" font-size="10" fill="#182230" >190.5</text>
+<text x="26" y="601" font-size="10.5" fill="#182230" >Rsbuild</text>
+<rect class="bar" data-rank="1" x="96" y="592" width="24.281" height="10" rx="2" fill="#219e91"/>
+<text x="124.28143884892086" y="601" font-size="10" fill="#182230" >176.4</text>
+<text x="26" y="619" font-size="10.5" fill="#182230" >Vite</text>
+<rect class="bar" data-rank="4" x="96" y="610" width="89.789" height="10" rx="2" fill="#617cd0"/>
+<text x="189.78901678657073" y="619" font-size="10" fill="#182230" >652.3</text>
+<text x="26" y="637" font-size="10.5" fill="#182230" >webpack</text>
+<rect class="bar" data-rank="5" x="96" y="628" width="169.351" height="10" rx="2" fill="#856ac3"/>
+<text x="269.3506474820143" y="637" font-size="10" fill="#182230" >1,230.3</text>
+<text x="26" y="655" font-size="10.5" fill="#182230" >Farm</text>
+<rect class="bar" data-rank="3" x="96" y="646" width="47.517" height="10" rx="2" fill="#4390c9"/>
+<text x="147.5167386091127" y="655" font-size="10" fill="#182230" >345.2</text>
+<text x="26" y="673" font-size="10.5" fill="#182230" >Parcel</text>
+<rect class="bar" data-rank="6" x="96" y="664" width="191.333" height="10" rx="2" fill="#ad63ad"/>
+<text x="291.3333333333333" y="673" font-size="10" fill="#182230" >1,390.0</text>
+</g>
+<g class="chart" data-metric="Steady (with cache)" data-table="Dev memory (MiB)" data-scale="1799">
+<rect x="355.3333333333333" y="538" width="329.3333333333333" height="148" rx="8" fill="#ffffff" stroke="#dce3ec"/>
+<text x="365.3333333333333" y="559" font-size="12" fill="#182230" font-weight="650">Dev steady memory · with cache (MiB)</text>
+<text x="365.3333333333333" y="583" font-size="10.5" fill="#182230" >Rspack CLI</text>
+<rect class="bar" data-rank="2" x="435.3333333333333" y="574" width="21.292" height="10" rx="2" fill="#2f9faf"/>
+<text x="460.6256809338521" y="583" font-size="10" fill="#182230" >200.2</text>
+<text x="365.3333333333333" y="601" font-size="10.5" fill="#182230" >Rsbuild</text>
+<rect class="bar" data-rank="1" x="435.3333333333333" y="592" width="19.144" height="10" rx="2" fill="#219e91"/>
+<text x="458.47730220492866" y="601" font-size="10" fill="#182230" >180.0</text>
+<text x="365.3333333333333" y="619" font-size="10.5" fill="#182230" >Vite</text>
+<rect class="bar" data-rank="3" x="435.3333333333333" y="610" width="25.525" height="10" rx="2" fill="#4390c9"/>
+<text x="464.8586251621271" y="619" font-size="10" fill="#182230" >240.0</text>
+<text x="365.3333333333333" y="637" font-size="10.5" fill="#182230" >webpack</text>
+<rect class="bar" data-rank="6" x="435.3333333333333" y="628" width="191.333" height="10" rx="2" fill="#ad63ad"/>
+<text x="630.6666666666666" y="637" font-size="10" fill="#182230" >1,799.0</text>
+<text x="365.3333333333333" y="655" font-size="10.5" fill="#182230" >Farm</text>
+<rect class="bar" data-rank="4" x="435.3333333333333" y="646" width="34.363" height="10" rx="2" fill="#617cd0"/>
+<text x="473.69675745784696" y="655" font-size="10" fill="#182230" >323.1</text>
+<text x="365.3333333333333" y="673" font-size="10.5" fill="#182230" >Parcel</text>
+<rect class="bar" data-rank="5" x="435.3333333333333" y="664" width="109.291" height="10" rx="2" fill="#856ac3"/>
+<text x="548.6241245136187" y="673" font-size="10" fill="#182230" >1,027.6</text>
+</g>
+<g class="chart" data-metric="Peak (no cache)" data-table="Dev memory (MiB)" data-scale="1896.5">
+<rect x="694.6666666666666" y="538" width="329.3333333333333" height="148" rx="8" fill="#ffffff" stroke="#dce3ec"/>
+<text x="704.6666666666666" y="559" font-size="12" fill="#182230" font-weight="650">Dev peak memory · no cache (MiB)</text>
+<text x="704.6666666666666" y="583" font-size="10.5" fill="#182230" >Rspack CLI</text>
+<rect class="bar" data-rank="2" x="774.6666666666666" y="574" width="20.975" height="10" rx="2" fill="#2f9faf"/>
+<text x="799.6411986993585" y="583" font-size="10" fill="#182230" >207.9</text>
+<text x="704.6666666666666" y="601" font-size="10.5" fill="#182230" >Rsbuild</text>
+<rect class="bar" data-rank="1" x="774.6666666666666" y="592" width="18.049" height="10" rx="2" fill="#219e91"/>
+<text x="796.7154583003778" y="601" font-size="10" fill="#182230" >178.9</text>
+<text x="704.6666666666666" y="619" font-size="10.5" fill="#182230" >Vite</text>
+<rect class="bar" data-rank="4" x="774.6666666666666" y="610" width="67.363" height="10" rx="2" fill="#617cd0"/>
+<text x="846.0293171631953" y="619" font-size="10" fill="#182230" >667.7</text>
+<text x="704.6666666666666" y="637" font-size="10.5" fill="#182230" >webpack</text>
+<rect class="bar" data-rank="6" x="774.6666666666666" y="628" width="191.333" height="10" rx="2" fill="#ad63ad"/>
+<text x="970" y="637" font-size="10" fill="#182230" >1,896.5</text>
+<text x="704.6666666666666" y="655" font-size="10.5" fill="#182230" >Farm</text>
+<rect class="bar" data-rank="3" x="774.6666666666666" y="646" width="35.401" height="10" rx="2" fill="#4390c9"/>
+<text x="814.0681254943316" y="655" font-size="10" fill="#182230" >350.9</text>
+<text x="704.6666666666666" y="673" font-size="10.5" fill="#182230" >Parcel</text>
+<rect class="bar" data-rank="5" x="774.6666666666666" y="664" width="160.482" height="10" rx="2" fill="#856ac3"/>
+<text x="939.1485719307495" y="673" font-size="10" fill="#182230" >1,590.7</text>
+</g>
+<g class="chart" data-metric="Peak (with cache)" data-table="Dev memory (MiB)" data-scale="1909.5">
+<rect x="16" y="696" width="329.3333333333333" height="148" rx="8" fill="#ffffff" stroke="#dce3ec"/>
+<text x="26" y="717" font-size="12" fill="#182230" font-weight="650">Dev peak memory · with cache (MiB)</text>
+<text x="26" y="741" font-size="10.5" fill="#182230" >Rspack CLI</text>
+<rect class="bar" data-rank="2" x="96" y="732" width="20.671" height="10" rx="2" fill="#2f9faf"/>
+<text x="120.67141485554683" y="741" font-size="10" fill="#182230" >206.3</text>
+<text x="26" y="759" font-size="10.5" fill="#182230" >Rsbuild</text>
+<rect class="bar" data-rank="1" x="96" y="750" width="18.718" height="10" rx="2" fill="#219e91"/>
+<text x="118.7175002182072" y="759" font-size="10" fill="#182230" >186.8</text>
+<text x="26" y="777" font-size="10.5" fill="#182230" >Vite</text>
+<rect class="bar" data-rank="3" x="96" y="768" width="24.048" height="10" rx="2" fill="#4390c9"/>
+<text x="124.04818015187222" y="777" font-size="10" fill="#182230" >240.0</text>
+<text x="26" y="795" font-size="10.5" fill="#182230" >webpack</text>
+<rect class="bar" data-rank="6" x="96" y="786" width="191.333" height="10" rx="2" fill="#ad63ad"/>
+<text x="291.3333333333333" y="795" font-size="10" fill="#182230" >1,909.5</text>
+<text x="26" y="813" font-size="10.5" fill="#182230" >Farm</text>
+<rect class="bar" data-rank="4" x="96" y="804" width="32.595" height="10" rx="2" fill="#617cd0"/>
+<text x="132.59530418085012" y="813" font-size="10" fill="#182230" >325.3</text>
+<text x="26" y="831" font-size="10.5" fill="#182230" >Parcel</text>
+<rect class="bar" data-rank="5" x="96" y="822" width="124.820" height="10" rx="2" fill="#856ac3"/>
+<text x="224.82007506328006" y="831" font-size="10" fill="#182230" >1,245.7</text>
+</g>
+<text x="16" y="860" font-size="10" fill="#596779" >Memory: macOS process-tree physical footprint.</text>
+</g>
+</svg>
