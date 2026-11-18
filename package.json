@@ -4,6 +4,7 @@
   "type": "module",
   "scripts": {
     "benchmark": "node ./scripts/benchmark.ts",
+    "charts": "node ./scripts/generate-charts.ts",
     "build:cases": "node ./scripts/build-rspack-cases.ts",
     "format": "rs fmt",
     "format:check": "rs fmt --check",
