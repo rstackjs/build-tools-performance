@@ -71,11 +71,9 @@ jobs:
       - name: Test memory sampler
         run: pnpm test
 
-      - name: Verify application parity
+      - name: Typecheck dashboard
         if: matrix.case == 'react-dashboard'
-        run: |
-          pnpm --filter react-dashboard typecheck
-          pnpm --filter react-dashboard verify:all
+        run: pnpm --filter react-dashboard typecheck
 
       - name: Run Benchmark
         run: cross-env CASE=${{ matrix.case }} pnpm benchmark

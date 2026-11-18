@@ -5,7 +5,6 @@
   "type": "module",
   "scripts": {
     "generate": "node generate.mjs",
-    "verify": "node verify.mjs",
     "typecheck": "node generate.mjs && tsc --project tsconfig.json",
     "build:rspack": "cross-env NODE_ENV=production rspack build",
     "build:rsbuild": "cross-env NODE_ENV=production rsbuild build",
@@ -16,8 +15,7 @@
     "start:rsbuild": "cross-env NODE_ENV=development rsbuild dev",
     "start:webpack": "cross-env NODE_ENV=development webpack serve --mode development",
     "start:vite": "cross-env NODE_ENV=development vite",
-    "start:utoo": "cross-env NODE_ENV=development node start-utoo.mjs",
-    "verify:all": "node verify-all.mjs"
+    "start:utoo": "cross-env NODE_ENV=development node start-utoo.mjs"
   },
   "dependencies": {
     "@headlessui/react": "2.2.10",

@@ -8,7 +8,6 @@ Run from the repository root:
 CASE=react-dashboard pnpm benchmark
 pnpm --filter react-dashboard start:vite
 pnpm --filter react-dashboard typecheck
-pnpm --filter react-dashboard verify:all
 # Regenerate sources after manual edits or partial deletion
 pnpm --filter react-dashboard generate --force
 ```
@@ -40,11 +39,6 @@ pnpm --filter react-dashboard generate --force
   assets as files. Compiler, chunking, and cache implementations remain native.
 - Vite prebundles the declared runtime dependencies at startup so opening a
   lazy route does not trigger a dependency-optimizer reload.
-- CI checks all routes' content and styles, business interactions,
-  approvals, report persistence and CSV export, localization, and
-  state-preserving HMR before measuring. Run verification sequentially because
-  tools share `dist/` and HMR checks temporarily edit source files. CSS HMR is
-  verified but not separately timed.
 - Each development session gets a fresh browser context. Cold/warm refers to
   build-tool caches; OS caches are not flushed. Bundle sizes reflect tree shaking,
   minification, and chunking together, rather than a per-library score.

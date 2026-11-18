@@ -1,4 +1,4 @@
-// Stable inputs shared by the generator and its graph verification.
+// Stable inputs for the dashboard generator.
 export const features = [
   'overview',
   'customers',
