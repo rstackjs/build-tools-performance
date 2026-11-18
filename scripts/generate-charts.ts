@@ -201,7 +201,7 @@ function draw(
         x + cardPadding,
         y + 21,
         `${panel.title} (${panel.unit})`,
-        12,
+        14,
         t.text,
         'font-weight="650"',
       );
@@ -212,7 +212,7 @@ function draw(
         const length = (value / limit) * plotWidth;
         const rank = sortedValues.indexOf(value) + 1;
         const color = rankColor(t.ranks, rank, rowCount);
-        text(x + cardPadding, rowY + 9, name, 10.5);
+        text(x + cardPadding, rowY + 9, name, 11.5);
         parts.push(
           `<rect class="bar" data-rank="${rank}" x="${plotX}" y="${rowY}" width="${length.toFixed(3)}" height="10" rx="2" fill="${color}"/>`,
         );
