@@ -58,7 +58,7 @@ export function Insights() {
     >
       <div>
         <h2 className={styles.title}>Account revenue</h2>
-        <p data-testid="revenue-total">
+        <p>
           ${revenueTotal(data)} across {data.length} accounts
         </p>
         <AreaChart width={420} height={180} data={data.slice(0, 12)}>
@@ -88,11 +88,7 @@ export function Insights() {
               </div>
             ))}
           </div>
-          <div
-            ref={scroll}
-            data-testid="account-scroll"
-            className={styles.scroll}
-          >
+          <div ref={scroll} className={styles.scroll}>
             <div
               className={styles.rows}
               style={{ height: virtualizer.getTotalSize() }}

@@ -37,8 +37,6 @@ pnpm --filter react-dashboard generate --force
   Development uses on-demand loading, source maps, and React/CSS HMR; production
   enables JS/CSS minification and tree shaking, disables source maps, and emits
   assets as files. Compiler, chunking, and cache implementations remain native.
-- Vite prebundles the declared runtime dependencies at startup so opening a
-  lazy route does not trigger a dependency-optimizer reload.
 - Each development session gets a fresh browser context. Cold/warm refers to
   build-tool caches; OS caches are not flushed. Bundle sizes reflect tree shaking,
   minification, and chunking together, rather than a per-library score.

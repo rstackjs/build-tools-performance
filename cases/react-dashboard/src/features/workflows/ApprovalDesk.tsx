@@ -16,7 +16,7 @@ export function ApprovalDesk({ workspace }: { workspace: string }) {
   const { t } = useTranslation();
   const [requests, setRequests] = useState(() => createRequests(workspace));
   return (
-    <section className={styles.workspace} data-testid="approval-desk">
+    <section className={styles.workspace}>
       <header className={styles.heading}>
         <div>
           <h2>{t('workflow')}</h2>
@@ -28,23 +28,18 @@ export function ApprovalDesk({ workspace }: { workspace: string }) {
       </header>
       <div className={styles.requestGrid}>
         {requests.map((request) => (
-          <article
-            key={request.id}
-            className={styles.request}
-            data-request={request.id}
-          >
+          <article key={request.id} className={styles.request}>
             <h3>{request.name}</h3>
             <p>
               {request.owner} · {request.amount.toLocaleString('en-US')}{' '}
               {workspace === 'releases' ? 'planned hours' : 'USD'}
             </p>
-            <span className={styles.badge} data-testid="approval-state">
+            <span className={styles.badge}>
               {String(request.snapshot.value)}
             </span>
             <div className={styles.actions}>
               {actions.map((action) => (
                 <button
-                  data-action={action.type}
                   key={action.type}
                   className={button()}
                   disabled={!request.snapshot.can({ type: action.type })}

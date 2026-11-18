@@ -11,7 +11,7 @@ export function ActivityFeed() {
     (event) => filter === 'all' || event.area === filter,
   );
   return (
-    <section className={styles.workspace} data-testid="activity-feed">
+    <section className={styles.workspace}>
       <header className={styles.heading}>
         <div>
           <h2>{t('activity')}</h2>

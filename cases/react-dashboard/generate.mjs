@@ -211,7 +211,7 @@ import { PanelSummary } from './PanelSummary';
 import styles from '../../../shared/Panel.module.css';
 export function Panel({ query, activeOnly, sort, page }: { query: string; activeOnly: boolean; sort: 'name' | 'amount' | 'updatedAt'; page: number }) {
   const selected = useMemo(() => selectRecords(records, query, activeOnly, sort), [query, activeOnly, sort]);
-  return <section data-panel="${feature}-${panel}" data-tone="${color}" className={styles.panel}>
+  return <section data-tone="${color}" className={styles.panel}>
     <PanelHeader count={selected.length} /><Metric records={selected} /><Details records={selected} page={page} /><PanelSummary records={selected} />
   </section>;
 }
@@ -233,7 +233,7 @@ ${['audit', 'notifications'].includes(feature) ? "import { ActivityFeed } from '
 ${panels.map((panel, i) => `import { Panel as Panel${i} } from './${panel}/Panel';`).join('\n')}
 export default function ${title(feature)}Page() {
   const { search: { query, activeOnly, sort, page }, updateSearch } = useWorkspaceSearch();
-  return <div data-benchmark-ready="true" data-feature="${feature}">
+  return <div data-benchmark-ready="true">
     <FeatureHeader title="${title(feature)}" description={profile.description} query={query} onQueryChange={query => updateSearch({ query, page: 1 })} activeOnly={activeOnly} onActiveOnlyChange={activeOnly => updateSearch({ activeOnly, page: 1 })} sort={sort} onSortChange={sort => updateSearch({ sort, page: 1 })} page={page} onPageChange={page => updateSearch({ page })} />
     ${feature === 'overview' ? '<Insights />' : ''}
     ${['approvals', 'procurement', 'releases'].includes(feature) ? '<ApprovalDesk workspace="' + feature + '" />' : ''}

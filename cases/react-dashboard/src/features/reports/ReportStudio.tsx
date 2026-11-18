@@ -23,14 +23,13 @@ import styles from '../../shared/Workspace.module.css';
 
 export function ReportStudio() {
   const { t } = useTranslation();
-  const { data = [], isSuccess } = useQuery({
+  const { data = [] } = useQuery({
     queryKey: ['accounts'],
     queryFn: loadAccounts,
   });
   const [minimum, setMinimum] = useState(minimumFromUrl);
   const [name, setName] = useState('January accounts');
   const [presets, setPresets] = useState<ReportPreset[]>([]);
-  const [loaded, setLoaded] = useState(false);
   const [message, setMessage] = useState('');
   useEffect(() => {
     let active = true;
@@ -38,13 +37,11 @@ export function ReportStudio() {
       .then((value) => {
         if (active) {
           setPresets(value);
-          setLoaded(true);
         }
       })
       .catch(() => {
         if (active) {
           setMessage('Unable to read saved reports.');
-          setLoaded(true);
         }
       });
     return () => {
@@ -58,10 +55,7 @@ export function ReportStudio() {
   const distribution = useMemo(() => revenueDistribution(accounts), [accounts]);
   const refreshPresets = async () => setPresets(await listPresets());
   return (
-    <section
-      className={styles.workspace}
-      data-report-ready={loaded && isSuccess ? 'true' : 'false'}
-    >
+    <section className={styles.workspace}>
       <header className={styles.heading}>
         <div>
           <h2>{t('reports')}</h2>
@@ -106,11 +100,9 @@ export function ReportStudio() {
               >
                 Download CSV
               </button>
-              <a href={reportLink(minimum)} data-testid="report-link">
-                Open report link
-              </a>
+              <a href={reportLink(minimum)}>Open report link</a>
             </div>
-            <p data-testid="report-total">
+            <p>
               {accounts.length} accounts · $
               {reportTotal(accounts).toLocaleString('en-US')}
             </p>
@@ -156,9 +148,7 @@ export function ReportStudio() {
             </form>
             <details className={styles.csvPreview}>
               <summary>CSV preview</summary>
-              <pre data-testid="csv-preview">
-                {accountsCsv(accounts.slice(0, 5))}
-              </pre>
+              <pre>{accountsCsv(accounts.slice(0, 5))}</pre>
             </details>
           </TabPanel>
           <TabPanel>
@@ -200,9 +190,7 @@ export function ReportStudio() {
           </TabPanel>
         </TabPanels>
       </TabGroup>
-      <p role="status" data-testid="report-status">
-        {message}
-      </p>
+      <p role="status">{message}</p>
     </section>
   );
 }

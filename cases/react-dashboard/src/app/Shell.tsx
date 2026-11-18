@@ -52,7 +52,6 @@ export function Shell() {
           <WorkspaceTools />
           <LocaleSwitcher />
           <button
-            data-testid="density"
             aria-pressed={compact}
             className={styles.density}
             onClick={() => setCompact(!compact)}

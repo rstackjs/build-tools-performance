@@ -80,7 +80,7 @@ export function FeatureHeader({
           >
             Previous
           </button>
-          <span data-testid="page-number">Page {page}</span>
+          <span>Page {page}</span>
           <button
             aria-label="Next page"
             disabled={page === 3}
