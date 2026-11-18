@@ -25,6 +25,7 @@ jobs:
     runs-on: ${{ matrix.os }}
     timeout-minutes: 90
     env:
+      NODE_OPTIONS: '--max-old-space-size=4096'
       PUPPETEER_SKIP_DOWNLOAD: 'true'
       PUPPETEER_EXECUTABLE_PATH: '/Applications/Google Chrome for Testing.app/Contents/MacOS/Google Chrome for Testing'
     strategy:
