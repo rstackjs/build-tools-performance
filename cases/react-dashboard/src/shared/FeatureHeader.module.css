@@ -1,0 +1,98 @@
+.header {
+  margin-bottom: 24px;
+}
+
+.header > :not(:last-child) {
+  margin-bottom: 20px;
+}
+
+.title {
+  font-size: 30px;
+  line-height: 36px;
+  font-weight: 700;
+  letter-spacing: -0.025em;
+  color: var(--slate-950);
+}
+
+.description {
+  margin-top: 8px;
+  font-size: 14px;
+  line-height: 20px;
+  color: var(--slate-500);
+}
+
+.filters {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 16px;
+}
+
+.control {
+  border: 1px solid var(--slate-300);
+  border-radius: 8px;
+  background: white;
+  padding: 8px 12px;
+  font-size: 14px;
+  line-height: 20px;
+}
+
+input.control {
+  font: inherit;
+}
+
+.filter {
+  outline: none;
+}
+
+.filter:focus {
+  box-shadow: 0 0 0 2px var(--indigo-500);
+}
+
+.option,
+.pagination {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 14px;
+  line-height: 20px;
+}
+
+.pageButton {
+  border: 1px solid var(--slate-300);
+  border-radius: 4px;
+  padding: 4px 8px;
+}
+
+.pageButton:disabled {
+  opacity: 0.4;
+}
+
+.saveForm {
+  margin-left: auto;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.viewName {
+  width: 144px;
+}
+
+.saveButton {
+  border-radius: 8px;
+  background: var(--indigo-600);
+  padding: 8px 12px;
+  font: inherit;
+  color: white;
+}
+
+.saveButton:hover {
+  background: var(--indigo-700);
+}
+
+.status {
+  font-size: 14px;
+  line-height: 20px;
+  color: var(--indigo-700);
+}

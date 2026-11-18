@@ -12,6 +12,7 @@ export default {
     lazyCompilation: production ? false : { entries: false, imports: true },
   },
   module: {
+    parser: { 'css/auto': { namedExports: false } },
     rules: [
       {
         test: /\.[jt]sx?$/,
@@ -21,7 +22,6 @@ export default {
       {
         test: /\.css$/,
         type: 'css/auto',
-        use: { loader: '@tailwindcss/webpack', options: { optimize: false } },
       },
       { test: /\.svg$/, type: 'asset/resource' },
     ],

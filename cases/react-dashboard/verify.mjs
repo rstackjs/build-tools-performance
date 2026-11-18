@@ -14,14 +14,15 @@ import { setTimeout as delay } from 'node:timers/promises';
 import { parseSync } from '@swc/core';
 import puppeteer from 'puppeteer';
 import { ensureGenerated } from './generate.mjs';
-import { features, panels } from './workload.mjs';
+import { domains, features, panels } from './workload.mjs';
+import { verifyWorkspaces } from './verify-workflows.mjs';
 
 const root = import.meta.dirname;
 const src = path.join(root, 'src');
 ensureGenerated();
 
 // Follow actual value imports, including literal dynamic imports. Type-only
-// imports, declarations, CSS and assets do not contribute to the 10k minimum.
+// imports, declarations, CSS and assets do not contribute to the 24k minimum.
 const visited = new Set();
 const dependencies = new Set();
 function visit(file) {
@@ -94,19 +95,25 @@ const declaredDependencies = Object.keys(
     .dependencies,
 );
 assert.ok(
-  declaredDependencies.length >= 24,
-  'Keep at least 20 libraries in addition to the original four dependencies',
+  declaredDependencies.length >= 37,
+  'Keep at least 37 runtime libraries in the dashboard workload',
 );
 for (const dependency of declaredDependencies)
   assert.ok(
     dependencies.has(dependency),
     `Unused runtime dependency: ${dependency}`,
   );
+assert.equal(new Set(features).size, features.length, 'Duplicate routes');
+assert.deepEqual(
+  domains.flatMap((domain) => domain.features).sort(),
+  [...features].sort(),
+  'Each route must belong to exactly one business domain',
+);
 const generatedModules = readdirSync(path.join(src, 'generated'), {
   recursive: true,
 }).filter((file) => /\.tsx?$/.test(file));
 assert.ok(
-  generatedModules.length >= 10000,
+  generatedModules.length >= 24000,
   `Only ${generatedModules.length} generated modules`,
 );
 for (const file of generatedModules)
@@ -280,12 +287,12 @@ try {
     background: getComputedStyle(element).backgroundColor,
     gap: getComputedStyle(element.parentElement).gap,
   }));
-  assert.equal(styles.padding, '20px', 'Tailwind spacing did not compile');
-  assert.equal(styles.gap, '20px', 'Tailwind grid styles did not compile');
+  assert.equal(styles.padding, '20px', 'CSS Modules spacing did not compile');
+  assert.equal(styles.gap, '20px', 'CSS Modules grid styles did not compile');
   assert.equal(
     styles.background,
     'rgb(255, 255, 255)',
-    'Tailwind background did not compile',
+    'CSS Modules background did not compile',
   );
   await page.waitForFunction(() => {
     const image = document.querySelector('aside img');
@@ -319,6 +326,8 @@ try {
         '[data-testid="account-scroll"] [role="cell"]',
       );
     }
+    if (['reports', 'forecasts'].includes(feature))
+      await page.waitForSelector('[data-report-ready="true"]');
     const content = await page.$eval('[data-feature]', (element) =>
       element.textContent.replace(/\s+/g, ' ').trim(),
     );
@@ -344,13 +353,17 @@ try {
   );
   await page.click('[aria-haspopup="dialog"]');
   await page.type('[aria-label="Search workspaces"]', 'invo');
-  await page.waitForFunction(() => {
-    const matches = [...document.querySelectorAll('[cmdk-item]')];
-    return (
-      matches.length < 40 &&
-      matches.some((item) => item.textContent === 'Invoices')
-    );
-  });
+  await page.waitForFunction(
+    (total) => {
+      const matches = [...document.querySelectorAll('[cmdk-item]')];
+      return (
+        matches.length < total &&
+        matches.some((item) => item.textContent === 'Invoices')
+      );
+    },
+    {},
+    features.length,
+  );
   await page.click('[cmdk-item][data-value="Invoices"]');
   await page.waitForSelector('[data-feature="invoices"]');
   assert.equal(
@@ -435,6 +448,7 @@ try {
       document.querySelector('[role="status"]').textContent ===
       'Saved view: xyz',
   );
+  await verifyWorkspaces(page, base);
   if (dev) {
     await page.goto(base);
     await page.waitForSelector('[data-feature="overview"]');
@@ -475,13 +489,36 @@ try {
     }
     const cssFile = path.join(src, 'styles.css');
     originals.set(cssFile, readFileSync(cssFile, 'utf8'));
-    // A class absent from the baseline checks Tailwind rescanning on TSX edits.
+    // Check scoped stylesheet updates and newly exported class names.
+    const moduleFile = path.join(src, 'shared/FeatureHeader.module.css');
+    originals.set(moduleFile, readFileSync(moduleFile, 'utf8'));
+    writeFileSync(
+      moduleFile,
+      originals.get(moduleFile) +
+        '\n.header { min-height: 121px; }\n.hmrProbe { min-height: 123px; }\n',
+    );
+    await page.waitForFunction(
+      () =>
+        getComputedStyle(document.querySelector('[data-feature] > header'))
+          .minHeight === '121px',
+    );
+    assert.equal(
+      await page.$eval(
+        '[data-panel] > header',
+        (element) => getComputedStyle(element).minHeight,
+      ),
+      '0px',
+      'CSS Modules leaked between components with the same local class name',
+    );
     const headerFile = path.join(src, 'shared/FeatureHeader.tsx');
     const header = readFileSync(headerFile, 'utf8');
     originals.set(headerFile, header);
     writeFileSync(
       headerFile,
-      header.replace('mb-6 space-y-5', 'mb-6 space-y-5 min-h-[123px]'),
+      header.replace(
+        'className={styles.header}',
+        'className={cn(styles.header, styles.hmrProbe)}',
+      ),
     );
     await page.waitForFunction(
       () =>
@@ -503,6 +540,13 @@ try {
       'hmr-document',
       'CSS update reloaded the page',
     );
+    assert.equal(
+      await page.$eval('[data-testid="density"]', (element) =>
+        element.getAttribute('aria-pressed'),
+      ),
+      'true',
+      'CSS Modules HMR lost React state',
+    );
   }
   assert.deepEqual(errors, [], 'Browser errors');
   if (process.argv.includes('--report')) {
@@ -518,7 +562,7 @@ try {
     );
   }
   console.log(
-    `${tool}: ${dev ? 'development + state-preserving root/leaf HMR + Tailwind/CSS HMR' : 'production build'} passed; all 40 routes, CSS, assets, filtering, validation, and direct navigation work.`,
+    `${tool}: ${dev ? 'development + state-preserving root/leaf HMR + CSS Modules/global CSS HMR' : 'production build'} passed; all ${features.length} routes, CSS, assets, filtering, approvals, report persistence/export, localization, and direct navigation work.`,
   );
 } catch (error) {
   console.error(output);

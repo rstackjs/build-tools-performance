@@ -12,7 +12,7 @@ See [metrics](#metrics) and [notes](#notes) for details.
 
 ### react-dashboard
 
-A synthetic enterprise operations dashboard with 40 lazy routes and 29 common libraries, including React, Tailwind CSS, TanStack Router, Zod, and Recharts.
+A synthetic enterprise operations dashboard with 60 lazy routes across 8 business domains, CSS Modules, and 37 common libraries, including React, TanStack Router, Zod, and Recharts.
 
 See [case details](cases/react-dashboard/README.md).
 

@@ -1,0 +1,59 @@
+.insights {
+  display: grid;
+  gap: 20px;
+  margin-bottom: 24px;
+  border: 1px solid var(--slate-200);
+  border-radius: 12px;
+  background: white;
+  padding: 20px;
+}
+
+@media (min-width: 1280px) {
+  .insights {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+.title {
+  font-weight: 600;
+}
+
+.accountsTitle {
+  margin-bottom: 8px;
+  font-weight: 600;
+}
+
+.table,
+.notes {
+  font-size: 14px;
+  line-height: 20px;
+}
+
+.tableHeader {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  font-weight: 500;
+}
+
+.scroll {
+  height: 192px;
+  overflow: auto;
+}
+
+.rows {
+  position: relative;
+}
+
+.row {
+  position: absolute;
+  left: 0;
+  top: 0;
+  display: grid;
+  width: 100%;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  align-items: center;
+}
+
+.notes > :not(:last-child) {
+  margin-bottom: 8px;
+}

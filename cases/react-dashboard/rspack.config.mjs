@@ -9,15 +9,12 @@ export default {
   output: { publicPath: '/', clean: production },
   lazyCompilation: production ? false : { entries: false, imports: true },
   module: {
+    parser: { 'css/auto': { namedExports: false } },
     rules: [
       {
         test: /\.[jt]sx?$/,
         exclude: /node_modules/,
         use: { loader: 'builtin:swc-loader', options: swcOptions },
-      },
-      {
-        test: /\.css$/,
-        use: { loader: '@tailwindcss/webpack', options: { optimize: false } },
       },
       { test: /\.svg$/, type: 'asset/resource' },
     ],

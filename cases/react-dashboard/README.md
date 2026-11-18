@@ -1,6 +1,6 @@
 # React dashboard
 
-A synthetic enterprise operations dashboard with 40 lazy routes and 29 common libraries, including React, Tailwind CSS, TanStack Router, Zod, and Recharts.
+A synthetic enterprise operations dashboard with 60 lazy routes across 8 business domains, CSS Modules, and 37 common libraries, including React, TanStack Router, Zod, and Recharts.
 
 Run from the repository root:
 
@@ -13,19 +13,35 @@ pnpm --filter react-dashboard verify:all
 pnpm --filter react-dashboard generate --force
 ```
 
-- The fixture generates over 10,000 reachable application modules before timing
+- The fixture generates over 24,000 reachable application modules before timing
   and memory sampling; dependencies, declarations, CSS, and assets are excluded
   from this count. Edit `workload.mjs` or `generate.mjs` to change its size.
+  Repeated panels reuse a shared CSS Module; global CSS provides the reset and
+  theme variables.
+- Generated panels include domain-specific records, validation, filtering,
+  statistics, budget utilization, review alerts, and activity details.
+- Approvals, procurement, and releases include a state-machine-driven approval
+  workflow. Reports and forecasts provide revenue distributions, CSV downloads,
+  shareable filters, and report presets stored in IndexedDB. Audit and
+  notifications show a session activity log. The shell and workspaces include
+  bundled English/Chinese translations.
+- Additional libraries are used by these features: D3 Array/Scale for analytics,
+  XState for approvals, Dexie for presets, Headless UI for report tabs,
+  i18next/react-i18next for translations, query-string for report links, and
+  Nano ID/mitt for activity identifiers and notifications.
 - Startup loads only the overview route and waits for its data; production builds
   include all routes. Data is deterministic and requires no backend. This is a
   client-rendered SPA, not an SSR/RSC benchmark.
 - Rspack, Rsbuild, Vite, webpack, and Utoo share the source, Chrome 93 target,
-  Tailwind version, and CSS scan scope, using dedicated Tailwind integrations
-  with `optimize: false`; each bundler handles production CSS minification.
+  and CSS Modules styles; each tool handles CSS processing and production
+  minification. Rspack and webpack use their built-in CSS Modules support.
   Development uses on-demand loading, source maps, and React/CSS HMR; production
   enables JS/CSS minification and tree shaking, disables source maps, and emits
   assets as files. Compiler, chunking, and cache implementations remain native.
-- CI checks all routes' content and styles, business interactions, and
+- Vite prebundles the declared runtime dependencies at startup so opening a
+  lazy route does not trigger a dependency-optimizer reload.
+- CI checks all routes' content and styles, business interactions,
+  approvals, report persistence and CSV export, localization, and
   state-preserving HMR before measuring. Run verification sequentially because
   tools share `dist/` and HMR checks temporarily edit source files. CSS HMR is
   verified but not separately timed.

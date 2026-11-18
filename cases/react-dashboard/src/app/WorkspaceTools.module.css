@@ -1,0 +1,113 @@
+.tools {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.icon {
+  width: 16px;
+  height: 16px;
+}
+
+.leadingIcon {
+  display: inline;
+  width: 16px;
+  height: 16px;
+  margin-right: 8px;
+}
+
+.overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 20;
+  background: color-mix(in oklab, var(--slate-950) 30%, transparent);
+}
+
+.dialog {
+  position: fixed;
+  left: 50%;
+  top: 96px;
+  z-index: 30;
+  width: 384px;
+  transform: translateX(-50%);
+  border-radius: 12px;
+  background: white;
+  padding: 20px;
+  box-shadow:
+    0 20px 25px -5px rgb(0 0 0 / 10%),
+    0 8px 10px -6px rgb(0 0 0 / 10%);
+}
+
+.title {
+  font-weight: 600;
+}
+
+.description {
+  margin: 8px 0;
+  font-size: 14px;
+  line-height: 20px;
+  color: var(--slate-500);
+}
+
+.search {
+  width: 100%;
+  border: 1px solid;
+  border-radius: 4px;
+  padding: 8px;
+}
+
+.results {
+  margin-top: 8px;
+  max-height: 288px;
+  overflow: auto;
+}
+
+.result {
+  cursor: pointer;
+  border-radius: 4px;
+  padding: 8px;
+}
+
+.result[data-selected='true'] {
+  background: var(--indigo-50);
+}
+
+.close {
+  position: absolute;
+  right: 16px;
+  top: 16px;
+}
+
+.tooltip {
+  z-index: 40;
+  border-radius: 4px;
+  background: var(--slate-900);
+  padding: 8px;
+  font-size: 12px;
+  line-height: 16px;
+  color: white;
+}
+
+.menu {
+  z-index: 30;
+  border: 1px solid;
+  border-radius: 8px;
+  background: white;
+  padding: 8px;
+  box-shadow:
+    0 10px 15px -3px rgb(0 0 0 / 10%),
+    0 4px 6px -4px rgb(0 0 0 / 10%);
+}
+
+.menuItem {
+  cursor: pointer;
+  border-radius: 4px;
+  padding: 8px;
+  font-size: 14px;
+  line-height: 20px;
+  outline: none;
+}
+
+.menuItem:focus {
+  background: var(--indigo-50);
+}

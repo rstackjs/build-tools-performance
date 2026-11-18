@@ -30,7 +30,8 @@ import Fuse from 'fuse.js';
 import { toast } from 'sonner';
 import { navigation } from '../generated/navigation';
 import { usePreferences } from '../shared/preferences';
-import { button, cn } from '../shared/ui';
+import { button } from '../shared/ui';
+import styles from './WorkspaceTools.module.css';
 
 const searchIndex = new Fuse([...navigation], {
   keys: ['name'],
@@ -48,17 +49,17 @@ export function WorkspaceTools() {
     [query],
   );
   return (
-    <div className="flex items-center gap-2">
+    <div className={styles.tools}>
       <Dialog open={open} onOpenChange={setOpen}>
         <Trigger className={button()}>
-          <Search className="mr-2 inline size-4" />
+          <Search className={styles.leadingIcon} />
           Find workspace
         </Trigger>
         <Portal>
-          <Overlay className="fixed inset-0 z-20 bg-slate-950/30" />
-          <Content className="fixed left-1/2 top-24 z-30 w-96 -translate-x-1/2 rounded-xl bg-white p-5 shadow-xl">
-            <Title className="font-semibold">Find a workspace</Title>
-            <Description className="my-2 text-sm text-slate-500">
+          <Overlay className={styles.overlay} />
+          <Content className={styles.dialog}>
+            <Title className={styles.title}>Find a workspace</Title>
+            <Description className={styles.description}>
               Search business areas and navigate directly.
             </Description>
             <Command shouldFilter={false}>
@@ -66,15 +67,15 @@ export function WorkspaceTools() {
                 aria-label="Search workspaces"
                 value={query}
                 onValueChange={setQuery}
-                className="w-full rounded border p-2"
+                className={styles.search}
               />
-              <Command.List className="mt-2 max-h-72 overflow-auto">
+              <Command.List className={styles.results}>
                 <Command.Empty>No workspaces found.</Command.Empty>
                 {matches.map((item) => (
                   <Command.Item
                     key={item.path}
                     value={item.name}
-                    className="cursor-pointer rounded p-2 data-[selected=true]:bg-indigo-50"
+                    className={styles.result}
                     onSelect={() => {
                       void navigate({
                         to: item.path,
@@ -93,11 +94,8 @@ export function WorkspaceTools() {
                 ))}
               </Command.List>
             </Command>
-            <Close
-              aria-label="Close workspace search"
-              className="absolute right-4 top-4"
-            >
-              <X className="size-4" />
+            <Close aria-label="Close workspace search" className={styles.close}>
+              <X className={styles.icon} />
             </Close>
           </Content>
         </Portal>
@@ -108,17 +106,14 @@ export function WorkspaceTools() {
             <button
               aria-label="Pin overview"
               aria-pressed={pinned.includes('overview')}
-              className={cn(
-                button(),
-                pinned.includes('overview') && 'bg-indigo-100',
-              )}
+              className={button()}
               onClick={() => togglePin('overview')}
             >
-              <Pin className="size-4" />
+              <Pin className={styles.icon} />
             </button>
           </TooltipTrigger>
           <TooltipPortal>
-            <TooltipContent className="z-40 rounded bg-slate-900 p-2 text-xs text-white">
+            <TooltipContent className={styles.tooltip}>
               Pin overview
             </TooltipContent>
           </TooltipPortal>
@@ -127,12 +122,12 @@ export function WorkspaceTools() {
       <Menu>
         <MenuTrigger className={button()}>Actions</MenuTrigger>
         <MenuPortal>
-          <MenuContent className="z-30 rounded-lg border bg-white p-2 shadow-lg">
+          <MenuContent className={styles.menu}>
             <Item
-              className="cursor-pointer rounded p-2 text-sm outline-none focus:bg-indigo-50"
+              className={styles.menuItem}
               onSelect={() => toast.success('Report queued for export')}
             >
-              <Download className="mr-2 inline size-4" />
+              <Download className={styles.leadingIcon} />
               Export report
             </Item>
           </MenuContent>

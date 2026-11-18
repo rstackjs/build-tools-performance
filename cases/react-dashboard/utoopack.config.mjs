@@ -7,12 +7,6 @@ export default createBrowserUtooConfig({
   module: {
     rules: {
       '*.svg': { type: 'asset' },
-      '*.css': {
-        type: 'css',
-        loaders: [
-          { loader: '@tailwindcss/webpack', options: { optimize: false } },
-        ],
-      },
     },
   },
   images: { inlineLimit: 0 },

@@ -8,7 +8,14 @@ import {
 } from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { features, panels, title } from './workload.mjs';
+import {
+  domains,
+  domainForFeature,
+  features,
+  panels,
+  title,
+} from './workload.mjs';
+import { emitPanelAnalytics } from './generate-analytics.mjs';
 
 const root = import.meta.dirname;
 const generated = path.join(root, 'src/generated');
@@ -16,6 +23,7 @@ const manifestPath = path.join(generated, 'manifest.json');
 const fingerprint = createHash('sha256')
   .update(readFileSync(fileURLToPath(import.meta.url)))
   .update(readFileSync(path.join(root, 'workload.mjs')))
+  .update(readFileSync(path.join(root, 'generate-analytics.mjs')))
   .digest('hex');
 
 // The benchmark imports this before starting any timed processes. Tool configs
@@ -37,6 +45,22 @@ export function ensureGenerated({ force = false } = {}) {
   };
   const palette = ['indigo', 'emerald', 'sky', 'amber', 'rose'];
   for (const [featureIndex, feature] of features.entries()) {
+    const domain = domainForFeature(feature);
+    emit(
+      `${feature}/config.ts`,
+      `export const profile = ${JSON.stringify(
+        {
+          title: title(feature),
+          domain: domain.name,
+          recordLabel: domain.record,
+          unit: domain.unit,
+          targetLabel: domain.target,
+          description: `${domain.name}: manage ${feature}, review ${domain.record}s, and track ${domain.target.toLowerCase()}.`,
+        },
+        null,
+        2,
+      )};`,
+    );
     for (const [panelIndex, panel] of panels.entries()) {
       const prefix = `${feature}/${panel}`;
       const seed = featureIndex * panels.length + panelIndex;
@@ -44,7 +68,8 @@ export function ensureGenerated({ force = false } = {}) {
       emit(
         `${prefix}/labels.ts`,
         `
-export const labels = { title: '${title(panel)}', unit: '${panelIndex % 3 === 0 ? 'USD' : 'items'}', owner: '${title(feature)} team' };
+import { profile } from '../config';
+export const labels = { title: '${title(panel)}', unit: profile.unit, owner: '${title(feature)} team', recordLabel: profile.recordLabel };
 export const statuses = ['active', 'pending', 'archived'] as const;
 export const statusLabels = { active: 'Active', pending: 'Pending', archived: 'Archived' };
 `,
@@ -71,7 +96,7 @@ import { recordsSchema } from './schema';
 import { labels, statuses } from './labels';
 export const records = recordsSchema.parse(Array.from({ length: ${8 + (seed % 5)} }, (_, index) => ({
   id: '${feature}-${panel}-' + index,
-  name: '${title(feature)} ${title(panel)} ' + (index + 1),
+  name: '${title(feature)} ${title(panel)} ' + labels.recordLabel + ' ' + (index + 1),
   amount: ${100 + seed * 7} + index * 29,
   previous: ${90 + seed * 5} + index * 23,
   status: statuses[index % statuses.length], owner: labels.owner,
@@ -99,6 +124,7 @@ export const totalAmount = (records: RecordItem[]) => records.reduce((sum, recor
 import { labels } from './labels';
 const formatter = new Intl.NumberFormat('en-US', labels.unit === 'USD'
   ? { style: 'currency', currency: 'USD', maximumFractionDigits: 0 }
+  : labels.unit === 'hours' ? { style: 'unit', unit: 'hour', maximumFractionDigits: 0 }
   : { maximumFractionDigits: 0 });
 export const formatAmount = (value: number) => formatter.format(value);
 export const formatDate = (value: string) => value.slice(5).replace('-', '/');
@@ -120,10 +146,11 @@ export const progress = (amount: number, maximum: number) => Math.max(2, Math.mi
         `${prefix}/PanelHeader.tsx`,
         `
 import { labels } from './labels';
+import styles from '../../../shared/Panel.module.css';
 export function PanelHeader({ count }: { count: number }) {
-  return <header className="flex items-center justify-between gap-3 border-b border-slate-100 pb-3">
-    <h2 className="font-semibold text-slate-800">{labels.title}</h2>
-    <span className="rounded-full bg-${color}-50 px-2 py-1 text-xs text-${color}-700">{count} records</span>
+  return <header className={styles.header}>
+    <h2 className={styles.title}>{labels.title}</h2>
+    <span className={styles.badge}>{count} {labels.recordLabel}s</span>
   </header>;
 }
 `,
@@ -135,11 +162,12 @@ import type { RecordItem } from './schema';
 import { totalAmount } from './selectors';
 import { formatAmount } from './format';
 import { trend } from './trend';
+import styles from '../../../shared/Panel.module.css';
 export function Metric({ records }: { records: RecordItem[] }) {
   const change = trend(records);
-  return <div className="flex items-baseline justify-between py-4">
-    <strong className="text-2xl tracking-tight text-slate-950">{formatAmount(totalAmount(records))}</strong>
-    <span className={change >= 0 ? 'text-sm text-emerald-700' : 'text-sm text-rose-700'}>{change >= 0 ? '+' : ''}{change}%</span>
+  return <div className={styles.metric}>
+    <strong className={styles.amount}>{formatAmount(totalAmount(records))}</strong>
+    <span className={change >= 0 ? styles.positive : styles.negative}>{change >= 0 ? '+' : ''}{change}%</span>
   </div>;
 }
 `,
@@ -147,22 +175,23 @@ export function Metric({ records }: { records: RecordItem[] }) {
       const content =
         panelIndex % 3 === 0
           ? `
-<table className="w-full text-left text-xs"><thead><tr className="text-slate-500"><th className="py-2">Record</th><th>Status</th><th className="text-right">Value</th></tr></thead>
-<tbody>{records.slice((page - 1) * 4, page * 4).map(record => <tr key={record.id} className="border-t border-slate-100"><td className="max-w-32 truncate py-2" title={record.name}>{record.name}</td><td>{statusLabels[record.status]}</td><td className="text-right">{formatAmount(record.amount)}</td></tr>)}</tbody></table>`
+<table className={styles.table}><thead><tr className={styles.muted}><th className={styles.cell}>Record</th><th>Status</th><th className={styles.numeric}>Value</th></tr></thead>
+<tbody>{records.slice((page - 1) * 4, page * 4).map(record => <tr key={record.id} className={styles.tableRow}><td className={styles.recordName} title={record.name}>{record.name}</td><td>{statusLabels[record.status]}</td><td className={styles.numeric}>{formatAmount(record.amount)}</td></tr>)}</tbody></table>`
           : panelIndex % 3 === 1
             ? `
-<ul className="space-y-3">{records.slice((page - 1) * 4, page * 4).map(record => <li key={record.id}>
-<div className="mb-1 flex justify-between text-xs"><span className="truncate">{record.name}</span><span>{formatAmount(record.amount)}</span></div>
-<div className="h-2 overflow-hidden rounded-full bg-slate-100"><div className="h-2 rounded-full bg-${color}-500" style={{ width: progress(record.amount, maximum) + '%' }} /></div></li>)}</ul>`
+<ul className={styles.list}>{records.slice((page - 1) * 4, page * 4).map(record => <li key={record.id}>
+<div className={styles.progressLabel}><span className={styles.truncate}>{record.name}</span><span>{formatAmount(record.amount)}</span></div>
+<div className={styles.track}><div className={styles.progress} style={{ width: progress(record.amount, maximum) + '%' }} /></div></li>)}</ul>`
             : `
-<ul className="space-y-3">{records.slice((page - 1) * 4, page * 4).map(record => <li key={record.id} className="flex items-center gap-3 text-xs">
-<span className="size-2 shrink-0 rounded-full bg-${color}-500" /><div className="min-w-0 flex-1"><p className="truncate">{record.name}</p><p className="text-slate-500">{statusLabels[record.status]} · {formatDate(record.updatedAt)}</p></div><span>{formatAmount(record.amount)}</span></li>)}</ul>`;
+<ul className={styles.list}>{records.slice((page - 1) * 4, page * 4).map(record => <li key={record.id} className={styles.activity}>
+<span className={styles.dot} /><div className={styles.activityContent}><p className={styles.truncate}>{record.name}</p><p className={styles.muted}>{statusLabels[record.status]} · {formatDate(record.updatedAt)}</p></div><span>{formatAmount(record.amount)}</span></li>)}</ul>`;
       emit(
         `${prefix}/Details.tsx`,
         `
 import type { RecordItem } from './schema';
 import { formatAmount${panelIndex % 3 === 2 ? ', formatDate' : ''} } from './format';
 ${panelIndex % 3 === 1 ? "import { progress } from './trend';" : "import { statusLabels } from './labels';"}
+import styles from '../../../shared/Panel.module.css';
 export function Details({ records, page }: { records: RecordItem[]; page: number }) {
   ${panelIndex % 3 === 1 ? 'const maximum = Math.max(1, ...records.map(record => record.amount));' : ''}
   return (${content});
@@ -178,28 +207,39 @@ import { selectRecords } from './selectors';
 import { PanelHeader } from './PanelHeader';
 import { Metric } from './Metric';
 import { Details } from './Details';
+import { PanelSummary } from './PanelSummary';
+import styles from '../../../shared/Panel.module.css';
 export function Panel({ query, activeOnly, sort, page }: { query: string; activeOnly: boolean; sort: 'name' | 'amount' | 'updatedAt'; page: number }) {
   const selected = useMemo(() => selectRecords(records, query, activeOnly, sort), [query, activeOnly, sort]);
-  return <section data-panel="${feature}-${panel}" className="rounded-xl border border-slate-200 bg-white p-5 shadow-sm">
-    <PanelHeader count={selected.length} /><Metric records={selected} /><Details records={selected} page={page} />
+  return <section data-panel="${feature}-${panel}" data-tone="${color}" className={styles.panel}>
+    <PanelHeader count={selected.length} /><Metric records={selected} /><Details records={selected} page={page} /><PanelSummary records={selected} />
   </section>;
 }
 `,
       );
+      emitPanelAnalytics(emit, prefix, seed);
     }
     emit(
       `${feature}/page.tsx`,
       `
+import { profile } from './config';
 import { useWorkspaceSearch } from '../../shared/useWorkspaceSearch';
 import { FeatureHeader } from '../../shared/FeatureHeader';
+import styles from '../../shared/Panel.module.css';
 ${feature === 'overview' ? "import { Insights } from '../../features/insights/Insights';" : ''}
+${['approvals', 'procurement', 'releases'].includes(feature) ? "import { ApprovalDesk } from '../../features/workflows/ApprovalDesk';" : ''}
+${['reports', 'forecasts'].includes(feature) ? "import { ReportStudio } from '../../features/reports/ReportStudio';" : ''}
+${['audit', 'notifications'].includes(feature) ? "import { ActivityFeed } from '../../features/activity/ActivityFeed';" : ''}
 ${panels.map((panel, i) => `import { Panel as Panel${i} } from './${panel}/Panel';`).join('\n')}
 export default function ${title(feature)}Page() {
   const { search: { query, activeOnly, sort, page }, updateSearch } = useWorkspaceSearch();
   return <div data-benchmark-ready="true" data-feature="${feature}">
-    <FeatureHeader title="${title(feature)}" description="${title(feature)} workspace reports, records, and team activity." query={query} onQueryChange={query => updateSearch({ query, page: 1 })} activeOnly={activeOnly} onActiveOnlyChange={activeOnly => updateSearch({ activeOnly, page: 1 })} sort={sort} onSortChange={sort => updateSearch({ sort, page: 1 })} page={page} onPageChange={page => updateSearch({ page })} />
+    <FeatureHeader title="${title(feature)}" description={profile.description} query={query} onQueryChange={query => updateSearch({ query, page: 1 })} activeOnly={activeOnly} onActiveOnlyChange={activeOnly => updateSearch({ activeOnly, page: 1 })} sort={sort} onSortChange={sort => updateSearch({ sort, page: 1 })} page={page} onPageChange={page => updateSearch({ page })} />
     ${feature === 'overview' ? '<Insights />' : ''}
-    <div className="grid grid-cols-1 gap-5 lg:grid-cols-2 2xl:grid-cols-3">${panels.map((_, i) => `<Panel${i} query={query} activeOnly={activeOnly} sort={sort} page={page} />`).join('\n')}</div>
+    ${['approvals', 'procurement', 'releases'].includes(feature) ? '<ApprovalDesk workspace="' + feature + '" />' : ''}
+    ${['reports', 'forecasts'].includes(feature) ? '<ReportStudio />' : ''}
+    ${['audit', 'notifications'].includes(feature) ? '<ActivityFeed />' : ''}
+    <div className={styles.grid}>${panels.map((_, i) => `<Panel${i} query={query} activeOnly={activeOnly} sort={sort} page={page} />`).join('\n')}</div>
   </div>;
 }
 `,
@@ -210,11 +250,13 @@ export default function ${title(feature)}Page() {
     `export const navigation = ${JSON.stringify(
       features.map((name, i) => ({
         name: title(name),
+        group: domainForFeature(name).name,
         path: i === 0 ? '/' : `/${name}`,
       })),
       null,
       2,
-    )} as const;`,
+    )} as const;
+export const navigationGroups = ${JSON.stringify(domains.map((domain) => domain.name))}.map(name => ({ name, items: navigation.filter(item => item.group === name) }));`,
   );
   emit(
     'routes.ts',
