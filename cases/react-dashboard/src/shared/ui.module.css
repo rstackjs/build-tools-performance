@@ -1,0 +1,27 @@
+.button {
+  border-radius: 6px;
+  padding: 8px 12px;
+  font: inherit;
+}
+
+.primary {
+  background: var(--indigo-600);
+  color: white;
+}
+
+.primary:hover {
+  background: var(--indigo-700);
+}
+
+.secondary {
+  border: 1px solid var(--slate-300);
+  background: white;
+}
+
+.secondary:hover {
+  background: var(--slate-50);
+}
+
+.secondary[aria-pressed='true'] {
+  background: var(--indigo-100);
+}

@@ -18,6 +18,7 @@ import {
 import Markdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import { accountDate, loadAccounts, revenueTotal, type Account } from './data';
+import styles from './Insights.module.css';
 
 const features = tableFeatures({});
 const columns: ColumnDef<typeof features, Account>[] = [
@@ -53,11 +54,11 @@ export function Insights() {
   return (
     <section
       data-insights-ready={isSuccess ? 'true' : 'false'}
-      className="mb-6 grid gap-5 rounded-xl border border-slate-200 bg-white p-5 xl:grid-cols-2"
+      className={styles.insights}
     >
       <div>
-        <h2 className="font-semibold">Account revenue</h2>
-        <p data-testid="revenue-total">
+        <h2 className={styles.title}>Account revenue</h2>
+        <p>
           ${revenueTotal(data)} across {data.length} accounts
         </p>
         <AreaChart width={420} height={180} data={data.slice(0, 12)}>
@@ -75,9 +76,9 @@ export function Insights() {
         </AreaChart>
       </div>
       <div>
-        <h2 className="mb-2 font-semibold">Top accounts</h2>
-        <div role="table" aria-label="Account revenue" className="text-sm">
-          <div role="row" className="grid grid-cols-3 font-medium">
+        <h2 className={styles.accountsTitle}>Top accounts</h2>
+        <div role="table" aria-label="Account revenue" className={styles.table}>
+          <div role="row" className={styles.tableHeader}>
             {table.getFlatHeaders().map((header) => (
               <div role="columnheader" key={header.id}>
                 {flexRender(
@@ -87,20 +88,16 @@ export function Insights() {
               </div>
             ))}
           </div>
-          <div
-            ref={scroll}
-            data-testid="account-scroll"
-            className="h-48 overflow-auto"
-          >
+          <div ref={scroll} className={styles.scroll}>
             <div
-              className="relative"
+              className={styles.rows}
               style={{ height: virtualizer.getTotalSize() }}
             >
               {virtualizer.getVirtualItems().map((item) => (
                 <div
                   role="row"
                   key={rows[item.index].id}
-                  className="absolute left-0 top-0 grid w-full grid-cols-3 items-center"
+                  className={styles.row}
                   style={{
                     height: item.size,
                     transform: `translateY(${item.start}px)`,
@@ -120,7 +117,7 @@ export function Insights() {
           </div>
         </div>
       </div>
-      <div className="space-y-2 text-sm">
+      <div className={styles.notes}>
         <Markdown remarkPlugins={[remarkGfm]}>{notes}</Markdown>
       </div>
     </section>

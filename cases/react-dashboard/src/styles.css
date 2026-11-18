@@ -1,16 +1,84 @@
-@import 'tailwindcss' source(none);
-/* Explicitly include generated sources even though they are gitignored. */
-@source "./";
-@source "./generated";
-
-@theme {
-  --font-sans: Inter, ui-sans-serif, system-ui, sans-serif;
+:root {
+  font-family: Inter, ui-sans-serif, system-ui, sans-serif;
+  line-height: 1.5;
+  -webkit-text-size-adjust: 100%;
+  --slate-50: oklch(98.4% 0.003 247.858);
+  --slate-100: oklch(96.8% 0.007 247.896);
+  --slate-200: oklch(92.9% 0.013 255.508);
+  --slate-300: oklch(86.9% 0.022 252.894);
+  --slate-500: oklch(55.4% 0.046 257.417);
+  --slate-700: oklch(37.2% 0.044 257.287);
+  --slate-800: oklch(27.9% 0.041 260.031);
+  --slate-900: oklch(20.8% 0.042 265.755);
+  --slate-950: oklch(12.9% 0.042 264.695);
+  --indigo-50: oklch(96.2% 0.018 272.314);
+  --indigo-100: oklch(93% 0.034 272.788);
+  --indigo-500: oklch(58.5% 0.233 277.117);
+  --indigo-600: oklch(51.1% 0.262 276.966);
+  --indigo-700: oklch(45.7% 0.24 277.023);
 }
 
-body {
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
   margin: 0;
+  padding: 0;
+  border: 0 solid;
 }
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-size: inherit;
+  font-weight: inherit;
+}
+
+a {
+  color: inherit;
+  text-decoration: inherit;
+}
+
 button,
-input {
+input,
+select,
+textarea {
   font: inherit;
+  color: inherit;
+  background: transparent;
+}
+
+input::placeholder,
+textarea::placeholder {
+  opacity: 1;
+  color: color-mix(in oklab, currentColor 50%, transparent);
+}
+
+ul,
+ol {
+  list-style: none;
+}
+
+table {
+  border-collapse: collapse;
+  border-color: inherit;
+  text-indent: 0;
+}
+
+img,
+svg {
+  display: block;
+  vertical-align: middle;
+}
+
+img {
+  max-width: 100%;
+  height: auto;
+}
+
+[hidden]:not([hidden='until-found']) {
+  display: none !important;
 }

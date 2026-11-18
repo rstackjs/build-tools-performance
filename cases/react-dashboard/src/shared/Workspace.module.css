@@ -1,0 +1,179 @@
+.workspace {
+  margin-bottom: 24px;
+  border: 1px solid var(--slate-200);
+  border-radius: 12px;
+  padding: 24px;
+  background: white;
+}
+
+.heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  margin-bottom: 20px;
+}
+
+.heading h2 {
+  font-size: 20px;
+  font-weight: 600;
+  color: var(--slate-950);
+}
+
+.heading p {
+  margin-top: 4px;
+  color: var(--slate-500);
+  font-size: 14px;
+}
+
+.input {
+  border: 1px solid var(--slate-300);
+  border-radius: 6px;
+  background: white;
+  padding: 8px 12px;
+}
+
+.requestGrid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 16px;
+}
+
+.request {
+  padding: 16px;
+  border: 1px solid var(--slate-200);
+  border-radius: 8px;
+}
+
+.request h3 {
+  font-weight: 600;
+  margin-bottom: 8px;
+}
+
+.request p {
+  color: var(--slate-500);
+  font-size: 14px;
+  margin-bottom: 12px;
+}
+
+.badge {
+  display: inline-block;
+  padding: 4px 8px;
+  border-radius: 4px;
+  color: var(--indigo-700);
+  background: var(--indigo-50);
+  font-size: 12px;
+}
+
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 16px;
+}
+
+.actions button:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.tabs {
+  display: flex;
+  gap: 8px;
+  border-bottom: 1px solid var(--slate-200);
+  margin-bottom: 20px;
+}
+
+.tabs button {
+  padding: 8px 16px;
+  border-bottom: 2px solid transparent;
+  cursor: pointer;
+}
+
+.tabs button[data-selected] {
+  border-color: var(--indigo-600);
+  color: var(--indigo-700);
+}
+
+.reportControls {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 16px;
+  margin: 16px 0;
+}
+
+.reportControls label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.reportControls a {
+  color: var(--indigo-700);
+  text-decoration: underline;
+}
+
+.distribution {
+  display: grid;
+  gap: 12px;
+  margin: 24px 0;
+  max-width: 720px;
+}
+
+.bucket {
+  display: grid;
+  grid-template-columns: 140px minmax(0, 1fr) 36px;
+  gap: 16px;
+  align-items: center;
+  font-size: 14px;
+}
+
+.track {
+  height: 16px;
+  border-radius: 4px;
+  background: var(--slate-100);
+  overflow: hidden;
+}
+
+.bar {
+  height: 100%;
+  border-radius: 4px;
+  background: var(--indigo-500);
+}
+
+.savedReports li,
+.activityList li {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  border-bottom: 1px solid var(--slate-100);
+  padding: 12px 0;
+}
+
+.savedReports li > span {
+  flex: 1;
+}
+
+.csvPreview {
+  margin: 16px 0;
+}
+
+.csvPreview summary {
+  cursor: pointer;
+}
+
+.csvPreview pre {
+  padding: 16px;
+  margin-top: 8px;
+  border-radius: 8px;
+  background: var(--slate-50);
+  overflow: auto;
+  font-size: 12px;
+}
+
+@media (max-width: 1100px) {
+  .requestGrid {
+    grid-template-columns: 1fr;
+  }
+}
