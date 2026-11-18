@@ -5,61 +5,61 @@
 <rect width="1040" height="470" rx="12" fill="#f6f8fb"/>
 <text x="16" y="23" font-size="10" fill="#596779" font-weight="700" letter-spacing="1.5">BUILD TOOLS COMPARISON</text>
 <text x="16" y="49" font-size="24" fill="#182230" font-weight="700">ui-components</text>
-<g class="chart" data-metric="Build (no cache)" data-table="Build metrics" data-scale="20632">
+<g class="chart" data-metric="Build (no cache)" data-table="Build metrics" data-scale="43727">
 <rect x="16" y="64" width="329.3333333333333" height="184" rx="8" fill="#ffffff" stroke="#dce3ec"/>
 <text x="26" y="85" font-size="12" fill="#182230" font-weight="650">Build · no cache (ms)</text>
 <text x="26" y="109" font-size="10.5" fill="#182230" >Rspack CLI</text>
-<rect class="bar" data-rank="3" x="96" y="100" width="34.173" height="10" rx="2" fill="#369bbb"/>
-<text x="134.17329068114256" y="109" font-size="10" fill="#182230" >3,685</text>
+<rect class="bar" data-rank="2" x="96" y="100" width="33.977" height="10" rx="2" fill="#2b9fa7"/>
+<text x="133.97679542006844" y="109" font-size="10" fill="#182230" >7,765</text>
 <text x="26" y="127" font-size="10.5" fill="#182230" >Rsbuild</text>
-<rect class="bar" data-rank="4" x="96" y="118" width="34.591" height="10" rx="2" fill="#478dcc"/>
-<text x="134.59060359312394" y="127" font-size="10" fill="#182230" >3,730</text>
+<rect class="bar" data-rank="3" x="96" y="118" width="38.326" height="10" rx="2" fill="#369bbb"/>
+<text x="138.32617528453054" y="127" font-size="10" fill="#182230" >8,759</text>
 <text x="26" y="145" font-size="10.5" fill="#182230" >Vite</text>
-<rect class="bar" data-rank="1" x="96" y="136" width="24.770" height="10" rx="2" fill="#219e91"/>
-<text x="124.76983973116194" y="145" font-size="10" fill="#182230" >2,671</text>
+<rect class="bar" data-rank="1" x="96" y="136" width="31.570" height="10" rx="2" fill="#219e91"/>
+<text x="131.57019690351498" y="145" font-size="10" fill="#182230" >7,215</text>
 <text x="26" y="163" font-size="10.5" fill="#182230" >webpack</text>
-<rect class="bar" data-rank="5" x="96" y="154" width="114.650" height="10" rx="2" fill="#5c7fd1"/>
-<text x="214.64976735168668" y="163" font-size="10" fill="#182230" >12,363</text>
+<rect class="bar" data-rank="7" x="96" y="154" width="119.577" height="10" rx="2" fill="#9068bc"/>
+<text x="219.57731683704193" y="163" font-size="10" fill="#182230" >27,328</text>
 <text x="26" y="181" font-size="10.5" fill="#182230" >esbuild</text>
-<rect class="bar" data-rank="2" x="96" y="172" width="31.530" height="10" rx="2" fill="#2b9fa7"/>
-<text x="131.53030890526043" y="181" font-size="10" fill="#182230" >3,400</text>
+<rect class="bar" data-rank="4" x="96" y="172" width="38.737" height="10" rx="2" fill="#478dcc"/>
+<text x="138.73748484917786" y="181" font-size="10" fill="#182230" >8,853</text>
 <text x="26" y="199" font-size="10.5" fill="#182230" >Farm</text>
-<rect class="bar" data-rank="6" x="96" y="190" width="122.940" height="10" rx="2" fill="#7570ca"/>
-<text x="222.94038386971692" y="199" font-size="10" fill="#182230" >13,257</text>
+<rect class="bar" data-rank="6" x="96" y="190" width="109.295" height="10" rx="2" fill="#7570ca"/>
+<text x="209.29457772085897" y="199" font-size="10" fill="#182230" >24,978</text>
 <text x="26" y="217" font-size="10.5" fill="#182230" >Parcel</text>
 <rect class="bar" data-rank="8" x="96" y="208" width="191.333" height="10" rx="2" fill="#ad63ad"/>
-<text x="291.3333333333333" y="217" font-size="10" fill="#182230" >20,632</text>
+<text x="291.3333333333333" y="217" font-size="10" fill="#182230" >43,727</text>
 <text x="26" y="235" font-size="10.5" fill="#182230" >Utoo</text>
-<rect class="bar" data-rank="7" x="96" y="226" width="145.429" height="10" rx="2" fill="#9068bc"/>
-<text x="245.4289130153806" y="235" font-size="10" fill="#182230" >15,682</text>
+<rect class="bar" data-rank="5" x="96" y="226" width="81.142" height="10" rx="2" fill="#5c7fd1"/>
+<text x="181.1417507108499" y="235" font-size="10" fill="#182230" >18,544</text>
 </g>
-<g class="chart" data-metric="Build (with cache)" data-table="Build metrics" data-scale="5293">
+<g class="chart" data-metric="Build (with cache)" data-table="Build metrics" data-scale="12785">
 <rect x="355.3333333333333" y="64" width="329.3333333333333" height="184" rx="8" fill="#ffffff" stroke="#dce3ec"/>
 <text x="365.3333333333333" y="85" font-size="12" fill="#182230" font-weight="650">Build · with cache (ms)</text>
 <text x="365.3333333333333" y="109" font-size="10.5" fill="#182230" >Rspack CLI</text>
-<rect class="bar" data-rank="2" x="435.3333333333333" y="100" width="32.461" height="10" rx="2" fill="#2b9fa7"/>
-<text x="471.79457144656465" y="109" font-size="10" fill="#182230" >898</text>
+<rect class="bar" data-rank="2" x="435.3333333333333" y="100" width="41.155" height="10" rx="2" fill="#2b9fa7"/>
+<text x="480.4883326815278" y="109" font-size="10" fill="#182230" >2,750</text>
 <text x="365.3333333333333" y="127" font-size="10.5" fill="#182230" >Rsbuild</text>
-<rect class="bar" data-rank="4" x="435.3333333333333" y="118" width="44.860" height="10" rx="2" fill="#478dcc"/>
-<text x="484.1934630644247" y="127" font-size="10" fill="#182230" >1,241</text>
+<rect class="bar" data-rank="3" x="435.3333333333333" y="118" width="61.149" height="10" rx="2" fill="#369bbb"/>
+<text x="500.4821796375961" y="127" font-size="10" fill="#182230" >4,086</text>
 <text x="365.3333333333333" y="145" font-size="10.5" fill="#182230" >Vite</text>
-<rect class="bar" data-rank="5" x="435.3333333333333" y="136" width="96.119" height="10" rx="2" fill="#5c7fd1"/>
-<text x="535.4518546507966" y="145" font-size="10" fill="#182230" >2,659</text>
+<rect class="bar" data-rank="6" x="435.3333333333333" y="136" width="99.326" height="10" rx="2" fill="#7570ca"/>
+<text x="538.6590535784121" y="145" font-size="10" fill="#182230" >6,637</text>
 <text x="365.3333333333333" y="163" font-size="10.5" fill="#182230" >webpack</text>
 <rect class="bar" data-rank="8" x="435.3333333333333" y="154" width="191.333" height="10" rx="2" fill="#ad63ad"/>
-<text x="630.6666666666666" y="163" font-size="10" fill="#182230" >5,293</text>
+<text x="630.6666666666666" y="163" font-size="10" fill="#182230" >12,785</text>
 <text x="365.3333333333333" y="181" font-size="10.5" fill="#182230" >esbuild</text>
-<rect class="bar" data-rank="6" x="435.3333333333333" y="172" width="105.734" height="10" rx="2" fill="#7570ca"/>
-<text x="545.0673216197494" y="181" font-size="10" fill="#182230" >2,925</text>
+<rect class="bar" data-rank="5" x="435.3333333333333" y="172" width="84.450" height="10" rx="2" fill="#5c7fd1"/>
+<text x="523.7833919958284" y="181" font-size="10" fill="#182230" >5,643</text>
 <text x="365.3333333333333" y="199" font-size="10.5" fill="#182230" >Farm</text>
-<rect class="bar" data-rank="7" x="435.3333333333333" y="190" width="112.132" height="10" rx="2" fill="#9068bc"/>
-<text x="551.4655834750299" y="199" font-size="10" fill="#182230" >3,102</text>
+<rect class="bar" data-rank="7" x="435.3333333333333" y="190" width="121.235" height="10" rx="2" fill="#9068bc"/>
+<text x="560.56847868596" y="199" font-size="10" fill="#182230" >8,101</text>
 <text x="365.3333333333333" y="217" font-size="10.5" fill="#182230" >Parcel</text>
-<rect class="bar" data-rank="3" x="435.3333333333333" y="208" width="43.306" height="10" rx="2" fill="#369bbb"/>
-<text x="482.6390830656842" y="217" font-size="10" fill="#182230" >1,198</text>
+<rect class="bar" data-rank="4" x="435.3333333333333" y="208" width="63.783" height="10" rx="2" fill="#478dcc"/>
+<text x="503.11609959588054" y="217" font-size="10" fill="#182230" >4,262</text>
 <text x="365.3333333333333" y="235" font-size="10.5" fill="#182230" >Utoo</text>
-<rect class="bar" data-rank="1" x="435.3333333333333" y="226" width="26.533" height="10" rx="2" fill="#219e91"/>
-<text x="465.8662384281126" y="235" font-size="10" fill="#182230" >734</text>
+<rect class="bar" data-rank="1" x="435.3333333333333" y="226" width="27.417" height="10" rx="2" fill="#219e91"/>
+<text x="466.7500456263851" y="235" font-size="10" fill="#182230" >1,832</text>
 </g>
 <g class="chart" data-metric="Output size" data-table="Build metrics" data-scale="8510.5">
 <rect x="694.6666666666666" y="64" width="329.3333333333333" height="184" rx="8" fill="#ffffff" stroke="#dce3ec"/>
@@ -89,61 +89,61 @@
 <rect class="bar" data-rank="5" x="774.6666666666666" y="226" width="112.556" height="10" rx="2" fill="#5c7fd1"/>
 <text x="891.2229598730979" y="235" font-size="10" fill="#182230" >5,006.5</text>
 </g>
-<g class="chart" data-metric="Peak (no cache)" data-table="Build memory (MiB)" data-scale="3396">
+<g class="chart" data-metric="Peak (no cache)" data-table="Build memory (MiB)" data-scale="3155.9">
 <rect x="16" y="258" width="329.3333333333333" height="184" rx="8" fill="#ffffff" stroke="#dce3ec"/>
 <text x="26" y="279" font-size="12" fill="#182230" font-weight="650">Build peak memory · no cache (MiB)</text>
 <text x="26" y="303" font-size="10.5" fill="#182230" >Rspack CLI</text>
-<rect class="bar" data-rank="1" x="96" y="294" width="59.930" height="10" rx="2" fill="#219e91"/>
-<text x="159.92970160973695" y="303" font-size="10" fill="#182230" >1,063.7</text>
+<rect class="bar" data-rank="2" x="96" y="294" width="64.689" height="10" rx="2" fill="#2b9fa7"/>
+<text x="164.68920645985827" y="303" font-size="10" fill="#182230" >1,067.0</text>
 <text x="26" y="321" font-size="10.5" fill="#182230" >Rsbuild</text>
-<rect class="bar" data-rank="3" x="96" y="312" width="65.620" height="10" rx="2" fill="#369bbb"/>
-<text x="165.62012171181783" y="321" font-size="10" fill="#182230" >1,164.7</text>
+<rect class="bar" data-rank="3" x="96" y="312" width="71.673" height="10" rx="2" fill="#369bbb"/>
+<text x="171.67345817886076" y="321" font-size="10" fill="#182230" >1,182.2</text>
 <text x="26" y="339" font-size="10.5" fill="#182230" >Vite</text>
-<rect class="bar" data-rank="7" x="96" y="330" width="100.946" height="10" rx="2" fill="#9068bc"/>
-<text x="200.9457989791912" y="339" font-size="10" fill="#182230" >1,791.7</text>
+<rect class="bar" data-rank="6" x="96" y="330" width="107.692" height="10" rx="2" fill="#7570ca"/>
+<text x="207.69206882347348" y="339" font-size="10" fill="#182230" >1,776.3</text>
 <text x="26" y="357" font-size="10.5" fill="#182230" >webpack</text>
-<rect class="bar" data-rank="6" x="96" y="348" width="99.667" height="10" rx="2" fill="#7570ca"/>
-<text x="199.66686297605025" y="357" font-size="10" fill="#182230" >1,769.0</text>
+<rect class="bar" data-rank="7" x="96" y="348" width="111.766" height="10" rx="2" fill="#9068bc"/>
+<text x="211.76621565955827" y="357" font-size="10" fill="#182230" >1,843.5</text>
 <text x="26" y="375" font-size="10.5" fill="#182230" >esbuild</text>
-<rect class="bar" data-rank="4" x="96" y="366" width="84.128" height="10" rx="2" fill="#478dcc"/>
-<text x="184.12807224185315" y="375" font-size="10" fill="#182230" >1,493.2</text>
+<rect class="bar" data-rank="4" x="96" y="366" width="78.300" height="10" rx="2" fill="#478dcc"/>
+<text x="178.30000950600464" y="375" font-size="10" fill="#182230" >1,291.5</text>
 <text x="26" y="393" font-size="10.5" fill="#182230" >Farm</text>
-<rect class="bar" data-rank="5" x="96" y="384" width="95.791" height="10" rx="2" fill="#5c7fd1"/>
-<text x="195.79061641146444" y="393" font-size="10" fill="#182230" >1,700.2</text>
+<rect class="bar" data-rank="5" x="96" y="384" width="103.442" height="10" rx="2" fill="#5c7fd1"/>
+<text x="203.4421031507124" y="393" font-size="10" fill="#182230" >1,706.2</text>
 <text x="26" y="411" font-size="10.5" fill="#182230" >Parcel</text>
 <rect class="bar" data-rank="8" x="96" y="402" width="191.333" height="10" rx="2" fill="#ad63ad"/>
-<text x="291.3333333333333" y="411" font-size="10" fill="#182230" >3,396.0</text>
+<text x="291.3333333333333" y="411" font-size="10" fill="#182230" >3,155.9</text>
 <text x="26" y="429" font-size="10.5" fill="#182230" >Utoo</text>
-<rect class="bar" data-rank="2" x="96" y="420" width="61.073" height="10" rx="2" fill="#2b9fa7"/>
-<text x="161.07341970946212" y="429" font-size="10" fill="#182230" >1,084.0</text>
+<rect class="bar" data-rank="1" x="96" y="420" width="64.465" height="10" rx="2" fill="#219e91"/>
+<text x="164.46488587513335" y="429" font-size="10" fill="#182230" >1,063.3</text>
 </g>
-<g class="chart" data-metric="Peak (with cache)" data-table="Build memory (MiB)" data-scale="1745.8">
+<g class="chart" data-metric="Peak (with cache)" data-table="Build memory (MiB)" data-scale="1782.1">
 <rect x="355.3333333333333" y="258" width="329.3333333333333" height="184" rx="8" fill="#ffffff" stroke="#dce3ec"/>
 <text x="365.3333333333333" y="279" font-size="12" fill="#182230" font-weight="650">Build peak memory · with cache (MiB)</text>
 <text x="365.3333333333333" y="303" font-size="10.5" fill="#182230" >Rspack CLI</text>
-<rect class="bar" data-rank="3" x="435.3333333333333" y="294" width="136.568" height="10" rx="2" fill="#369bbb"/>
-<text x="575.9013632718525" y="303" font-size="10" fill="#182230" >1,246.1</text>
+<rect class="bar" data-rank="3" x="435.3333333333333" y="294" width="133.818" height="10" rx="2" fill="#369bbb"/>
+<text x="573.1517872173279" y="303" font-size="10" fill="#182230" >1,246.4</text>
 <text x="365.3333333333333" y="321" font-size="10.5" fill="#182230" >Rsbuild</text>
-<rect class="bar" data-rank="4" x="435.3333333333333" y="312" width="140.404" height="10" rx="2" fill="#478dcc"/>
-<text x="579.7372360331461" y="321" font-size="10" fill="#182230" >1,281.1</text>
+<rect class="bar" data-rank="4" x="435.3333333333333" y="312" width="135.429" height="10" rx="2" fill="#478dcc"/>
+<text x="574.7622467874978" y="321" font-size="10" fill="#182230" >1,261.4</text>
 <text x="365.3333333333333" y="339" font-size="10.5" fill="#182230" >Vite</text>
 <rect class="bar" data-rank="8" x="435.3333333333333" y="330" width="191.333" height="10" rx="2" fill="#ad63ad"/>
-<text x="630.6666666666666" y="339" font-size="10" fill="#182230" >1,745.8</text>
+<text x="630.6666666666666" y="339" font-size="10" fill="#182230" >1,782.1</text>
 <text x="365.3333333333333" y="357" font-size="10.5" fill="#182230" >webpack</text>
-<rect class="bar" data-rank="6" x="435.3333333333333" y="348" width="159.233" height="10" rx="2" fill="#7570ca"/>
-<text x="598.5658914728682" y="357" font-size="10" fill="#182230" >1,452.9</text>
+<rect class="bar" data-rank="7" x="435.3333333333333" y="348" width="155.742" height="10" rx="2" fill="#9068bc"/>
+<text x="595.0755101659091" y="357" font-size="10" fill="#182230" >1,450.6</text>
 <text x="365.3333333333333" y="375" font-size="10.5" fill="#182230" >esbuild</text>
-<rect class="bar" data-rank="7" x="435.3333333333333" y="366" width="162.049" height="10" rx="2" fill="#9068bc"/>
-<text x="601.3825180433039" y="375" font-size="10" fill="#182230" >1,478.6</text>
+<rect class="bar" data-rank="5" x="435.3333333333333" y="366" width="145.221" height="10" rx="2" fill="#5c7fd1"/>
+<text x="584.5538409741316" y="375" font-size="10" fill="#182230" >1,352.6</text>
 <text x="365.3333333333333" y="393" font-size="10.5" fill="#182230" >Farm</text>
-<rect class="bar" data-rank="5" x="435.3333333333333" y="384" width="152.942" height="10" rx="2" fill="#5c7fd1"/>
-<text x="592.2750601443464" y="393" font-size="10" fill="#182230" >1,395.5</text>
+<rect class="bar" data-rank="6" x="435.3333333333333" y="384" width="149.730" height="10" rx="2" fill="#7570ca"/>
+<text x="589.0631277706077" y="393" font-size="10" fill="#182230" >1,394.6</text>
 <text x="365.3333333333333" y="411" font-size="10.5" fill="#182230" >Parcel</text>
-<rect class="bar" data-rank="2" x="435.3333333333333" y="402" width="101.815" height="10" rx="2" fill="#2b9fa7"/>
-<text x="541.1483560545308" y="411" font-size="10" fill="#182230" >929.0</text>
+<rect class="bar" data-rank="2" x="435.3333333333333" y="402" width="87.158" height="10" rx="2" fill="#2b9fa7"/>
+<text x="526.491405270935" y="411" font-size="10" fill="#182230" >811.8</text>
 <text x="365.3333333333333" y="429" font-size="10.5" fill="#182230" >Utoo</text>
-<rect class="bar" data-rank="1" x="435.3333333333333" y="420" width="27.158" height="10" rx="2" fill="#219e91"/>
-<text x="466.4913124832932" y="429" font-size="10" fill="#182230" >247.8</text>
+<rect class="bar" data-rank="1" x="435.3333333333333" y="420" width="26.573" height="10" rx="2" fill="#219e91"/>
+<text x="465.9059162411387" y="429" font-size="10" fill="#182230" >247.5</text>
 </g>
 <g class="chart" data-metric="Gzipped size" data-table="Build metrics" data-scale="2907.9">
 <rect x="694.6666666666666" y="258" width="329.3333333333333" height="184" rx="8" fill="#ffffff" stroke="#dce3ec"/>
