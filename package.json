@@ -11,7 +11,7 @@
     "test": "rs test"
   },
   "devDependencies": {
-    "@farmfe/cli": "^1.0.5",
+    "@farmfe/cli": "^2.0.0",
     "@farmfe/core": "1.7.11",
     "@farmfe/plugin-react": "^1.2.6",
     "@parcel/config-default": "^2.16.4",
